@@ -20,7 +20,7 @@ interface Prompt {
 
 export default async function Home() {
   let prompts: Prompt[] = []
-  let fetchError = null
+  let fetchError: string | null = null
 
   try {
     console.log('Fetching prompts from Supabase...')
@@ -33,7 +33,7 @@ export default async function Home() {
     console.log('Error:', error)
 
     if (error) {
-      fetchError = error
+      fetchError = error.message
       console.error('Supabase error:', error)
     } else if (data) {
       prompts = data
@@ -41,7 +41,7 @@ export default async function Home() {
     }
   } catch (error) {
     console.error('Error fetching prompts:', error)
-    fetchError = error
+    fetchError = error instanceof Error ? error.message : '알 수 없는 에러'
   }
 
   return (
@@ -67,14 +67,20 @@ export default async function Home() {
         </div>
 
         {fetchError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <p>에러: {JSON.stringify(fetchError)}</p>
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <p>에러: {fetchError}</p>
           </div>
         )}
 
         {prompts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500">프롬프트가 없습니다. 첫 번째 프롬프트를 공유해보세요!</p>
+            <p className="text-gray-500 text-xl mb-4">아직 프롬프트가 없습니다.</p>
+            <Link
+              href="/create"
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
+            >
+              첫 프롬프트 공유하기
+            </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
