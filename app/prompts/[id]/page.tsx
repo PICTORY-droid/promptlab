@@ -31,7 +31,6 @@ export default function PromptDetail({
     const fetchAndIncrement = async () => {
       const { id } = await params
       
-      // Fetch prompt
       const { data, error } = await supabase
         .from('prompts')
         .select('*')
@@ -45,7 +44,6 @@ export default function PromptDetail({
       setPrompt(data)
       setLoading(false)
 
-      // Increment views
       await supabase
         .from('prompts')
         .update({ views: (data.views || 0) + 1 })
@@ -100,20 +98,6 @@ export default function PromptDetail({
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-md">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-3xl font-bold text-blue-600">
-            PromptShare
-          </Link>
-          <Link
-            href="/create"
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 font-semibold"
-          >
-            + 프롬프트 공유
-          </Link>
-        </div>
-      </nav>
-
       <div className="max-w-4xl mx-auto px-4 py-12">
         <Link href="/" className="text-blue-500 hover:underline mb-6 inline-block font-medium">
           ← 돌아가기

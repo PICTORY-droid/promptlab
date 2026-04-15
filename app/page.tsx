@@ -46,18 +46,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-blue-600">PromptShare</h1>
-          <Link
-            href="/create"
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 font-semibold"
-          >
-            + 프롬프트 공유
-          </Link>
-        </div>
-      </nav>
-
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="mb-8">
           <h2 className="text-4xl font-bold mb-2">프롬프트 공유 커뮤니티</h2>
