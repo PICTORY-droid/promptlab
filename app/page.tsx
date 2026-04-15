@@ -114,13 +114,13 @@ export default function Home() {
           </div>
 
           <div className="fade-in-up">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'monospace' }}>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 whitespace-nowrap" style={{ fontFamily: 'monospace' }}>
               <span style={{ color: '#8b949e' }}>// </span>
               <span style={{ color: '#e6edf3' }}>프롬프트 </span>
               <span style={{ color: '#58a6ff' }}>공유</span>
               <span style={{ color: '#e6edf3' }}> 커뮤니티</span>
             </h1>
-            <p className="text-sm sm:text-base lg:text-lg mb-5 sm:mb-6" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
+            <p className="text-xs sm:text-base lg:text-lg mb-5 sm:mb-6 truncate" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
               <span style={{ color: '#3fb950' }}>{'>'}</span> AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.
             </p>
 
