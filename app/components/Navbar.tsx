@@ -3,6 +3,50 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
+function MatrixRain() {
+  useEffect(() => {
+    const canvas = document.getElementById('matrix-canvas-global') as HTMLCanvasElement
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    const chars = 'アイウエオカキクケコ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const fontSize = 14
+    const columns = Math.floor(canvas.width / fontSize)
+    const drops: number[] = Array(columns).fill(1)
+    const draw = () => {
+      ctx.fillStyle = 'rgba(13, 17, 23, 0.05)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.fillStyle = '#3fb950'
+      ctx.font = `${fontSize}px monospace`
+      drops.forEach((y, i) => {
+        const char = chars[Math.floor(Math.random() * chars.length)]
+        ctx.fillText(char, i * fontSize, y * fontSize)
+        if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0
+        drops[i]++
+      })
+    }
+    const interval = setInterval(draw, 33)
+    const handleResize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    window.addEventListener('resize', handleResize)
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  return (
+    <canvas
+      id="matrix-canvas-global"
+      style={{ position: 'fixed', top: 0, left: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.3 }}
+    />
+  )
+}
+
 export default function Navbar() {
   const [time, setTime] = useState('')
   const [mounted, setMounted] = useState(false)
@@ -28,7 +72,6 @@ export default function Navbar() {
       setGlitchText(originalText)
       return
     }
-
     let iteration = 0
     const interval = setInterval(() => {
       setGlitchText(
@@ -38,77 +81,77 @@ export default function Navbar() {
           return glitchChars[Math.floor(Math.random() * glitchChars.length)]
         }).join('')
       )
-      if (iteration >= originalText.length) {
-        iteration = 0
-      }
+      if (iteration >= originalText.length) iteration = 0
       iteration += 0.5
     }, 50)
-
     return () => clearInterval(interval)
   }, [isHovered])
 
   return (
-    <nav className="sticky top-0 z-50 border-b" style={{
-      background: '#0d1117', borderColor: '#30363d'
-    }}>
-      {/* 터미널 상단 바 */}
-      <div className="px-3 py-1 flex items-center gap-2 border-b" style={{
-        borderColor: '#21262d', background: '#161b22'
+    <>
+      <MatrixRain />
+      <nav className="sticky top-0 z-50 border-b" style={{
+        background: '#0d1117', borderColor: '#30363d'
       }}>
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
-          <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
-          <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
-        </div>
-        <span className="text-xs ml-1 truncate" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
-          <span className="hidden sm:inline">promptshare — zsh — 80×24</span>
-          <span className="sm:hidden">promptshare</span>
-        </span>
-        <span className="ml-auto text-xs flex-shrink-0" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
-          {mounted ? time : ''}
-        </span>
-      </div>
-
-      {/* 메인 네비 */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center gap-2">
-        <div onClick={() => window.location.href = '/'} className="flex items-center gap-1 sm:gap-2 group min-w-0 cursor-pointer">
-          <span style={{ color: '#3fb950', fontFamily: 'monospace', fontSize: '0.95rem' }}>~/</span>
-          <span className="text-lg sm:text-2xl font-bold tracking-tight" style={{
-            color: '#e6edf3', fontFamily: 'monospace'
-          }}>prompt</span>
-          <span className="text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff', fontFamily: 'monospace' }}>share</span>
-          <span className="blink ml-0.5 text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff' }}>_</span>
+        {/* 터미널 상단 바 */}
+        <div className="px-3 py-1 flex items-center gap-2 border-b" style={{
+          borderColor: '#21262d', background: '#161b22'
+        }}>
+          <div className="flex gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
+          </div>
+          <span className="text-xs ml-1 truncate" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
+            <span className="hidden sm:inline">promptshare — zsh — 80×24</span>
+            <span className="sm:hidden">promptshare</span>
+          </span>
+          <span className="ml-auto text-xs flex-shrink-0" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
+            {mounted ? time : ''}
+          </span>
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="hidden sm:inline text-xs px-2 py-1 rounded" style={{
-            background: '#21262d', color: '#3fb950',
-            fontFamily: 'monospace', border: '1px solid #30363d'
-          }}>v2.0.1</span>
+        {/* 메인 네비 */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center gap-2">
+          <div onClick={() => window.location.href = '/'} className="flex items-center gap-1 sm:gap-2 group min-w-0 cursor-pointer">
+            <span style={{ color: '#3fb950', fontFamily: 'monospace', fontSize: '0.95rem' }}>~/</span>
+            <span className="text-lg sm:text-2xl font-bold tracking-tight" style={{
+              color: '#e6edf3', fontFamily: 'monospace'
+            }}>prompt</span>
+            <span className="text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff', fontFamily: 'monospace' }}>share</span>
+            <span className="blink ml-0.5 text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff' }}>_</span>
+          </div>
 
-          <Link
-            href="/create"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className="flex items-center justify-center px-3 sm:px-4 py-2 rounded-lg font-mono font-semibold transition-all active:scale-95 text-sm"
-            style={{
-              background: isHovered
-                ? 'linear-gradient(270deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000)'
-                : 'transparent',
-              backgroundSize: isHovered ? '400% 400%' : '100%',
-              color: isHovered ? '#ffffff' : '#3fb950',
-              border: isHovered ? '2px solid #bc8cff' : '2px solid #3fb950',
-              boxShadow: isHovered ? '0 0 15px #bc8cff66' : 'none',
-              animation: isHovered ? 'rainbow 1s linear infinite' : 'none',
-              minWidth: '70px',
-              fontFamily: 'monospace',
-            }}
-          >
-            <span className="sm:hidden">{glitchText}</span>
-            <span className="hidden sm:inline">+ new prompt</span>
-          </Link>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <span className="hidden sm:inline text-xs px-2 py-1 rounded" style={{
+              background: '#21262d', color: '#3fb950',
+              fontFamily: 'monospace', border: '1px solid #30363d'
+            }}>v2.0.1</span>
+
+            <Link
+              href="/create"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className="flex items-center justify-center px-3 sm:px-4 py-2 rounded-lg font-mono font-semibold transition-all active:scale-95 text-sm"
+              style={{
+                background: isHovered
+                  ? 'linear-gradient(270deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000)'
+                  : 'transparent',
+                backgroundSize: isHovered ? '400% 400%' : '100%',
+                color: isHovered ? '#ffffff' : '#3fb950',
+                border: isHovered ? '2px solid #bc8cff' : '2px solid #3fb950',
+                boxShadow: isHovered ? '0 0 15px #bc8cff66' : 'none',
+                animation: isHovered ? 'rainbow 1s linear infinite' : 'none',
+                minWidth: '70px',
+                fontFamily: 'monospace',
+              }}
+            >
+              <span className="sm:hidden">{glitchText}</span>
+              <span className="hidden sm:inline">+ new prompt</span>
+            </Link>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   )
 }
