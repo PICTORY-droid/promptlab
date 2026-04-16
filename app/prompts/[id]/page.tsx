@@ -618,7 +618,7 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
 
             <GlitchButton
               onClick={handleCopy}
-              text={copied ? '✓ copied to clipboard!' : '$ copy prompt'}
+              text={copied ? '✓ copied to clipboard!' : 'copy prompt'}
               copied={copied}
             />
 
