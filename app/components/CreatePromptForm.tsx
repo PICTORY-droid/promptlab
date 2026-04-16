@@ -201,8 +201,6 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> authorName</span>
-            <span style={{ color: '#8b949e' }}> = </span>
-            <span style={{ color: '#f0883e' }}>"..."</span>
           </label>
           <input type="text" value={authorName} onChange={(e) => setAuthorName(e.target.value)}
             required style={inputStyle} placeholder="// 작성자 이름을 입력하세요"
@@ -215,8 +213,6 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> password</span>
-            <span style={{ color: '#8b949e' }}> = </span>
-            <span style={{ color: '#ff7b72' }}>"****"</span>
             <span style={{ color: '#484f58' }}> // 수정·삭제시</span>
           </label>
           <div style={{ position: 'relative' }}>
@@ -258,8 +254,6 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> title</span>
-            <span style={{ color: '#8b949e' }}> = </span>
-            <span style={{ color: '#f0883e' }}>"..."</span>
           </label>
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
             required style={inputStyle} placeholder="// 프롬프트 제목"
@@ -272,8 +266,6 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> description</span>
-            <span style={{ color: '#8b949e' }}> = </span>
-            <span style={{ color: '#f0883e' }}>"..."</span>
           </label>
           <textarea value={description} onChange={(e) => setDescription(e.target.value)}
             style={{ ...inputStyle, resize: 'vertical' }}
@@ -287,8 +279,6 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> category</span>
-            <span style={{ color: '#8b949e' }}> = </span>
-            <span style={{ color: CATEGORY_COLORS[category] }}>"{category}"</span>
           </label>
           <select value={category} onChange={(e) => setCategory(e.target.value)}
             style={{ ...inputStyle, cursor: 'pointer' }}
@@ -308,8 +298,6 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> content</span>
-            <span style={{ color: '#8b949e' }}> = </span>
-            <span style={{ color: '#f0883e' }}>`...`</span>
           </label>
           <div style={{ border: '1px solid #30363d', borderRadius: '8px', overflow: 'hidden', background: '#0d1117' }}>
             <div className="flex items-center justify-between px-3 py-1.5" style={{
