@@ -89,6 +89,18 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [showCategories, setShowCategories] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+
+  // 화면 크기 감지
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 640)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     const fetchPrompts = async () => {
@@ -110,11 +122,78 @@ export default function Home() {
     return matchCat && matchSearch
   })
 
+  // 페이지네이션 설정
+  const itemsPerPage = isSmallScreen ? 20 : 30
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedPrompts = filtered.slice(startIndex, startIndex + itemsPerPage)
+
+  // 카테고리나 검색 변경시 페이지 리셋
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedCategory, searchQuery])
+
   // 검색 버튼 클릭 핸들러
   const handleSearch = () => {
     if (searchQuery.trim()) {
+      setCurrentPage(1)
       document.querySelector('.grid')?.scrollIntoView({ behavior: 'smooth' })
     }
+  }
+
+  // 페이지네이션 버튼 생성 함수
+  const getPaginationButtons = () => {
+    const buttons = []
+    const maxButtons = isSmallScreen ? 5 : 7
+    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2))
+    let endPage = Math.min(totalPages, startPage + maxButtons - 1)
+
+    if (endPage - startPage + 1 < maxButtons) {
+      startPage = Math.max(1, endPage - maxButtons + 1)
+    }
+
+    if (startPage > 1) {
+      buttons.push(
+        <button
+          key="first"
+          onClick={() => setCurrentPage(1)}
+          className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
+          style={{ background: '#21262d', color: '#8b949e', border: '1px solid #30363d' }}>
+          ◀ first
+        </button>
+      )
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => setCurrentPage(i)}
+          className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm transition-all hover:scale-105"
+          style={{
+            background: currentPage === i ? '#58a6ff' : '#21262d',
+            color: currentPage === i ? '#0d1117' : '#8b949e',
+            border: `1px solid ${currentPage === i ? '#58a6ff' : '#30363d'}`,
+            fontWeight: currentPage === i ? 'bold' : 'normal',
+          }}>
+          {i}
+        </button>
+      )
+    }
+
+    if (endPage < totalPages) {
+      buttons.push(
+        <button
+          key="last"
+          onClick={() => setCurrentPage(totalPages)}
+          className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
+          style={{ background: '#21262d', color: '#8b949e', border: '1px solid #30363d' }}>
+          last ▶
+        </button>
+      )
+    }
+
+    return buttons
   }
 
   return (
@@ -234,11 +313,27 @@ export default function Home() {
             <p className="text-sm mt-2">// 첫 번째 프롬프트를 공유해보세요!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map(prompt => (
-              <PromptCard key={prompt.id} prompt={prompt} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+              {paginatedPrompts.map(prompt => (
+                <PromptCard key={prompt.id} prompt={prompt} />
+              ))}
+            </div>
+
+            {/* 페이지네이션 */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
+                {getPaginationButtons()}
+              </div>
+            )}
+
+            {/* 페이지 정보 */}
+            <div className="text-center mt-6 font-mono text-xs sm:text-sm" style={{ color: '#484f58' }}>
+              <span style={{ color: '#8b949e' }}>
+                // page {currentPage} of {totalPages} • {filtered.length} total prompts
+              </span>
+            </div>
+          </>
         )}
       </div>
     </main>
