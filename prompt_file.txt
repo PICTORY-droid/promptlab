@@ -32,27 +32,27 @@ const CATEGORIES = ['All', 'General', 'Writing', 'Coding', 'Marketing', 'Educati
 function formatContent(content: string): string {
   const lines = content.split('\n')
   if (lines.length === 0) return content
-
+  
   const firstLine = lines[0]
   const restLines = lines.slice(1).join('\n')
-
+  
   // 첫 줄에서 첫 번째 "." 찾기
   const dotIndex = firstLine.indexOf('.')
-
+  
   if (dotIndex === -1) {
     // "."이 없으면 원본 반환
     return content
   }
-
+  
   // "." 이후에 공백이 있으면 제거
   const firstSentence = firstLine.substring(0, dotIndex + 1).trim()
   const rest = firstLine.substring(dotIndex + 1).trim()
-
+  
   if (rest) {
     // "." 뒤에 텍스트가 있으면 줄바꿈
     return firstSentence + '\n' + rest + (restLines ? '\n' + restLines : '')
   }
-
+  
   // "." 뒤에 텍스트가 없으면 원본 반환
   return content
 }
@@ -152,7 +152,7 @@ function PasswordModal({
                 border: `1px solid ${isDelete ? '#f85149' : '#58a6ff'}`,
                 boxShadow: 'none',
               }}>
-              {isDelete ? 'Delete' : 'confirm'}
+              {isDelete ? '$ Delete' : '$ confirm'}
             </button>
           </div>
         </div>
@@ -619,7 +619,7 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
 
             <GlitchButton
               onClick={handleCopy}
-              text={copied ? '✓ copied to clipboard!' : 'copy prompt'}
+              text={copied ? '✓ copied to clipboard!' : '$ copy prompt'}
               copied={copied}
             />
 
