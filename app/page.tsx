@@ -27,6 +27,33 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 
 const CATEGORIES = ['All', 'General', 'Writing', 'Coding', 'Marketing', 'Education', 'Other']
 
+// 타이핑 애니메이션 컴포넌트
+function TypingAnimation() {
+  const fullText = "// 최고의 AI 프롬프트를 공유하고 발견하세요"
+  const [displayedText, setDisplayedText] = useState('')
+  const [isTyping, setIsTyping] = useState(true)
+
+  useEffect(() => {
+    if (!isTyping) return
+
+    if (displayedText.length < fullText.length) {
+      const timer = setTimeout(() => {
+        setDisplayedText(fullText.slice(0, displayedText.length + 1))
+      }, 50)
+      return () => clearTimeout(timer)
+    } else {
+      setIsTyping(false)
+    }
+  }, [displayedText, isTyping, fullText])
+
+  return (
+    <p className="text-sm font-mono" style={{ color: '#484f58', minHeight: '1.5em' }}>
+      {displayedText}
+      {isTyping && <span style={{ color: '#58a6ff', animation: 'blink 1s infinite' }}>▍</span>}
+    </p>
+  )
+}
+
 function PromptCard({ prompt }: { prompt: Prompt }) {
   const colors = CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS['Other']
   const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
@@ -198,13 +225,18 @@ export default function Home() {
 
   return (
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
+      <style>{`
+        @keyframes blink {
+          0%, 49%, 100% { opacity: 1; }
+          50%, 99% { opacity: 0; }
+        }
+      `}</style>
+      
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
 
-        {/* 헤더 - 제목만 표시 (설명 텍스트 유지) */}
+        {/* 헤더 - 타이핑 애니메이션 적용 */}
         <div className="mb-8 sm:mb-12 text-center">
-          <p className="text-sm font-mono" style={{ color: '#484f58' }}>
-            // 최고의 AI 프롬프트를 공유하고 발견하세요
-          </p>
+          <TypingAnimation />
         </div>
 
         {/* 검색 + 검색 버튼 */}
