@@ -4,6 +4,7 @@ import { supabase } from '@/app/lib/supabase'
 import { useState, useEffect, useRef } from 'react'
 import GravityEffect from '@/app/components/GravityEffect'
 import NeuralNetwork from '@/app/components/NeuralNetwork'
+import HologramCard from '@/app/components/HologramCard'
 
 interface Prompt {
   id: string
@@ -91,7 +92,7 @@ function PromptCard({ prompt, index }: { prompt: Prompt, index: number }) {
         transition: 'opacity 0.5s ease, transform 0.5s ease',
       }}
     >
-      <div className="rounded-xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer"
+      <div className="rounded-xl overflow-hidden cursor-pointer"
         style={{ background: '#161b22', border: '1px solid #30363d' }}>
         <div className="flex items-center px-3 pt-2.5" style={{ borderBottom: '1px solid #30363d' }}>
           <div className="px-3 py-1.5 rounded-t-lg text-xs font-mono flex items-center gap-1.5"
@@ -242,6 +243,7 @@ export default function Home() {
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
       <GravityEffect />
       <NeuralNetwork />
+      <HologramCard />
       <style>{`
         @keyframes blink {
           0%, 49%, 100% { opacity: 1; }
