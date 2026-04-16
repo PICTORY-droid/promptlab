@@ -109,6 +109,16 @@ export default function Home() {
     return matchCat && matchSearch
   })
 
+  // 검색 버튼 클릭 핸들러
+  const handleSearch = () => {
+    // 검색창에 입력된 값으로 필터링이 이미 적용되어 있습니다
+    // 버튼 클릭 시 검색창의 값이 유지되도록 설정
+    if (searchQuery.trim()) {
+      // 선택적: 스크롤을 결과 영역으로 이동
+      document.querySelector('.grid')?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
@@ -144,16 +154,27 @@ export default function Home() {
               }}
               onFocus={e => e.target.style.borderColor = '#58a6ff'}
               onBlur={e => e.target.style.borderColor = '#30363d'}
+              onKeyPress={e => e.key === 'Enter' && handleSearch()}
             />
           </div>
+          <button
+            onClick={handleSearch}
+            className="px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
+            style={{
+              background: 'linear-gradient(135deg, #238636, #2ea043)',
+              color: '#ffffff', border: '1px solid #3fb950',
+              boxShadow: '0 0 15px #3fb95033',
+            }}>
+            🔍 search
+          </button>
           <Link href="/create">
             <button className="px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
               style={{
-                background: 'linear-gradient(135deg, #238636, #2ea043)',
-                color: '#ffffff', border: '1px solid #3fb950',
-                boxShadow: '0 0 15px #3fb95033',
+                background: 'linear-gradient(135deg, #0969da, #1f6feb)',
+                color: '#ffffff', border: '1px solid #1f6feb',
+                boxShadow: '0 0 15px #1f6feb33',
               }}>
-              + new
+              + new prompt
             </button>
           </Link>
         </div>
