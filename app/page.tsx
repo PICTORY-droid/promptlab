@@ -3,6 +3,7 @@
 import { supabase } from '@/app/lib/supabase'
 import { useState, useEffect, useRef } from 'react'
 import GravityEffect from '@/app/components/GravityEffect'
+import NeuralNetwork from '@/app/components/NeuralNetwork'
 
 interface Prompt {
   id: string
@@ -240,6 +241,7 @@ export default function Home() {
   return (
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
       <GravityEffect />
+      <NeuralNetwork />
       <style>{`
         @keyframes blink {
           0%, 49%, 100% { opacity: 1; }
