@@ -141,16 +141,16 @@ function PasswordModal({
           <div className="flex gap-2">
             <button onClick={onCancel}
               className="flex-1 py-2.5 rounded-lg font-mono text-sm transition-all hover:opacity-80"
-              style={{ background: '#21262d', color: '#8b949e', border: '1px solid #30363d' }}>
+              style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
               // cancel
             </button>
             <button onClick={handleSubmit}
               className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold transition-all hover:scale-[1.02] active:scale-95"
               style={{
-                background: isDelete ? '#da3633' : '#1f6feb',
-                color: '#ffffff',
+                background: isDelete ? 'transparent' : 'transparent',
+                color: isDelete ? '#ff7b72' : '#58a6ff',
                 border: `1px solid ${isDelete ? '#f85149' : '#58a6ff'}`,
-                boxShadow: `0 0 10px ${isDelete ? '#ff7b7244' : '#58a6ff44'}`,
+                boxShadow: 'none',
               }}>
               {isDelete ? '$ rm -rf' : '$ confirm'}
             </button>
@@ -251,15 +251,22 @@ function EditModal({
           <div className="flex gap-2">
             <button onClick={onCancel}
               className="flex-1 py-2.5 rounded-lg font-mono text-sm transition-all hover:opacity-80"
-              style={{ background: '#21262d', color: '#8b949e', border: '1px solid #30363d' }}>
+              style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
               // cancel
             </button>
             <button onClick={() => onSave({ title, description, content, category })}
               className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold transition-all hover:scale-[1.02] active:scale-95"
               style={{
-                background: 'linear-gradient(135deg, #238636, #2ea043)',
-                color: '#ffffff', border: '1px solid #3fb950',
-                boxShadow: '0 0 10px #3fb95044',
+                background: 'transparent',
+                color: '#3fb950',
+                border: '1px solid #3fb950',
+                boxShadow: 'none',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 15px #3fb95066'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none'
               }}>
               $ git commit -m &quot;update&quot;
             </button>
@@ -300,16 +307,10 @@ function GlitchButton({ onClick, text, copied }: {
       onMouseLeave={() => setIsHovered(false)}
       className="w-full py-3 sm:py-4 rounded-xl font-mono font-bold text-sm sm:text-base transition-all hover:scale-[1.02] active:scale-95"
       style={{
-        background: copied
-          ? 'linear-gradient(135deg, #238636, #2ea043)'
-          : isHovered
-            ? 'linear-gradient(270deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000)'
-            : 'linear-gradient(135deg, #1f6feb, #388bfd)',
-        backgroundSize: isHovered ? '400% 400%' : '100%',
-        color: '#ffffff',
-        border: copied ? '1px solid #3fb950' : isHovered ? '1px solid #bc8cff' : '1px solid #58a6ff',
-        boxShadow: copied ? '0 0 20px #3fb95044' : isHovered ? '0 0 15px #bc8cff66' : '0 0 20px #58a6ff44',
-        animation: isHovered && !copied ? 'rainbow 1s linear infinite' : 'none',
+        background: 'transparent',
+        color: copied ? '#ffffff' : isHovered ? '#ffffff' : '#58a6ff',
+        border: copied ? '2px solid #3fb950' : isHovered ? '2px solid #bc8cff' : '2px solid #58a6ff',
+        boxShadow: copied ? '0 0 20px #3fb95044' : isHovered ? '0 0 15px #bc8cff66' : 'none',
       }}>
       {glitchText}
     </button>
@@ -538,19 +539,19 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button onClick={() => setModalMode('edit')}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
-                  style={{ background: '#1f2d3d', color: '#58a6ff', border: '1px solid #1f6feb66' }}>
+                  style={{ background: 'transparent', color: '#58a6ff', border: '1px solid #1f6feb' }}>
                   <span>✎</span>
                   <span className="hidden sm:inline">edit</span>
                 </button>
                 <button onClick={() => setModalMode('delete')}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
-                  style={{ background: '#2d1f1f', color: '#ff7b72', border: '1px solid #f8514966' }}>
+                  style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
                   <span>✕</span>
                   <span className="hidden sm:inline">delete</span>
                 </button>
                 <button onClick={handleLike} disabled={isLiking}
                   className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
-                  style={{ background: isLiking ? '#21262d' : '#2d1f1f', color: '#ff7b72', border: '1px solid #f8514966' }}>
+                  style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
                   <span>♥</span>
                   <span className="font-bold">{prompt.likes}</span>
                 </button>

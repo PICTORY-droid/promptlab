@@ -158,7 +158,7 @@ export default function Home() {
           key="first"
           onClick={() => setCurrentPage(1)}
           className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
-          style={{ background: '#21262d', color: '#8b949e', border: '1px solid #30363d' }}>
+          style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
           ◀ first
         </button>
       )
@@ -171,7 +171,7 @@ export default function Home() {
           onClick={() => setCurrentPage(i)}
           className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm transition-all hover:scale-105"
           style={{
-            background: currentPage === i ? '#58a6ff' : '#21262d',
+            background: currentPage === i ? '#58a6ff' : 'transparent',
             color: currentPage === i ? '#0d1117' : '#8b949e',
             border: `1px solid ${currentPage === i ? '#58a6ff' : '#30363d'}`,
             fontWeight: currentPage === i ? 'bold' : 'normal',
@@ -187,7 +187,7 @@ export default function Home() {
           key="last"
           onClick={() => setCurrentPage(totalPages)}
           className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
-          style={{ background: '#21262d', color: '#8b949e', border: '1px solid #30363d' }}>
+          style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
           last ▶
         </button>
       )
@@ -232,9 +232,18 @@ export default function Home() {
             onClick={handleSearch}
             className="px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
             style={{
-              background: 'linear-gradient(135deg, #238636, #2ea043)',
-              color: '#ffffff', border: '1px solid #3fb950',
-              boxShadow: '0 0 15px #3fb95033',
+              background: 'transparent',
+              color: '#3fb950',
+              border: '2px solid #3fb950',
+              boxShadow: 'none',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#ffffff'
+              e.currentTarget.style.boxShadow = '0 0 15px #3fb95066'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = '#3fb950'
+              e.currentTarget.style.boxShadow = 'none'
             }}>
             🔍 search
           </button>

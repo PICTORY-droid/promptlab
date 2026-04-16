@@ -94,11 +94,11 @@ export default function Navbar() {
             style={{
               background: isHovered
                 ? 'linear-gradient(270deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000)'
-                : 'linear-gradient(135deg, #238636, #2ea043)',
+                : 'transparent',
               backgroundSize: isHovered ? '400% 400%' : '100%',
-              color: '#ffffff',
-              border: isHovered ? '1px solid #bc8cff' : '1px solid #3fb950',
-              boxShadow: isHovered ? '0 0 15px #bc8cff66' : '0 0 10px #3fb95033',
+              color: isHovered ? '#ffffff' : '#3fb950',
+              border: isHovered ? '2px solid #bc8cff' : '2px solid #3fb950',
+              boxShadow: isHovered ? '0 0 15px #bc8cff66' : 'none',
               animation: isHovered ? 'rainbow 1s linear infinite' : 'none',
               minWidth: '70px',
               fontFamily: 'monospace',
