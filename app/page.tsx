@@ -88,6 +88,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
+  const [showCategories, setShowCategories] = useState(false)
 
   useEffect(() => {
     const fetchPrompts = async () => {
@@ -166,8 +167,8 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 카테고리 필터 */}
-        <div className="flex gap-2 mb-6 sm:mb-8 overflow-x-auto pb-1">
+        {/* 카테고리 필터 - 데스크톱 */}
+        <div className="hidden sm:flex gap-2 mb-6 sm:mb-8 overflow-x-auto pb-1">
           {CATEGORIES.map(cat => {
             const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
             const isActive = selectedCategory === cat
@@ -183,6 +184,48 @@ export default function Home() {
               </button>
             )
           })}
+        </div>
+
+        {/* 카테고리 필터 - 모바일 토글 */}
+        <div className="sm:hidden mb-6">
+          <button
+            onClick={() => setShowCategories(!showCategories)}
+            className="w-full px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all flex items-center justify-between"
+            style={{
+              background: '#161b22',
+              color: '#58a6ff',
+              border: '1px solid #30363d',
+            }}>
+            <span>{selectedCategory === 'All' ? '📂 All Categories' : `📂 ${selectedCategory}`}</span>
+            <span style={{ marginLeft: '8px' }}>{showCategories ? '▼' : '▶'}</span>
+          </button>
+
+          {showCategories && (
+            <div className="mt-2 p-3 rounded-xl" style={{ background: '#161b22', border: '1px solid #30363d' }}>
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map(cat => {
+                  const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
+                  const isActive = selectedCategory === cat
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => {
+                        setSelectedCategory(cat)
+                        setShowCategories(false)
+                      }}
+                      className="px-3 py-1.5 rounded-full font-mono text-xs font-semibold transition-all active:scale-95"
+                      style={{
+                        background: isActive ? (colors?.bg || '#21262d') : 'transparent',
+                        color: isActive ? (colors?.text || '#e6edf3') : '#484f58',
+                        border: `1px solid ${isActive ? (colors?.border || '#30363d') : '#21262d'}`,
+                      }}>
+                      {cat}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 목록 */}
