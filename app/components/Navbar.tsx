@@ -42,7 +42,7 @@ function MatrixRain() {
   return (
     <canvas
       id="matrix-canvas-global"
-      style={{ position: 'fixed', top: 0, left: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.3 }}
+      style={{ position: 'fixed', top: 0, left: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.07 }}
     />
   )
 }
