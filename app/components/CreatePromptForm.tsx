@@ -191,7 +191,7 @@ export default function CreatePromptForm() {
             <span style={{ color: '#e6edf3' }}> 공유하기</span>
             <span className="blink" style={{ color: '#58a6ff' }}>_</span>
           </h1>
-          <p className="text-xs font-mono" style={{ color: '#484f58' }}>
+          <p className="text-xs font-mono mb-1" style={{ color: '#484f58' }}>
             // 당신의 최고의 프롬프트를 커뮤니티와 공유하세요
           </p>
         </div>
@@ -201,6 +201,7 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> authorName</span>
+            <span style={{ color: '#484f58' }}> // 작성자 이름</span>
           </label>
           <input type="text" value={authorName} onChange={(e) => setAuthorName(e.target.value)}
             required style={inputStyle} placeholder="// 작성자 이름을 입력하세요"
@@ -254,6 +255,7 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> title</span>
+            <span style={{ color: '#484f58' }}> // 프롬프트 제목</span>
           </label>
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
             required style={inputStyle} placeholder="// 프롬프트 제목"
@@ -266,6 +268,7 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> description</span>
+            <span style={{ color: '#484f58' }}> // 한 줄 설명</span>
           </label>
           <textarea value={description} onChange={(e) => setDescription(e.target.value)}
             style={{ ...inputStyle, resize: 'vertical' }}
@@ -279,6 +282,7 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> category</span>
+            <span style={{ color: '#484f58' }}> // 카테고리 선택</span>
           </label>
           <select value={category} onChange={(e) => setCategory(e.target.value)}
             style={{ ...inputStyle, cursor: 'pointer' }}
@@ -298,6 +302,7 @@ export default function CreatePromptForm() {
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> content</span>
+            <span style={{ color: '#484f58' }}> // 본문 내용 작성</span>
           </label>
           <div style={{ border: '1px solid #30363d', borderRadius: '8px', overflow: 'hidden', background: '#0d1117' }}>
             <div className="flex items-center justify-between px-3 py-1.5" style={{
