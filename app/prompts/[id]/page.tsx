@@ -26,6 +26,37 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   Other: { bg: '#1f2d2d', text: '#39c5cf', border: '#1b7c83' },
 }
 
+const CATEGORIES = ['All', 'General', 'Writing', 'Coding', 'Marketing', 'Education', 'Other']
+
+// ✅ 본문 첫 문장을 "."으로 줄바꿈하는 함수
+function formatContent(content: string): string {
+  const lines = content.split('\n')
+  if (lines.length === 0) return content
+  
+  const firstLine = lines[0]
+  const restLines = lines.slice(1).join('\n')
+  
+  // 첫 줄에서 첫 번째 "." 찾기
+  const dotIndex = firstLine.indexOf('.')
+  
+  if (dotIndex === -1) {
+    // "."이 없으면 원본 반환
+    return content
+  }
+  
+  // "." 이후에 공백이 있으면 제거
+  const firstSentence = firstLine.substring(0, dotIndex + 1).trim()
+  const rest = firstLine.substring(dotIndex + 1).trim()
+  
+  if (rest) {
+    // "." 뒤에 텍스트가 있으면 줄바꿈
+    return firstSentence + '\n' + rest + (restLines ? '\n' + restLines : '')
+  }
+  
+  // "." 뒤에 텍스트가 없으면 원본 반환
+  return content
+}
+
 function PasswordModal({
   mode, onConfirm, onCancel,
 }: {
@@ -446,6 +477,7 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
 
   const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
   const colors = CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS['Other']
+  const formattedContent = formatContent(prompt.content)
 
   return (
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
@@ -572,13 +604,13 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                 <div className="flex overflow-x-auto">
                   <div className="py-4 px-2 sm:px-3 text-right select-none flex-shrink-0"
                     style={{ borderRight: '1px solid #21262d', minWidth: '40px' }}>
-                    {prompt.content.split('\n').map((_, i) => (
+                    {formattedContent.split('\n').map((_, i) => (
                       <div key={i} className="text-xs leading-6 font-mono" style={{ color: '#484f58' }}>{i + 1}</div>
                     ))}
                   </div>
                   <pre className="py-4 px-3 sm:px-4 text-xs sm:text-sm leading-6 font-mono flex-1 min-w-0"
                     style={{ color: '#e6edf3', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                    {prompt.content}
+                    {formattedContent}
                   </pre>
                 </div>
               </div>
