@@ -152,7 +152,7 @@ function PasswordModal({
                 border: `1px solid ${isDelete ? '#f85149' : '#58a6ff'}`,
                 boxShadow: 'none',
               }}>
-              {isDelete ? '$ Delete' : '$ confirm'}
+              {isDelete ? 'Delete' : 'confirm'}
             </button>
           </div>
         </div>
@@ -619,7 +619,7 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
 
             <GlitchButton
               onClick={handleCopy}
-              text={copied ? '✓ copied to clipboard!' : '$ copy prompt'}
+              text={copied ? '✓ copied to clipboard!' : 'copy prompt'}
               copied={copied}
             />
 
