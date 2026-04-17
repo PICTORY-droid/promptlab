@@ -195,10 +195,7 @@ export default function PromptList() {
 
               </div>
 
-              {/* 페이지 정보 */}
-              <p className="font-mono text-xs" style={{ color: '#484f58' }}>
-                // page {currentPage} of {totalPages} · {prompts.length} total prompts
-              </p>
+              
             </div>
           )}
         </>
