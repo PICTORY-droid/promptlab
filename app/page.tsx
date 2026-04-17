@@ -198,7 +198,7 @@ export default function Home() {
 
   const getPaginationButtons = () => {
     const buttons = []
-    const maxButtons = isSmallScreen ? 5 : 7
+    const maxButtons = 5
     let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2))
     let endPage = Math.min(totalPages, startPage + maxButtons - 1)
     if (endPage - startPage + 1 < maxButtons) {
