@@ -15,14 +15,29 @@ interface Prompt {
   created_at: string
 }
 
+const ITEMS_PER_PAGE = 27
+
 export default function PromptList() {
   const [prompts, setPrompts] = useState<Prompt[]>([])
   const [loading, setLoading] = useState(true)
   const [category, setCategory] = useState('All')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [chevronBlink, setChevronBlink] = useState(true)
 
   useEffect(() => {
     fetchPrompts()
   }, [category])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [category])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setChevronBlink(prev => !prev)
+    }, 800)
+    return () => clearInterval(interval)
+  }, [])
 
   const fetchPrompts = async () => {
     setLoading(true)
@@ -54,18 +69,73 @@ export default function PromptList() {
 
   const categories = ['All', 'General', 'Writing', 'Coding', 'Marketing', 'Education', 'Other']
 
+  const totalPages = Math.ceil(prompts.length / ITEMS_PER_PAGE)
+  const paginatedPrompts = prompts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  )
+
+  // 현재 페이지 기준 5개 페이지 번호 계산
+  const getPageNumbers = () => {
+    const half = 2
+    let start = Math.max(1, currentPage - half)
+    let end = Math.min(totalPages, start + 4)
+    if (end - start < 4) start = Math.max(1, end - 4)
+    const pages = []
+    for (let i = start; i <= end; i++) pages.push(i)
+    return pages
+  }
+
+  const chevronStyle = {
+    opacity: chevronBlink ? 1 : 0.2,
+    transition: 'opacity 0.3s',
+  }
+
+  const btnBase: React.CSSProperties = {
+    fontFamily: 'monospace',
+    fontSize: '13px',
+    padding: '6px 12px',
+    borderRadius: '6px',
+    border: '1px solid #30363d',
+    background: 'transparent',
+    color: '#8b949e',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    minWidth: '36px',
+  }
+
+  const btnActive: React.CSSProperties = {
+    ...btnBase,
+    border: '1px solid #8b949e',
+    color: '#e6edf3',
+    background: '#21262d',
+  }
+
+  const btnDisabled: React.CSSProperties = {
+    ...btnBase,
+    opacity: 0.2,
+    cursor: 'not-allowed',
+  }
+
   return (
     <div>
+      {/* 카테고리 필터 */}
       <div className="mb-8 flex gap-2 flex-wrap">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setCategory(cat)}
-            className={`px-4 py-2 rounded-full font-semibold transition ${
-              category === cat
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-            }`}
+            style={{
+              fontFamily: 'monospace',
+              fontSize: '12px',
+              padding: '6px 14px',
+              borderRadius: '999px',
+              border: category === cat ? '1px solid #8b949e' : '1px solid #30363d',
+              background: category === cat ? '#21262d' : 'transparent',
+              color: category === cat ? '#e6edf3' : '#8b949e',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
           >
             {cat}
           </button>
@@ -73,19 +143,65 @@ export default function PromptList() {
       </div>
 
       {loading ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">로딩 중...</p>
+        <div className="text-center py-12 font-mono" style={{ color: '#8b949e' }}>
+          <span style={{ color: '#8b949e' }}>$</span> loading
+          <span style={{ animation: 'blink 1s step-end infinite' }}>_</span>
         </div>
       ) : prompts.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">프롬프트가 없습니다. 첫 번째 프롬프트를 공유해보세요!</p>
+        <div className="text-center py-12 font-mono" style={{ color: '#484f58' }}>
+          // 프롬프트가 없습니다. 첫 번째 프롬프트를 공유해보세요!
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {prompts.map((prompt) => (
-            <PromptCard key={prompt.id} prompt={prompt} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedPrompts.map((prompt) => (
+              <PromptCard key={prompt.id} prompt={prompt} />
+            ))}
+          </div>
+
+          {/* 페이지네이션 */}
+          {totalPages > 1 && (
+            <div className="mt-10 flex flex-col items-center gap-3">
+              <div className="flex items-center gap-1">
+
+                {/* 이전 */}
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  style={currentPage === 1 ? btnDisabled : btnBase}
+                >
+                  <span style={currentPage === 1 ? {} : chevronStyle}>◄</span>
+                </button>
+
+                {/* 페이지 번호 */}
+                {getPageNumbers().map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    style={page === currentPage ? btnActive : btnBase}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                {/* 다음 */}
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  style={currentPage === totalPages ? btnDisabled : btnBase}
+                >
+                  <span style={currentPage === totalPages ? {} : chevronStyle}>►</span>
+                </button>
+
+              </div>
+
+              {/* 페이지 정보 */}
+              <p className="font-mono text-xs" style={{ color: '#484f58' }}>
+                // page {currentPage} of {totalPages} · {prompts.length} total prompts
+              </p>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
