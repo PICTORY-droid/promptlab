@@ -26,8 +26,6 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   Other: { bg: '#1f2d2d', text: '#39c5cf', border: '#1b7c83' },
 }
 
-const CATEGORIES = ['All', 'General', 'Writing', 'Coding', 'Marketing', 'Education', 'Other']
-
 function formatContent(content: string): string {
   const lines = content.split('\n')
   if (lines.length === 0) return content
@@ -39,6 +37,108 @@ function formatContent(content: string): string {
   const rest = firstLine.substring(dotIndex + 1).trim()
   if (rest) return firstSentence + '\n' + rest + (restLines ? '\n' + restLines : '')
   return content
+}
+
+// 작성자 인증 모달 (페이지 진입 시)
+function AuthModal({
+  onConfirm, onCancel,
+}: {
+  onConfirm: (pw: string) => void
+  onCancel: () => void
+}) {
+  const [pw, setPw] = useState('')
+  const [shake, setShake] = useState(false)
+
+  const handleSubmit = () => {
+    if (pw.length !== 4) {
+      setShake(true)
+      setTimeout(() => setShake(false), 500)
+      return
+    }
+    onConfirm(pw)
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)' }}>
+      <div className="w-full max-w-sm rounded-xl overflow-hidden"
+        style={{
+          background: '#161b22',
+          border: '1px solid #30363d',
+          boxShadow: '0 0 40px #58a6ff22'
+        }}>
+        <div className="px-4 py-2 flex items-center gap-2" style={{ background: '#21262d' }}>
+          <div className="flex gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
+          </div>
+          <span className="text-xs ml-2 font-mono" style={{ color: '#8b949e' }}>auth.verify</span>
+        </div>
+        <div className="p-5 sm:p-6">
+          <p className="font-mono text-sm mb-1" style={{ color: '#8b949e' }}>
+            <span style={{ color: '#58a6ff' }}>$</span> sudo verify --author
+          </p>
+          <h2 className="font-mono font-bold text-base sm:text-lg mb-1" style={{ color: '#e6edf3' }}>
+            // 작성자이신가요?
+          </h2>
+          <p className="font-mono text-xs mb-4" style={{ color: '#484f58' }}>
+            // 비밀번호가 맞으면 수정/삭제 버튼이 표시됩니다
+          </p>
+          <div style={{ position: 'relative', marginBottom: '16px' }}>
+            <input
+              type="password"
+              value={pw}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 4)
+                setPw(val)
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+              maxLength={4}
+              inputMode="numeric"
+              autoFocus
+              placeholder="숫자 4자리"
+              className={shake ? 'animate-bounce' : ''}
+              style={{
+                width: '100%', padding: '12px 44px 12px 14px',
+                background: '#0d1117',
+                border: '1px solid #30363d',
+                borderRadius: '8px', color: '#e6edf3',
+                fontFamily: 'monospace', fontSize: '20px',
+                letterSpacing: '0.4em', outline: 'none',
+                textAlign: 'center', transition: 'border-color 0.2s',
+              }}
+              onFocus={e => e.target.style.borderColor = '#58a6ff'}
+              onBlur={e => e.target.style.borderColor = '#30363d'}
+            />
+            <div style={{
+              position: 'absolute', right: '12px', top: '50%',
+              transform: 'translateY(-50%)',
+              fontFamily: 'monospace', fontSize: '11px', color: '#484f58'
+            }}>
+              {pw.length}/4
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={onCancel}
+              className="flex-1 py-2.5 rounded-lg font-mono text-sm transition-all hover:opacity-80"
+              style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
+              // 작성자 아님
+            </button>
+            <button onClick={handleSubmit}
+              className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold transition-all hover:scale-[1.02] active:scale-95"
+              style={{
+                background: 'transparent',
+                color: '#58a6ff',
+                border: '1px solid #58a6ff',
+              }}>
+              confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function PasswordModal({
@@ -354,6 +454,10 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
   const [modalMode, setModalMode] = useState<'edit' | 'delete' | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
 
+  // 작성자 인증 관련 상태
+  const [isAuthor, setIsAuthor] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+
   useEasterEgg()
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -387,6 +491,21 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
     }
     fetchAndIncrement()
   }, [id])
+
+  // 작성자 인증 처리
+  const handleAuthConfirm = async (pw: string) => {
+    if (!prompt) return
+    const { data, error } = await supabase
+      .from('prompts').select('password').eq('id', prompt.id).single()
+    if (error || !data) return
+    if (data.password !== pw) {
+      alert('❌ 비밀번호가 틀렸습니다.')
+      setShowAuthModal(false)
+      return
+    }
+    setIsAuthor(true)
+    setShowAuthModal(false)
+  }
 
   const handleCopy = () => {
     if (prompt) {
@@ -463,6 +582,14 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
       <MatrixRain active={matrixActive} />
 
+      {/* 작성자 인증 모달 */}
+      {showAuthModal && (
+        <AuthModal
+          onConfirm={handleAuthConfirm}
+          onCancel={() => setShowAuthModal(false)}
+        />
+      )}
+
       {modalMode && (
         <PasswordModal
           mode={modalMode}
@@ -516,18 +643,33 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                 {prompt.category}
               </span>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <button onClick={() => setModalMode('edit')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
-                  style={{ background: 'transparent', color: '#58a6ff', border: '1px solid #1f6feb' }}>
-                  <span>✎</span>
-                  <span className="hidden sm:inline">edit</span>
-                </button>
-                <button onClick={() => setModalMode('delete')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
-                  style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
-                  <span>✕</span>
-                  <span className="hidden sm:inline">delete</span>
-                </button>
+
+                {/* 작성자 인증된 경우에만 edit/delete 버튼 표시 */}
+                {isAuthor ? (
+                  <>
+                    <button onClick={() => setModalMode('edit')}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'transparent', color: '#58a6ff', border: '1px solid #1f6feb' }}>
+                      <span>✎</span>
+                      <span className="hidden sm:inline">edit</span>
+                    </button>
+                    <button onClick={() => setModalMode('delete')}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
+                      <span>✕</span>
+                      <span className="hidden sm:inline">delete</span>
+                    </button>
+                  </>
+                ) : (
+                  // 작성자가 아닌 경우 작은 잠금 버튼 표시
+                  <button onClick={() => setShowAuthModal(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
+                    style={{ background: 'transparent', color: '#484f58', border: '1px solid #30363d' }}>
+                    <span>🔒</span>
+                    <span className="hidden sm:inline">작성자</span>
+                  </button>
+                )}
+
                 <button onClick={handleLike} disabled={isLiking}
                   className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
                   style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
