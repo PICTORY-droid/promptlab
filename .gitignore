@@ -7,3 +7,7 @@ node_modules/
 build/
 dist/
 .DS_Store
+Desktop
+vibe
+promptshare
+*.backup
