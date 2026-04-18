@@ -1,9 +1,9 @@
-```typescriptreact
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import ScrollProgressBar from "./components/ScrollProgressBar";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +34,18 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col static-noise" style={{ background: '#0d1117' }}>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-7T02L3YW4T"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-7T02L3YW4T');
+          `}
+        </Script>
         <ScrollProgressBar />
         <Navbar />
         {children}
@@ -84,4 +96,3 @@ export default function RootLayout({
     </html>
   );
 }
-```
