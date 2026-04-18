@@ -11,3 +11,7 @@ Desktop
 vibe
 promptshare
 *.backup
+*.sql
+promptshare_*.md
+9회차_prompts_50.sql
+promptshare_가이드라인_업데이트.md
