@@ -75,12 +75,12 @@ def main():
     used_dates_result = supabase.table("prompts").select("created_at").execute()
     used_dates = [row["created_at"][:10] for row in used_dates_result.data]
 
-    # 50개 생성
+    # 20개 생성
     generated = 0
     attempts = 0
-    max_attempts = 150
+    max_attempts = 60
 
-    while generated < 50 and attempts < max_attempts:
+    while generated < 20 and attempts < max_attempts:
         attempts += 1
 
         combo = {
@@ -111,7 +111,7 @@ def main():
             existing_titles.append(prompt_data["title"])
             existing_authors.append(prompt_data["author_name"])
             used_dates.append(created_at[:10])
-            print(f"✅ {generated}/50 생성 완료: {prompt_data['title']}")
+            print(f"✅ {generated}/20 생성 완료: {prompt_data['title']}")
         else:
             print(f"시도 {attempts}: INSERT 실패")
 
