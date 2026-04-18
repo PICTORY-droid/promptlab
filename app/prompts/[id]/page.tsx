@@ -1,7 +1,6 @@
 'use client'
 
 import { supabase } from '@/app/lib/supabase'
-import Link from 'next/link'
 import { notFound, useRouter } from 'next/navigation'
 import { useState, useEffect, useCallback, use } from 'react'
 
@@ -39,7 +38,6 @@ function formatContent(content: string): string {
   return content
 }
 
-// 작성자 인증 모달 (페이지 진입 시)
 function AuthModal({
   onConfirm, onCancel,
 }: {
@@ -62,11 +60,7 @@ function AuthModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
       style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)' }}>
       <div className="w-full max-w-sm rounded-xl overflow-hidden"
-        style={{
-          background: '#161b22',
-          border: '1px solid #30363d',
-          boxShadow: '0 0 40px #58a6ff22'
-        }}>
+        style={{ background: '#161b22', border: '1px solid #30363d', boxShadow: '0 0 40px #58a6ff22' }}>
         <div className="px-4 py-2 flex items-center gap-2" style={{ background: '#21262d' }}>
           <div className="flex gap-1.5">
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
@@ -101,8 +95,7 @@ function AuthModal({
               className={shake ? 'animate-bounce' : ''}
               style={{
                 width: '100%', padding: '12px 44px 12px 14px',
-                background: '#0d1117',
-                border: '1px solid #30363d',
+                background: '#0d1117', border: '1px solid #30363d',
                 borderRadius: '8px', color: '#e6edf3',
                 fontFamily: 'monospace', fontSize: '20px',
                 letterSpacing: '0.4em', outline: 'none',
@@ -127,11 +120,7 @@ function AuthModal({
             </button>
             <button onClick={handleSubmit}
               className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold transition-all hover:scale-[1.02] active:scale-95"
-              style={{
-                background: 'transparent',
-                color: '#58a6ff',
-                border: '1px solid #58a6ff',
-              }}>
+              style={{ background: 'transparent', color: '#58a6ff', border: '1px solid #58a6ff' }}>
               confirm
             </button>
           </div>
@@ -340,12 +329,7 @@ function EditModal({
             </button>
             <button onClick={() => onSave({ title, description, content, category })}
               className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold transition-all hover:scale-[1.02] active:scale-95"
-              style={{
-                background: 'transparent',
-                color: '#3fb950',
-                border: '1px solid #3fb950',
-                boxShadow: 'none',
-              }}
+              style={{ background: 'transparent', color: '#3fb950', border: '1px solid #3fb950', boxShadow: 'none' }}
               onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 15px #3fb95066' }}
               onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none' }}>
               git commit -m &quot;update&quot;
@@ -453,8 +437,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
   const [konamiProgress, setKonamiProgress] = useState(0)
   const [modalMode, setModalMode] = useState<'edit' | 'delete' | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
-
-  // 작성자 인증 관련 상태
   const [isAuthor, setIsAuthor] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
 
@@ -492,7 +474,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
     fetchAndIncrement()
   }, [id])
 
-  // 작성자 인증 처리
   const handleAuthConfirm = async (pw: string) => {
     if (!prompt) return
     const { data, error } = await supabase
@@ -582,7 +563,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
       <MatrixRain active={matrixActive} />
 
-      {/* 작성자 인증 모달 */}
       {showAuthModal && (
         <AuthModal
           onConfirm={handleAuthConfirm}
@@ -619,10 +599,13 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
       )}
 
       <div className="max-w-4xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
-        <Link href="/" className="inline-flex items-center gap-2 mb-6 sm:mb-8 font-mono text-sm hover:opacity-80 transition-opacity"
+
+        <button
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-2 mb-6 sm:mb-8 font-mono text-sm hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer p-0"
           style={{ color: '#58a6ff' }}>
           ← cd ..
-        </Link>
+        </button>
 
         <article className="rounded-xl overflow-hidden" style={{ background: '#161b22', border: '1px solid #30363d' }}>
           <div className="flex items-center px-4 pt-3 overflow-x-auto" style={{ borderBottom: '1px solid #30363d' }}>
@@ -643,8 +626,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                 {prompt.category}
               </span>
               <div className="flex items-center gap-2 flex-shrink-0">
-
-                {/* 작성자 인증된 경우에만 edit/delete 버튼 표시 */}
                 {isAuthor ? (
                   <>
                     <button onClick={() => setModalMode('edit')}
@@ -661,7 +642,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                     </button>
                   </>
                 ) : (
-                  // 작성자가 아닌 경우 작은 잠금 버튼 표시
                   <button onClick={() => setShowAuthModal(true)}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
                     style={{ background: 'transparent', color: '#484f58', border: '1px solid #30363d' }}>
@@ -669,7 +649,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                     <span className="hidden sm:inline">작성자</span>
                   </button>
                 )}
-
                 <button onClick={handleLike} disabled={isLiking}
                   className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
                   style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
@@ -741,14 +720,9 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
             <div style={{ position: 'relative' }}>
               {copied && (
                 <div style={{
-                  position: 'absolute',
-                  top: '-28px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  color: '#8b949e',
-                  fontSize: '12px',
-                  fontFamily: 'monospace',
-                  whiteSpace: 'nowrap',
+                  position: 'absolute', top: '-28px', left: '50%',
+                  transform: 'translateX(-50%)', color: '#8b949e',
+                  fontSize: '12px', fontFamily: 'monospace', whiteSpace: 'nowrap',
                 }}>
                   // 복사 완료!
                 </div>
