@@ -434,6 +434,8 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
   const [loading, setLoading] = useState(true)
   const [isLiking, setIsLiking] = useState(false)
   const [isDisliking, setIsDisliking] = useState(false)
+  const [liked, setLiked] = useState(false)
+  const [disliked, setDisliked] = useState(false)
   const [matrixActive, setMatrixActive] = useState(false)
   const [showEasterMsg, setShowEasterMsg] = useState(false)
   const [konamiProgress, setKonamiProgress] = useState(0)
@@ -499,14 +501,14 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
   }
 
   const handleLike = async () => {
-    if (!prompt || isLiking) return
+    if (!prompt || isLiking || liked) return
     setIsLiking(true)
     try {
       const { data, error } = await supabase
         .from('prompts').update({ likes: (prompt.likes || 0) + 1 })
         .eq('id', prompt.id).select().single()
       if (error) throw error
-      if (data) setPrompt(data)
+      if (data) { setPrompt(data); setLiked(true) }
     } catch { alert('좋아요 처리 중 오류가 발생했습니다.') }
     finally { setIsLiking(false) }
   }
@@ -519,7 +521,7 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
         .from('prompts').update({ dislikes: (prompt.dislikes || 0) + 1 })
         .eq('id', prompt.id).select().single()
       if (error) throw error
-      if (data) setPrompt(data)
+      if (data) { setPrompt(data); setDisliked(true) }
     } catch { alert('아쉬워요 처리 중 오류가 발생했습니다.') }
     finally { setIsDisliking(false) }
   }
@@ -666,7 +668,7 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                 )}
                 <button onClick={handleLike} disabled={isLiking}
                   className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
-                  style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
+                  style={{ background: 'transparent', color: liked ? '#ff7b72' : '#8b949e', border: liked ? '1px solid #f85149' : '1px solid #484f58' }}>
                   <span>♥</span>
                   <span className="font-bold">{prompt.likes}</span>
                 </button>
