@@ -501,20 +501,21 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
   }
 
   const handleLike = async () => {
-    if (!prompt || isLiking || liked) return
+    if (!prompt || isLiking) return
     setIsLiking(true)
     try {
+      const newLikes = liked ? (prompt.likes || 1) - 1 : (prompt.likes || 0) + 1
       const { data, error } = await supabase
-        .from('prompts').update({ likes: (prompt.likes || 0) + 1 })
+        .from('prompts').update({ likes: newLikes })
         .eq('id', prompt.id).select().single()
       if (error) throw error
-      if (data) { setPrompt(data); setLiked(true) }
+      if (data) { setPrompt(data); setLiked(!liked) }
     } catch { alert('좋아요 처리 중 오류가 발생했습니다.') }
     finally { setIsLiking(false) }
   }
 
   const handleDislike = async () => {
-    if (!prompt || isDisliking) return
+    if (!prompt || isDisliking || disliked) return
     setIsDisliking(true)
     try {
       const { data, error } = await supabase
@@ -674,8 +675,8 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                 </button>
                 <button onClick={handleDislike} disabled={isDisliking}
                   className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
-                  style={{ background: 'transparent', color: '#8b949e', border: '1px solid #484f58' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b949e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  style={{ background: 'transparent', color: disliked ? '#ff7b72' : '#8b949e', border: disliked ? '1px solid #f85149' : '1px solid #484f58' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={disliked ? "#ff7b72" : "#8b949e"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M8 15s1.5-2 4-2 4 2 4 2"/>
                     <line x1="9" y1="9" x2="9.01" y2="9" strokeWidth="3"/>
