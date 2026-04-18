@@ -515,14 +515,15 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
   }
 
   const handleDislike = async () => {
-    if (!prompt || isDisliking || disliked) return
+    if (!prompt || isDisliking) return
     setIsDisliking(true)
     try {
+      const newDislikes = disliked ? (prompt.dislikes || 1) - 1 : (prompt.dislikes || 0) + 1
       const { data, error } = await supabase
-        .from('prompts').update({ dislikes: (prompt.dislikes || 0) + 1 })
+        .from('prompts').update({ dislikes: newDislikes })
         .eq('id', prompt.id).select().single()
       if (error) throw error
-      if (data) { setPrompt(data); setDisliked(true) }
+      if (data) { setPrompt(data); setDisliked(!disliked) }
     } catch { alert('아쉬워요 처리 중 오류가 발생했습니다.') }
     finally { setIsDisliking(false) }
   }
