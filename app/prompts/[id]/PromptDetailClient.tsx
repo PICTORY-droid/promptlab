@@ -364,14 +364,14 @@ function ShareModal({
   useEffect(() => {
     if (typeof window === 'undefined') return
     if (window.Kakao) {
-      if (!window.Kakao.isInitialized()) window.Kakao.init('b4ddc9dd04b76991410a732cacee7671')
+      if (!window.Kakao.isInitialized()) window.Kakao.init('8d2c2590ce75f2f21d3bb4bf6b437e61')
       return
     }
     const script = document.createElement('script')
     script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js'
     script.async = true
     script.onload = () => {
-      if (!window.Kakao.isInitialized()) window.Kakao.init('b4ddc9dd04b76991410a732cacee7671')
+      if (!window.Kakao.isInitialized()) window.Kakao.init('8d2c2590ce75f2f21d3bb4bf6b437e61')
     }
     document.head.appendChild(script)
   }, [])
