@@ -2,7 +2,7 @@
 
 ## 프로젝트 기본 정보
 - 브랜드명: PromptLab
-- 사이트: https://promptshare-woad.vercel.app (도메인 변경 예정)
+- 사이트: https://promptlab.io.kr (도메인 변경 예정)
 - Supabase ID: hkijkcoshdzzmaxiihzm
 - 로컬 경로: C:/Desktop/vibe/promptshare
 - 스택: Next.js + TypeScript, Supabase, Vercel, Tailwind CSS

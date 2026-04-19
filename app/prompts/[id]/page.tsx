@@ -9,7 +9,7 @@ const supabaseServer = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-const SITE_URL = 'https://promptshare-woad.vercel.app'
+const SITE_URL = 'https://promptlab.io.kr'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params

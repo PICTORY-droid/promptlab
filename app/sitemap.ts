@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { supabase } from '@/app/lib/supabase'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://promptshare-woad.vercel.app'
+  const baseUrl = 'https://promptlab.io.kr'
 
   // 프롬프트 목록 가져오기
   const { data: prompts } = await supabase

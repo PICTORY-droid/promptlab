@@ -376,9 +376,9 @@ function ShareModal({
     document.head.appendChild(script)
   }, [])
 
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://promptshare-woad.vercel.app'
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://promptlab.io.kr'
   const url = `${baseUrl}/prompts/${prompt.id}`
-  const shareText = `[PromptLab] ${prompt.title}\n${url}\n\n더 많은 프롬프트 → promptshare-woad.vercel.app`
+  const shareText = `[PromptLab] ${prompt.title}\n${url}\n\n더 많은 프롬프트 → promptlab.io.kr`
 
   const handleCopyURL = async () => {
     await navigator.clipboard.writeText(shareText)
@@ -413,7 +413,7 @@ function ShareModal({
             content: {
               title: `[PromptLab] ${prompt.title}`,
               description: prompt.description || '더 많은 프롬프트를 PromptLab에서 확인하세요.',
-              imageUrl: 'https://promptshare-woad.vercel.app/og-image.png',
+              imageUrl: 'https://promptlab.io.kr/og-image.png',
               link: {
                 mobileWebUrl: `${url}?ref=kakao`,
                 webUrl: `${url}?ref=kakao`,

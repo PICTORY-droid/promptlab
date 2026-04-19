@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = 'https://promptshare-woad.vercel.app'
+const SITE_URL = 'https://promptlab.io.kr'
 
 export const metadata: Metadata = {
   title: "PromptLab - 프롬프트 공유 커뮤니티",
