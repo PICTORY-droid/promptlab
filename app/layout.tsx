@@ -15,11 +15,35 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = 'https://promptshare-woad.vercel.app'
+
 export const metadata: Metadata = {
   title: "PromptLab - 프롬프트 공유 커뮤니티",
   description: "AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.",
+  metadataBase: new URL(SITE_URL),
   verification: {
     google: "jnR9e_2rD2cYJr5-ZfNaCKWLBgqx9n9i411RoqO2A8s",
+  },
+  openGraph: {
+    title: 'PromptLab - 프롬프트 공유 커뮤니티',
+    description: 'AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.',
+    url: SITE_URL,
+    siteName: 'PromptLab',
+    type: 'website',
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: 'PromptLab',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PromptLab - 프롬프트 공유 커뮤니티',
+    description: 'AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.',
+    images: [`${SITE_URL}/og-image.png`],
   },
 };
 
