@@ -171,6 +171,32 @@ function TypingAnimation() {
   )
 }
 
+function CategoryTyping() {
+  const fullText = '카테고리로 검색하세요'
+  const [displayed, setDisplayed] = useState('')
+  const [done, setDone] = useState(false)
+
+  useEffect(() => {
+    let i = 0
+    const interval = setInterval(() => {
+      i++
+      setDisplayed(fullText.slice(0, i))
+      if (i >= fullText.length) {
+        clearInterval(interval)
+        setDone(true)
+      }
+    }, 80)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <span>
+      {displayed}
+      <span style={{ opacity: done ? undefined : 1, animation: done ? 'blink 1s infinite' : 'none' }}>▍</span>
+    </span>
+  )
+}
+
 function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery }: {
   prompt: Prompt
   index: number
@@ -458,9 +484,11 @@ function HomeInner() {
         <div className="mb-6">
           <button
             onClick={() => setShowCategories(!showCategories)}
-            className="w-full px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all flex items-center justify-between"
-            style={{ background: '#161b22', color: '#58a6ff', border: '1px solid #30363d' }}>
-            <span>{selectedCategory === 'All' ? '📂 All Categories' : `📂 ${selectedCategory}`}</span>
+            className="w-full px-4 py-2.5 rounded-xl font-mono font-normal text-sm transition-all flex items-center justify-between"
+            style={{ background: '#161b22', color: '#484f58', border: '1px solid #30363d' }}>
+            <span>
+              {selectedCategory === 'All' ? <CategoryTyping /> : selectedCategory}
+            </span>
             <span style={{ marginLeft: '8px' }}>{showCategories ? '▼' : '▶'}</span>
           </button>
           {showCategories && (
