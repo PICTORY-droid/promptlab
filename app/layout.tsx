@@ -52,7 +52,7 @@ export default function RootLayout({
         <footer className="mt-auto py-4 text-center font-mono"
           style={{ borderTop: '1px solid #21262d' }}>
           <p className="text-xs" style={{ color: '#a0b4c8' }}>
-            $ whoami → seoin · PICTORY-droid
+            $ whoami → PromptLab · seoin
             <span style={{
               color: '#7ec99a',
               animation: 'blink 1s step-end infinite',
