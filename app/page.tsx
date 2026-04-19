@@ -26,9 +26,25 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   Education: { bg: '#1f2d1f', text: '#3fb950', border: '#238636' },
   General: { bg: '#2d2d1f', text: '#d29922', border: '#9e6a03' },
   Other: { bg: '#1f2d2d', text: '#39c5cf', border: '#1b7c83' },
+  Finance: { bg: '#1f2d1f', text: '#26a641', border: '#196c2e' },
+  Legal: { bg: '#2d261f', text: '#e3b341', border: '#9e6a03' },
+  Health: { bg: '#2d1f1f', text: '#ff7b72', border: '#b62324' },
+  Career: { bg: '#1f2a2d', text: '#79c0ff', border: '#1f6feb' },
+  Business: { bg: '#2d2d1f', text: '#ffa657', border: '#bd561d' },
+  Parenting: { bg: '#2d1f2d', text: '#d2a8ff', border: '#8957e5' },
+  Lifestyle: { bg: '#1f2d2a', text: '#56d364', border: '#238636' },
+  Tech: { bg: '#1a2233', text: '#58a6ff', border: '#0969da' },
+  'Real Estate': { bg: '#2d241f', text: '#ffa657', border: '#bd561d' },
+  Food: { bg: '#2a1f1f', text: '#ff9492', border: '#b62324' },
+  Beauty: { bg: '#2d1f29', text: '#f778ba', border: '#bf4b8a' },
+  Agriculture: { bg: '#1f2d1f', text: '#7ee787', border: '#238636' },
+  Social: { bg: '#1f252d', text: '#79c0ff', border: '#1f6feb' },
+  Psychology: { bg: '#261f2d', text: '#d2a8ff', border: '#8957e5' },
+  Environment: { bg: '#1f2d22', text: '#56d364', border: '#196c2e' },
+  Global: { bg: '#1f2430', text: '#58a6ff', border: '#1f6feb' },
 }
 
-const CATEGORIES = ['All', 'General', 'Writing', 'Coding', 'Marketing', 'Education', 'Other']
+const CATEGORIES = ['All', 'Coding', 'Marketing', 'Writing', 'Education', 'General', 'Other', 'Finance', 'Legal', 'Health', 'Career', 'Business', 'Parenting', 'Lifestyle', 'Tech', 'Real Estate', 'Food', 'Beauty', 'Agriculture', 'Social', 'Psychology', 'Environment', 'Global']
 
 function TypingAnimation() {
   const fullText = "// 최고의 AI 프롬프트를 공유하고 발견하세요"
