@@ -9,6 +9,7 @@
 - 현재 글 수: 976개 / 목표: 50,000개
 - 작성자명 고정: PromptLab
 - 비밀번호: 0520 (임시 — 향후 로그인 시스템으로 교체 예정)
+- 사이트 성격: 프롬프트 학습 플랫폼 (외부 사용자 글 작성 불가)
 
 ## DB 구조 (prompts 테이블)
 컬럼: id, title, description, content, category, author_name, views, likes, dislikes, created_at, updated_at, password

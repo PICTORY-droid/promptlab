@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 
 function MatrixRain() {
@@ -146,12 +145,6 @@ function CursorTrail() {
 export default function Navbar() {
   const [time, setTime] = useState('')
   const [mounted, setMounted] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
-  const [glitchText, setGlitchText] = useState('+ new')
-
-  const originalText = '+ new'
-  const glitchChars = '!@#$%^&*<>?/\\|[]{}~`'
-
   useEffect(() => {
     setMounted(true)
     const updateTime = () => {
@@ -162,26 +155,6 @@ export default function Navbar() {
     const interval = setInterval(updateTime, 1000)
     return () => clearInterval(interval)
   }, [])
-
-  useEffect(() => {
-    if (!isHovered) {
-      setGlitchText(originalText)
-      return
-    }
-    let iteration = 0
-    const interval = setInterval(() => {
-      setGlitchText(
-        originalText.split('').map((char, index) => {
-          if (char === ' ') return ' '
-          if (index < iteration) return originalText[index]
-          return glitchChars[Math.floor(Math.random() * glitchChars.length)]
-        }).join('')
-      )
-      if (iteration >= originalText.length) iteration = 0
-      iteration += 0.5
-    }, 50)
-    return () => clearInterval(interval)
-  }, [isHovered])
 
   return (
     <>
@@ -222,28 +195,6 @@ export default function Navbar() {
               background: '#21262d', color: '#3fb950',
               fontFamily: 'monospace', border: '1px solid #30363d'
             }}>v2.0.1</span>
-
-            <Link
-              href="/create"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              className="flex items-center justify-center px-3 sm:px-4 py-2 rounded-lg font-mono font-semibold transition-all active:scale-95 text-sm"
-              style={{
-                background: isHovered
-                  ? 'linear-gradient(270deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000)'
-                  : 'transparent',
-                backgroundSize: isHovered ? '400% 400%' : '100%',
-                color: isHovered ? '#ffffff' : '#3fb950',
-                border: isHovered ? '2px solid #bc8cff' : '2px solid #3fb950',
-                boxShadow: isHovered ? '0 0 15px #bc8cff66' : 'none',
-                animation: isHovered ? 'rainbow 1s linear infinite' : 'none',
-                minWidth: '70px',
-                fontFamily: 'monospace',
-              }}
-            >
-              <span className="sm:hidden">{glitchText}</span>
-              <span className="hidden sm:inline">+ new prompt</span>
-            </Link>
           </div>
         </div>
       </nav>

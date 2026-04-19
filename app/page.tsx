@@ -47,7 +47,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 const CATEGORIES = ['All', 'Coding', 'Marketing', 'Writing', 'Education', 'General', 'Other', 'Finance', 'Legal', 'Health', 'Career', 'Business', 'Parenting', 'Lifestyle', 'Tech', 'Real Estate', 'Food', 'Beauty', 'Agriculture', 'Social', 'Psychology', 'Environment', 'Global']
 
 function TypingAnimation() {
-  const fullText = "// 최고의 AI 프롬프트를 공유하고 발견하세요"
+  const fullText = "// 프롬프트를 제대로 알면 AI 수준이 달라진다"
   const [displayedText, setDisplayedText] = useState('')
   const [isTyping, setIsTyping] = useState(true)
   const [glitchText, setGlitchText] = useState(fullText)
