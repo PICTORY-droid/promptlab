@@ -1,6 +1,6 @@
 // app/api/resume/route.ts
 // OpenRouter 무료 티어 기반 — 비용 0원
-// Vision 모델: qwen/qwen2.5-vl-72b-instruct:free
+// Vision 모델: google/gemma-4-31b-it:free
 // ANTHROPIC_API_KEY는 Claude Code 자동화 전용 — 이 파일에서 사용 안 함
 
 import { NextRequest, NextResponse } from "next/server";
@@ -16,7 +16,7 @@ const client = new OpenAI({
   },
 });
 
-const VISION_MODEL = "qwen/qwen2.5-vl-72b-instruct:free";
+const VISION_MODEL = "google/gemma-4-31b-it:free";
 
 interface ImageInput {
   base64: string;
