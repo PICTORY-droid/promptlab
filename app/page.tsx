@@ -96,9 +96,7 @@ function TypingAnimation() {
 
     const onScanDone = () => {
       if (destroyed) return
-      // 글리치 시작
       glitchTimer = setTimeout(triggerGlitch, 1500 + Math.random() * 2000)
-      // 5.5s 후 글리치 중단 → 3s 클린 대기 → 재스캔 (총 사이클 10s)
       cycleTimer = setTimeout(() => {
         if (destroyed) return
         if (glitchTimer) clearTimeout(glitchTimer)
@@ -136,11 +134,9 @@ function TypingAnimation() {
 
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
-      {/* 레이아웃 높이 확보용 투명 텍스트 */}
       <p className="text-sm font-mono" style={{ color: 'transparent', margin: 0, userSelect: 'none', pointerEvents: 'none' }}>
         {fullText}
       </p>
-      {/* 실제 표시 텍스트 — 스캔 중엔 clip-path로 위→아래 reveal */}
       <p
         className="text-sm font-mono"
         style={{
@@ -153,7 +149,6 @@ function TypingAnimation() {
       >
         {isGlitching ? glitchText : fullText}
       </p>
-      {/* 스캔라인 */}
       {!scanDone && (
         <div
           style={{
@@ -270,7 +265,6 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
               style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}>
               {prompt.category}
             </span>
-
           </div>
 
           <h3 className="font-bold font-mono mb-1.5 text-sm sm:text-base leading-snug"
@@ -453,6 +447,56 @@ function HomeInner() {
 
         <div className="mb-8 sm:mb-12 text-center">
           <TypingAnimation />
+        </div>
+
+        {/* ── AI 취업 기능 배너 ── */}
+        <div style={{
+          background: 'linear-gradient(135deg, #0d1f35 0%, #1a2d1a 100%)',
+          border: '1px solid #1f6feb44',
+          borderRadius: '12px',
+          padding: '16px 20px',
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px',
+        }}>
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#e6edf3', fontFamily: 'monospace', marginBottom: '4px' }}>
+              📄 AI 취업 도구 <span style={{ fontSize: '10px', background: '#1f6feb', color: '#fff', borderRadius: '999px', padding: '1px 7px', marginLeft: '6px' }}>BETA</span>
+            </div>
+            <div style={{ fontSize: '11px', color: '#8b949e', fontFamily: 'monospace' }}>
+              채용공고 사진 한 장 → 자소서 생성 · 핏 분석 · 면접 질문
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <a href="/resume" style={{
+              background: '#238636', color: '#fff', border: 'none',
+              borderRadius: '8px', padding: '8px 14px', fontSize: '12px',
+              fontWeight: 700, fontFamily: 'monospace', textDecoration: 'none',
+              cursor: 'pointer',
+            }}>
+              📝 자소서 생성
+            </a>
+            <a href="/fit-analysis" style={{
+              background: '#2d1b00', color: '#e3b341',
+              border: '1px solid #bb690288',
+              borderRadius: '8px', padding: '8px 14px', fontSize: '12px',
+              fontWeight: 700, fontFamily: 'monospace', textDecoration: 'none',
+              cursor: 'pointer',
+            }}>
+              🔴 핏 분석
+            </a>
+            <a href="/interview" style={{
+              background: '#1f6feb', color: '#fff', border: 'none',
+              borderRadius: '8px', padding: '8px 14px', fontSize: '12px',
+              fontWeight: 700, fontFamily: 'monospace', textDecoration: 'none',
+              cursor: 'pointer',
+            }}>
+              🎯 면접 준비
+            </a>
+          </div>
         </div>
 
         <div className="flex gap-2 mb-5 sm:mb-6">
