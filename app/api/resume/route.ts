@@ -1,7 +1,6 @@
 // app/api/resume/route.ts
-// OpenRouter 무료 티어 기반 — 비용 0원
-// Vision 모델: 자동 폴백 (429/404 시 다음 모델로 전환)
-// ANTHROPIC_API_KEY는 Claude Code 자동화 전용 — 이 파일에서 사용 안 함
+// OpenRouter 무료 텍스트 모델 기반 — 비용 0원
+// 텍스트 입력 방식 — Vision 모델 불필요
 
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -15,31 +14,23 @@ const client = new OpenAI({
   },
 });
 
-const VISION_MODELS = [
-  "google/gemma-4-31b-it:free",
-  "google/gemma-4-26b-a4b-it:free",
+// 안정적인 무료 텍스트 모델 폴백 순서
+const TEXT_MODELS = [
+  "meta-llama/llama-3.3-70b-instruct:free",
+  "deepseek/deepseek-r1:free",
+  "google/gemma-3-27b-it:free",
 ];
 
-interface ImageInput {
-  base64: string;
-  mediaType: string;
-}
-
-// PDF는 page.tsx에서 이미지로 변환되어 오므로 image/* 만 허용
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-
-async function callWithFallback(
-  messages: OpenAI.Chat.ChatCompletionMessageParam[]
-): Promise<string> {
+async function callWithFallback(prompt: string): Promise<string> {
   let lastError: Error | null = null;
 
-  for (const model of VISION_MODELS) {
+  for (const model of TEXT_MODELS) {
     try {
       console.log(`[Resume] 모델 시도: ${model}`);
       const response = await client.chat.completions.create({
         model,
         max_tokens: 4000,
-        messages,
+        messages: [{ role: "user", content: prompt }],
       });
 
       const result = response.choices[0]?.message?.content;
@@ -52,11 +43,10 @@ async function callWithFallback(
       const status = err?.status;
       console.warn(`[Resume] 실패 (${model}): ${status} ${err?.message}`);
 
-      if (status === 429 || status === 404) {
+      if (status === 429 || status === 404 || status === 503) {
         lastError = error instanceof Error ? error : new Error(String(error));
         continue;
       }
-
       throw error;
     }
   }
@@ -68,74 +58,47 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
-      jobImageBase64,
-      jobMediaType,
-      resumeImages,
+      jobText,
+      resumeText,
       userInfo,
     }: {
-      jobImageBase64?: string;
-      jobMediaType?: string;
-      resumeImages?: ImageInput[];
+      jobText?: string;
+      resumeText?: string;
       userInfo?: string;
     } = body;
 
-    if (!jobImageBase64 || !jobMediaType) {
+    if (!jobText?.trim()) {
       return NextResponse.json(
-        { error: "채용공고 이미지가 없습니다." },
+        { error: "채용공고 내용을 입력해주세요." },
         { status: 400 }
       );
     }
 
-    if (!ALLOWED_TYPES.includes(jobMediaType)) {
-      return NextResponse.json(
-        { error: "지원하지 않는 이미지 형식입니다. (jpg, png, webp 가능)" },
-        { status: 400 }
-      );
-    }
-
-    const validResumeImages: ImageInput[] = [];
-    if (resumeImages && Array.isArray(resumeImages)) {
-      for (const img of resumeImages.slice(0, 3)) {
-        if (img.base64 && img.mediaType && ALLOWED_TYPES.includes(img.mediaType)) {
-          validResumeImages.push(img);
-        }
-      }
-    }
-
-    const hasResume = validResumeImages.length > 0;
-
-    const imageContents: OpenAI.Chat.ChatCompletionContentPart[] = [];
-
-    imageContents.push({
-      type: "image_url",
-      image_url: { url: `data:${jobMediaType};base64,${jobImageBase64}` },
-    });
-
-    for (const img of validResumeImages) {
-      imageContents.push({
-        type: "image_url",
-        image_url: { url: `data:${img.mediaType};base64,${img.base64}` },
-      });
-    }
+    const hasResume = !!resumeText?.trim();
 
     const resumeSection = hasResume
-      ? `두 번째 이미지${validResumeImages.length > 1 ? `부터 ${validResumeImages.length + 1}번째 이미지까지` : ""}는 지원자의 이력서입니다 (${validResumeImages.length}장으로 분할 캡처됨). 모든 이력서 이미지를 합쳐서 학력, 경력, 프로젝트, 자격증, 기술 스택 등 정보를 빠짐없이 추출하여 자소서에 반영하세요.`
+      ? `아래는 지원자의 이력서입니다. 이력서에 실제로 적힌 내용만 사용하세요.\n\n[이력서]\n${resumeText}`
       : `이력서가 제공되지 않아 일반적인 신입 지원자 기준으로 작성합니다.`;
 
     const userInfoSection = userInfo?.trim()
-      ? `\n추가 정보:\n${userInfo.trim()}`
+      ? `\n\n[추가 정보]\n${userInfo.trim()}`
       : "";
 
     const prompt = `당신은 삼성전자·구글 출신 10년 경력 채용 전문가입니다.
 
-첫 번째 이미지는 채용공고입니다. ${resumeSection}${userInfoSection}
+아래는 채용공고입니다.
+
+[채용공고]
+${jobText}
+
+${resumeSection}${userInfoSection}
 
 아래 규칙을 반드시 지켜 자기소개서를 작성하세요.
 
 ━━━ 절대 원칙 (위반 시 전체 재작성) ━━━
 
 [1. 환각 금지 — 가장 중요]
-- 이력서에 실제로 적힌 내용만 사용. 이미지에 없는 수치·경험·회사명·프로젝트명 절대 생성 금지
+- 이력서에 실제로 적힌 내용만 사용. 없는 수치·경험·회사명·프로젝트명 절대 생성 금지
 - 이력서 없는 경우: 수치/경험 자리에 반드시 [본인 경험 입력] 또는 [수치 직접 입력] 빈칸으로 출력
 - 이력서에 있는 수치도 그대로 사용. 임의로 변경하거나 추정치 생성 금지
 
@@ -215,20 +178,9 @@ ${hasResume ? `
 4. 입사 후 포부
 (내용)`;
 
-    const result = await callWithFallback([
-      {
-        role: "user",
-        content: [
-          ...imageContents,
-          { type: "text", text: prompt },
-        ],
-      },
-    ]);
+    const result = await callWithFallback(prompt);
 
-    return NextResponse.json({
-      resume: result,
-      resumeImagesUsed: validResumeImages.length,
-    });
+    return NextResponse.json({ resume: result });
   } catch (error: unknown) {
     console.error("Resume API error:", error);
     const msg = error instanceof Error ? error.message : "서버 오류";
