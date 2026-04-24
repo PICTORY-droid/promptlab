@@ -199,7 +199,15 @@ export default function ResumePage() {
                 style={{ width: "100%", background: "#161b22", border: "1px solid #30363d", borderRadius: "8px", color: "#e6edf3", fontSize: "12px", padding: "10px 12px", resize: "vertical", fontFamily: "'Courier New', monospace", boxSizing: "border-box", outline: "none", lineHeight: 1.6 }} />
             </div>
 
-            {error && <div style={{ background: "#2d1117", border: "1px solid #f85149", borderRadius: "6px", padding: "10px 14px", fontSize: "12px", color: "#f85149" }}>⚠ {error}</div>}
+            {/* 오류 메시지 — "현재 무료 API 제공." 문구 포함 */}
+            {error && (
+              <div style={{ background: "#2d1117", border: "1px solid #f85149", borderRadius: "6px", padding: "10px 14px", fontSize: "12px", color: "#f85149" }}>
+                ⚠ {error}
+                <div style={{ marginTop: "6px", color: "#8b949e", fontSize: "11px" }}>
+                  현재 무료 API 제공. 잠시 후 다시 시도해주세요.
+                </div>
+              </div>
+            )}
 
             <div style={{ display: "flex", gap: "10px" }}>
               <button onClick={handleGenerate} disabled={!canGenerate}
