@@ -1,24 +1,19 @@
 // app/api/resume/route.ts
-// OpenRouter 무료 텍스트 모델 기반 — 비용 0원
+// Groq 무료 티어 기반 — 비용 0원, 신용카드 불필요
 
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    "HTTP-Referer": "https://promptlab.io.kr",
-    "X-Title": "PromptLab",
-  },
+  baseURL: "https://api.groq.com/openai/v1",
+  apiKey: process.env.GROQ_API_KEY,
 });
 
-// 2026년 4월 기준 안전하고 안정적인 무료 모델
+// 2026년 4월 기준 Groq 무료 모델 — 안정적
 const TEXT_MODELS = [
-  "meta-llama/llama-3.3-70b-instruct:free",
-  "nousresearch/hermes-3-llama-3.1-405b:free",
-  "google/gemma-3-27b-it:free",
-  "google/gemma-3-12b-it:free",
+  "llama-3.3-70b-versatile",
+  "llama3-70b-8192",
+  "llama-3.1-8b-instant",
 ];
 
 async function callWithFallback(prompt: string): Promise<string> {
@@ -45,6 +40,7 @@ async function callWithFallback(prompt: string): Promise<string> {
 
       if (status === 429 || status === 404 || status === 503) {
         lastError = error instanceof Error ? error : new Error(String(error));
+        await new Promise((res) => setTimeout(res, 1000));
         continue;
       }
       throw error;
