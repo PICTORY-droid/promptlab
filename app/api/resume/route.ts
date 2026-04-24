@@ -1,6 +1,5 @@
 // app/api/resume/route.ts
 // OpenRouter 무료 텍스트 모델 기반 — 비용 0원
-// 텍스트 입력 방식 — Vision 모델 불필요
 
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -14,11 +13,11 @@ const client = new OpenAI({
   },
 });
 
-// 안정적인 무료 텍스트 모델 폴백 순서
 const TEXT_MODELS = [
-  "meta-llama/llama-3.3-70b-instruct:free",
-  "deepseek/deepseek-r1:free",
-  "google/gemma-3-27b-it:free",
+  "openrouter/auto",
+  "nousresearch/hermes-3-llama-3.1-405b:free",
+  "google/gemma-3-12b-it:free",
+  "meta-llama/llama-3.2-3b-instruct:free",
 ];
 
 async function callWithFallback(prompt: string): Promise<string> {
