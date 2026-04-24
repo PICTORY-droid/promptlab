@@ -53,6 +53,19 @@ async function callWithFallback(prompt: string): Promise<string> {
   throw lastError ?? new Error("모든 모델에서 응답을 받지 못했습니다.");
 }
 
+// 마크다운 기호 제거 함수
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/__(.*?)__/g, "$1")
+    .replace(/_(.*?)_/g, "$1")
+    .replace(/`{1,3}[^`]*`{1,3}/g, "")
+    .replace(/#{1,6}\s/g, "")
+    .replace(/>\s/g, "")
+    .trim();
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -95,6 +108,11 @@ ${resumeSection}${userInfoSection}
 아래 규칙을 반드시 지켜 자기소개서를 작성하세요.
 
 ━━━ 절대 원칙 (위반 시 전체 재작성) ━━━
+
+[0. 출력 형식 금지 — 최우선]
+- **텍스트**, *텍스트*, __텍스트__, # 제목, > 인용 등 마크다운 문법 절대 사용 금지
+- ** * _ # > 기호 출력 완전 금지 — 일반 텍스트로만 작성
+- 이 규칙을 어기면 즉시 전체 재작성
 
 [1. 환각 금지 — 가장 중요]
 - 이력서에 실제로 적힌 내용만 사용. 없는 수치·경험·회사명·프로젝트명 절대 생성 금지
@@ -177,7 +195,8 @@ ${hasResume ? `
 4. 입사 후 포부
 (내용)`;
 
-    const result = await callWithFallback(prompt);
+    const rawResult = await callWithFallback(prompt);
+    const result = stripMarkdown(rawResult);
 
     return NextResponse.json({ resume: result });
   } catch (error: unknown) {
