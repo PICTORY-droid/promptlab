@@ -3,6 +3,7 @@
 import { supabase } from '@/app/lib/supabase'
 import { notFound, useRouter } from 'next/navigation'
 import { useState, useEffect, useCallback, use } from 'react'
+import type { User } from '@supabase/supabase-js'
 
 declare global {
   interface Window {
@@ -659,8 +660,42 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
   const [isAuthor, setIsAuthor] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
+  const [forked, setForked] = useState(false)
+  const [forking, setForking] = useState(false)
 
   useEasterEgg()
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleFork = async () => {
+    if (!prompt || !user || forking) return
+    setForking(true)
+    try {
+      const { error } = await supabase.from('user_prompts').insert({
+        user_id: user.id,
+        original_prompt_id: prompt.id,
+        title: prompt.title,
+        content: prompt.content,
+        description: prompt.description,
+        category: prompt.category,
+      })
+      if (error) throw error
+      setForked(true)
+      setTimeout(() => setForked(false), 3000)
+    } catch {
+      alert('저장 중 오류가 발생했습니다.')
+    } finally {
+      setForking(false)
+    }
+  }
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     setKonamiProgress(prev => {
@@ -990,6 +1025,23 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
                 </div>
               </div>
             </div>
+
+            {user && (
+              <div className="mb-3">
+                <button
+                  onClick={handleFork}
+                  disabled={forking || forked}
+                  className="w-full py-3 sm:py-4 rounded-xl font-mono font-bold text-sm sm:text-base transition-all hover:scale-[1.02] active:scale-95"
+                  style={{
+                    background: 'transparent',
+                    color: forked ? '#3fb950' : '#bc8cff',
+                    border: forked ? '2px solid #3fb950' : '2px solid #bc8cff',
+                    boxShadow: forked ? '0 0 20px #3fb95044' : 'none',
+                  }}>
+                  {forked ? '\u2713 내 컬렉션에 저장됨!' : forking ? '저장 중...' : '\u2442 내 버전으로 저장'}
+                </button>
+              </div>
+            )}
 
             <div style={{ position: 'relative' }}>
               {copied && (

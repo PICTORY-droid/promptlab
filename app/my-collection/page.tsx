@@ -1,0 +1,341 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { supabase } from '@/app/lib/supabase'
+import type { User } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
+
+interface UserPrompt {
+  id: string
+  title: string
+  description: string
+  content: string
+  category: string
+  original_prompt_id: string | null
+  created_at: string
+  updated_at: string
+}
+
+const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  Coding: { bg: '#1f2d3d', text: '#58a6ff', border: '#1f6feb' },
+  Writing: { bg: '#2d1f3d', text: '#bc8cff', border: '#8957e5' },
+  Marketing: { bg: '#2d1f1f', text: '#f0883e', border: '#bd561d' },
+  Education: { bg: '#1f2d1f', text: '#3fb950', border: '#238636' },
+  General: { bg: '#2d2d1f', text: '#d29922', border: '#9e6a03' },
+  Other: { bg: '#1f2d2d', text: '#39c5cf', border: '#1b7c83' },
+}
+
+export default function MyCollectionPage() {
+  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null)
+  const [prompts, setPrompts] = useState<UserPrompt[]>([])
+  const [loading, setLoading] = useState(true)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editForm, setEditForm] = useState({ title: '', content: '', description: '', category: '' })
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [copied, setCopied] = useState<string | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session?.user) { router.push('/'); return }
+      setUser(session.user)
+      fetchPrompts(session.user.id)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) { router.push('/'); return }
+      setUser(session.user)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const fetchPrompts = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('user_prompts')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+    if (!error && data) setPrompts(data)
+    setLoading(false)
+  }
+
+  const handleEdit = (p: UserPrompt) => {
+    setEditingId(p.id)
+    setEditForm({ title: p.title, content: p.content, description: p.description || '', category: p.category })
+  }
+
+  const handleEditSave = async () => {
+    if (!editingId) return
+    const { data, error } = await supabase
+      .from('user_prompts')
+      .update({ ...editForm, updated_at: new Date().toISOString() })
+      .eq('id', editingId)
+      .select()
+      .single()
+    if (!error && data) {
+      setPrompts(prev => prev.map(p => p.id === editingId ? data : p))
+      setEditingId(null)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase.from('user_prompts').delete().eq('id', id)
+    if (!error) {
+      setPrompts(prev => prev.filter(p => p.id !== id))
+      setDeleteId(null)
+      if (selectedId === id) setSelectedId(null)
+    }
+  }
+
+  const handleCopy = async (content: string, id: string) => {
+    await navigator.clipboard.writeText(content)
+    setCopied(id)
+    setTimeout(() => setCopied(null), 2000)
+  }
+
+  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || '사용자'
+
+  const inputStyle = {
+    width: '100%', padding: '10px 12px',
+    background: '#0d1117', border: '1px solid #30363d',
+    borderRadius: '8px', color: '#e6edf3',
+    fontFamily: 'monospace', fontSize: '13px', outline: 'none',
+  }
+
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
+        <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
+          <span style={{ color: '#3fb950' }}>$</span> loading collection<span className="blink">_</span>
+        </div>
+      </main>
+    )
+  }
+
+  const selected = prompts.find(p => p.id === selectedId)
+
+  return (
+    <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }}>
+      {/* 삭제 확인 모달 */}
+      {deleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-sm rounded-xl overflow-hidden"
+            style={{ background: '#161b22', border: '1px solid #f85149' }}>
+            <div className="px-4 py-2 flex items-center gap-2" style={{ background: '#21262d' }}>
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
+              </div>
+              <span className="text-xs ml-2 font-mono" style={{ color: '#8b949e' }}>delete.prompt</span>
+            </div>
+            <div className="p-5">
+              <p className="font-mono text-sm mb-4" style={{ color: '#e6edf3' }}>// 정말 삭제하시겠습니까?</p>
+              <div className="flex gap-2">
+                <button onClick={() => setDeleteId(null)}
+                  className="flex-1 py-2.5 rounded-lg font-mono text-sm"
+                  style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d', cursor: 'pointer' }}>
+                  // cancel
+                </button>
+                <button onClick={() => handleDelete(deleteId)}
+                  className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold"
+                  style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149', cursor: 'pointer' }}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 편집 모달 */}
+      {editingId && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center px-3 py-4 overflow-y-auto"
+          style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-2xl rounded-xl overflow-hidden my-auto"
+            style={{ background: '#161b22', border: '1px solid #30363d' }}>
+            <div className="px-4 py-2 flex items-center gap-2" style={{ background: '#21262d' }}>
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
+              </div>
+              <span className="text-xs ml-2 font-mono" style={{ color: '#8b949e' }}>vim my-prompt.md — INSERT MODE</span>
+            </div>
+            <div className="p-5">
+              <h2 className="font-mono font-bold text-base mb-4" style={{ color: '#e6edf3' }}>
+                <span style={{ color: '#8b949e' }}>// </span>
+                <span style={{ color: '#bc8cff' }}>내 프롬프트</span> 수정
+                <span className="blink" style={{ color: '#bc8cff' }}>_</span>
+              </h2>
+              <div className="mb-3">
+                <label className="block mb-1 text-xs font-mono" style={{ color: '#8b949e' }}>
+                  <span style={{ color: '#58a6ff' }}>const</span> title =
+                </label>
+                <input type="text" value={editForm.title} onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))}
+                  style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = '#bc8cff'}
+                  onBlur={e => e.target.style.borderColor = '#30363d'} />
+              </div>
+              <div className="mb-3">
+                <label className="block mb-1 text-xs font-mono" style={{ color: '#8b949e' }}>
+                  <span style={{ color: '#58a6ff' }}>const</span> description =
+                </label>
+                <textarea value={editForm.description} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                  style={{ ...inputStyle, resize: 'vertical' }} rows={2}
+                  onFocus={e => e.target.style.borderColor = '#bc8cff'}
+                  onBlur={e => e.target.style.borderColor = '#30363d'} />
+              </div>
+              <div className="mb-3">
+                <label className="block mb-1 text-xs font-mono" style={{ color: '#8b949e' }}>
+                  <span style={{ color: '#58a6ff' }}>const</span> category =
+                </label>
+                <select value={editForm.category} onChange={e => setEditForm(f => ({ ...f, category: e.target.value }))}
+                  style={{ ...inputStyle, cursor: 'pointer' }}>
+                  {['General','Writing','Coding','Marketing','Education','Other'].map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4">
+                <label className="block mb-1 text-xs font-mono" style={{ color: '#8b949e' }}>
+                  <span style={{ color: '#58a6ff' }}>const</span> content =
+                </label>
+                <textarea value={editForm.content} onChange={e => setEditForm(f => ({ ...f, content: e.target.value }))}
+                  style={{ ...inputStyle, resize: 'vertical' }} rows={10}
+                  onFocus={e => e.target.style.borderColor = '#bc8cff'}
+                  onBlur={e => e.target.style.borderColor = '#30363d'} />
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => setEditingId(null)}
+                  className="flex-1 py-2.5 rounded-lg font-mono text-sm"
+                  style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d', cursor: 'pointer' }}>
+                  // cancel
+                </button>
+                <button onClick={handleEditSave}
+                  className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold"
+                  style={{ background: 'transparent', color: '#3fb950', border: '1px solid #3fb950', cursor: 'pointer' }}>
+                  git commit -m "update"
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8">
+        {/* 헤더 */}
+        <button onClick={() => router.push('/')}
+          className="inline-flex items-center gap-2 mb-6 font-mono text-sm bg-transparent border-none cursor-pointer p-0"
+          style={{ color: '#58a6ff' }}>
+          ← cd ..
+        </button>
+
+        <div className="mb-6">
+          <h1 className="font-mono font-bold text-xl sm:text-2xl mb-1" style={{ color: '#e6edf3' }}>
+            <span style={{ color: '#8b949e' }}>// </span>
+            <span style={{ color: '#bc8cff' }}>📁 내 컬렉션</span>
+            <span className="blink" style={{ color: '#bc8cff' }}>_</span>
+          </h1>
+          <p className="font-mono text-xs" style={{ color: '#484f58' }}>
+            // {displayName} · {prompts.length}개의 프롬프트
+          </p>
+        </div>
+
+        {prompts.length === 0 ? (
+          <div className="text-center py-20 font-mono">
+            <p className="text-4xl mb-4">📭</p>
+            <p style={{ color: '#8b949e' }}>// 아직 저장된 프롬프트가 없습니다</p>
+            <p className="text-xs mt-2" style={{ color: '#484f58' }}>// 프롬프트 상세 페이지에서 "내 버전으로 저장" 버튼을 눌러보세요</p>
+            <button onClick={() => router.push('/')}
+              className="mt-6 px-6 py-2.5 rounded-lg font-mono text-sm"
+              style={{ background: 'transparent', color: '#bc8cff', border: '1px solid #bc8cff', cursor: 'pointer' }}>
+              프롬프트 둘러보기 →
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {prompts.map(p => {
+              const colors = CATEGORY_COLORS[p.category] || CATEGORY_COLORS['Other']
+              const isSelected = selectedId === p.id
+              return (
+                <div key={p.id}
+                  onClick={() => setSelectedId(isSelected ? null : p.id)}
+                  className="rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-[1.01]"
+                  style={{
+                    background: '#161b22',
+                    border: isSelected ? '1px solid #bc8cff' : '1px solid #30363d',
+                    boxShadow: isSelected ? '0 0 20px #bc8cff22' : 'none',
+                  }}>
+                  {/* 탭바 */}
+                  <div className="flex items-center px-3 py-1.5" style={{ background: '#21262d', borderBottom: '1px solid #30363d' }}>
+                    <div className="flex gap-1.5 mr-3">
+                      <div className="w-2 h-2 rounded-full" style={{ background: '#ff5f57' }}></div>
+                      <div className="w-2 h-2 rounded-full" style={{ background: '#ffbd2e' }}></div>
+                      <div className="w-2 h-2 rounded-full" style={{ background: '#28c840' }}></div>
+                    </div>
+                    <span className="text-xs font-mono truncate flex-1" style={{ color: '#8b949e' }}>
+                      {p.title.substring(0, 25)}{p.title.length > 25 ? '...' : ''}.md
+                    </span>
+                    <span className="text-xs px-2 py-0.5 rounded-full font-mono ml-2 flex-shrink-0"
+                      style={{ background: colors.bg, color: colors.text, border: '1px solid ' + colors.border }}>
+                      {p.category}
+                    </span>
+                  </div>
+
+                  <div className="p-4">
+                    <h3 className="font-mono font-bold text-sm mb-1" style={{ color: '#e6edf3' }}>{p.title}</h3>
+                    {p.description && (
+                      <p className="text-xs mb-3 font-mono" style={{ color: '#8b949e' }}>{p.description}</p>
+                    )}
+                    <pre className="text-xs font-mono rounded-lg p-3 mb-3 overflow-hidden"
+                      style={{
+                        background: '#0d1117', color: '#8b949e',
+                        border: '1px solid #21262d',
+                        maxHeight: isSelected ? 'none' : '80px',
+                        whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                      }}>
+                      {p.content}
+                    </pre>
+
+                    {isSelected && (
+                      <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
+                        <button onClick={() => handleCopy(p.content, p.id)}
+                          className="flex-1 py-2 rounded-lg font-mono text-xs font-bold transition-all"
+                          style={{
+                            background: 'transparent',
+                            color: copied === p.id ? '#3fb950' : '#58a6ff',
+                            border: copied === p.id ? '1px solid #3fb950' : '1px solid #58a6ff',
+                            cursor: 'pointer',
+                          }}>
+                          {copied === p.id ? '✓ 복사됨' : 'copy prompt'}
+                        </button>
+                        <button onClick={() => handleEdit(p)}
+                          className="flex-1 py-2 rounded-lg font-mono text-xs transition-all"
+                          style={{ background: 'transparent', color: '#bc8cff', border: '1px solid #bc8cff', cursor: 'pointer' }}>
+                          ✎ 수정
+                        </button>
+                        <button onClick={() => setDeleteId(p.id)}
+                          className="py-2 px-3 rounded-lg font-mono text-xs transition-all"
+                          style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149', cursor: 'pointer' }}>
+                          ✕
+                        </button>
+                      </div>
+                    )}
+
+                    {!isSelected && (
+                      <p className="text-xs font-mono" style={{ color: '#484f58' }}>
+                        // 클릭하면 전체 내용 보기
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </main>
+  )
+}
