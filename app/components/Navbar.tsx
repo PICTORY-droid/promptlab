@@ -20,7 +20,7 @@ function MatrixRain() {
       ctx.fillStyle = 'rgba(13, 17, 23, 0.05)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       ctx.fillStyle = '#3fb950'
-      ctx.font = \`\${fontSize}px monospace\`
+      ctx.font = fontSize + 'px monospace'
       drops.forEach((y, i) => {
         const char = chars[Math.floor(Math.random() * chars.length)]
         ctx.fillText(char, i * fontSize, y * fontSize)
