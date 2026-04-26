@@ -449,49 +449,6 @@ function HomeInner() {
           <TypingAnimation />
         </div>
 
-        {/* ── AI 취업 기능 배너 ── */}
-        <div style={{
-          background: 'linear-gradient(135deg, #0d1f35 0%, #1a2d1a 100%)',
-          border: '1px solid #1f6feb44',
-          borderRadius: '12px',
-          padding: '16px 20px',
-          marginBottom: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '12px',
-        }}>
-          <div>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#e6edf3', fontFamily: 'monospace', marginBottom: '4px' }}>
-              📄 AI 취업 도구 <span style={{ fontSize: '10px', background: '#1f6feb', color: '#fff', borderRadius: '999px', padding: '1px 7px', marginLeft: '6px' }}>BETA</span>
-            </div>
-            <div style={{ fontSize: '11px', color: '#8b949e', fontFamily: 'monospace' }}>
-              자소서/이력서 텍스트 → 핏 분석 · 면접 질문
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-<a href="/fit-analysis" style={{
-              background: '#2d1b00', color: '#e3b341',
-              border: '1px solid #bb690288',
-              borderRadius: '8px', padding: '8px 14px', fontSize: '12px',
-              fontWeight: 700, fontFamily: 'monospace', textDecoration: 'none',
-              cursor: 'pointer',
-            }}>
-              🔴 핏 분석
-            </a>
-            <a href="/interview" style={{
-              background: '#1f6feb', color: '#fff', border: 'none',
-              borderRadius: '8px', padding: '8px 14px', fontSize: '12px',
-              fontWeight: 700, fontFamily: 'monospace', textDecoration: 'none',
-              cursor: 'pointer',
-            }}>
-              🎯 면접 준비
-            </a>
-          </div>
-        </div>
-
-        <div className="flex gap-2 mb-5 sm:mb-6">
           <div className="relative flex-1">
             <input
               type="text"
