@@ -4,6 +4,112 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import type { User } from '@supabase/supabase-js'
 
+
+function getGrade(totalCopied: number) {
+  if (totalCopied >= 500) return 'diamond'
+  if (totalCopied >= 200) return 'gold'
+  if (totalCopied >= 100) return 'silver'
+  if (totalCopied >= 50) return 'bronze'
+  return 'normal'
+}
+
+function GradeAvatar({ avatarUrl, displayName, grade }: { avatarUrl?: string; displayName: string; grade: string }) {
+  const inner = (
+    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#161b22', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative', zIndex: 2 }}>
+      {avatarUrl
+        ? <img src={avatarUrl} alt="프로필" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+        : <span style={{ color: '#58a6ff', fontSize: '14px', fontFamily: 'monospace' }}>{displayName[0].toUpperCase()}</span>
+      }
+    </div>
+  )
+
+  if (grade === 'normal') {
+    return (
+      <div style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px dashed #555' }}></div>
+        {inner}
+      </div>
+    )
+  }
+
+  if (grade === 'bronze') {
+    return (
+      <div style={{ position: 'relative', width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <style>{`
+          @keyframes pl-bronze-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+          @keyframes pl-bronze-glow { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+          .pl-bronze-ring { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(#f0883e 0deg,#f0883e 20deg,transparent 20deg,transparent 40deg,#f0883e 40deg,#f0883e 60deg,transparent 60deg,transparent 80deg,#f0883e 80deg,#f0883e 100deg,transparent 100deg,transparent 120deg,#f0883e 120deg,#f0883e 140deg,transparent 140deg,transparent 160deg,#f0883e 160deg,#f0883e 180deg,transparent 180deg,transparent 200deg,#f0883e 200deg,#f0883e 220deg,transparent 220deg,transparent 240deg,#f0883e 240deg,#f0883e 260deg,transparent 260deg,transparent 280deg,#f0883e 280deg,#f0883e 300deg,transparent 300deg,transparent 320deg,#f0883e 320deg,#f0883e 340deg,transparent 340deg,transparent 360deg); animation: pl-bronze-spin 6s linear infinite, pl-bronze-glow 1.5s ease-in-out infinite; }
+          .pl-bronze-mask { position: absolute; inset: 4px; border-radius: 50%; background: #0d1117; z-index: 1; }
+        `}</style>
+        <div className="pl-bronze-ring"></div>
+        <div className="pl-bronze-mask"></div>
+        <div style={{ position: 'relative', zIndex: 2 }}>{inner}</div>
+      </div>
+    )
+  }
+
+  if (grade === 'silver') {
+    return (
+      <div style={{ position: 'relative', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <style>{`
+          @keyframes pl-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+          @keyframes pl-spin-rev { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+          .pl-silver-outer { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(#e8e8e8,#888,#fff,#aaa,#ddd,#666,#fff,#999,#e8e8e8); animation: pl-spin 3s linear infinite; }
+          .pl-silver-inner { position: absolute; inset: 3px; border-radius: 50%; background: conic-gradient(#666,#fff,#888,#ddd,#555,#eee,#666); animation: pl-spin-rev 2s linear infinite; }
+          .pl-silver-mask { position: absolute; inset: 7px; border-radius: 50%; background: #0d1117; z-index: 1; }
+        `}</style>
+        <div className="pl-silver-outer"></div>
+        <div className="pl-silver-inner"></div>
+        <div className="pl-silver-mask"></div>
+        <div style={{ position: 'relative', zIndex: 2 }}>{inner}</div>
+      </div>
+    )
+  }
+
+  if (grade === 'gold') {
+    return (
+      <div style={{ position: 'relative', width: '42px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <style>{`
+          @keyframes pl-gold-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+          @keyframes pl-gold-rev { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+          @keyframes pl-gold-aura { 0%,100% { box-shadow: 0 0 15px 4px rgba(212,175,55,0.6); } 50% { box-shadow: 0 0 35px 10px rgba(255,215,0,0.9); } }
+          .pl-gold-outer { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(#b8860b,#ffd700,#daa520,#ffe066,#b8860b,#ffd700,#daa520,#ffe066,#b8860b); animation: pl-gold-spin 3s linear infinite, pl-gold-aura 1.5s ease-in-out infinite; }
+          .pl-gold-inner { position: absolute; inset: 4px; border-radius: 50%; background: conic-gradient(#ffd700,#b8860b,#ffe066,#daa520,#ffd700); animation: pl-gold-rev 1.5s linear infinite; }
+          .pl-gold-dots { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 50% 3%,#ffd700 2px,transparent 3px),radial-gradient(circle at 85% 15%,#ffd700 2px,transparent 3px),radial-gradient(circle at 97% 50%,#ffd700 2px,transparent 3px),radial-gradient(circle at 85% 85%,#ffd700 2px,transparent 3px),radial-gradient(circle at 50% 97%,#ffd700 2px,transparent 3px),radial-gradient(circle at 15% 85%,#ffd700 2px,transparent 3px),radial-gradient(circle at 3% 50%,#ffd700 2px,transparent 3px),radial-gradient(circle at 15% 15%,#ffd700 2px,transparent 3px); animation: pl-gold-spin 4s linear infinite; z-index: 2; }
+          .pl-gold-mask { position: absolute; inset: 8px; border-radius: 50%; background: #0d1117; z-index: 1; }
+        `}</style>
+        <div className="pl-gold-outer"></div>
+        <div className="pl-gold-inner"></div>
+        <div className="pl-gold-mask"></div>
+        <div className="pl-gold-dots"></div>
+        <div style={{ position: 'relative', zIndex: 3 }}>{inner}</div>
+      </div>
+    )
+  }
+
+  // diamond
+  return (
+    <div style={{ position: 'relative', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <style>{`
+        @keyframes pl-dia-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pl-dia-rev { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+        @keyframes pl-dia-pulse { 0%,100% { opacity: 0.8; } 50% { opacity: 1; } }
+        .pl-dia-glow { position: absolute; inset: -4px; border-radius: 50%; box-shadow: 0 0 20px 8px rgba(188,140,255,0.7),0 0 40px 16px rgba(88,166,255,0.4); animation: pl-dia-pulse 1s ease-in-out infinite; }
+        .pl-dia-r1 { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(#ff0080,#ff8c00,#ffd700,#00ff88,#00bfff,#8000ff,#ff0080); animation: pl-dia-spin 1.5s linear infinite; }
+        .pl-dia-r2 { position: absolute; inset: 3px; border-radius: 50%; background: conic-gradient(#00bfff,#8000ff,#ff0080,#ff8c00,#ffd700,#00ff88,#00bfff); animation: pl-dia-rev 1s linear infinite; }
+        .pl-dia-r3 { position: absolute; inset: 6px; border-radius: 50%; background: conic-gradient(#ffd700,#00ff88,#00bfff,#8000ff,#ff0080,#ff8c00,#ffd700); animation: pl-dia-spin 2s linear infinite; }
+        .pl-dia-mask { position: absolute; inset: 10px; border-radius: 50%; background: #0d1117; z-index: 1; }
+      `}</style>
+      <div className="pl-dia-glow"></div>
+      <div className="pl-dia-r1"></div>
+      <div className="pl-dia-r2"></div>
+      <div className="pl-dia-r3"></div>
+      <div className="pl-dia-mask"></div>
+      <div style={{ position: 'relative', zIndex: 2 }}>{inner}</div>
+    </div>
+  )
+}
+
 function MatrixRain() {
   useEffect(() => {
     const canvas = document.getElementById('matrix-canvas-global') as HTMLCanvasElement
@@ -87,6 +193,7 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false)
   const [user, setUser] = useState<User | null>(null)
   const [showMenu, setShowMenu] = useState(false)
+  const [totalCopied, setTotalCopied] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -98,11 +205,19 @@ export default function Navbar() {
     updateTime()
     const interval = setInterval(updateTime, 1000)
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null)
+      if (session?.user) {
+        const { data } = await supabase.from('user_activity').select('total_copied').eq('user_id', session.user.id).single()
+        if (data) setTotalCopied(data.total_copied || 0)
+      }
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null)
+      if (session?.user) {
+        const { data } = await supabase.from('user_activity').select('total_copied').eq('user_id', session.user.id).single()
+        if (data) setTotalCopied(data.total_copied || 0)
+      }
     })
 
     return () => { clearInterval(interval); subscription.unsubscribe() }
