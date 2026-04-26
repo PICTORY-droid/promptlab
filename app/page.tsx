@@ -324,12 +324,18 @@ function HomeInner() {
 
   useEffect(() => {
     const fetchPrompts = async () => {
-      const { data, error } = await supabase
-        .from('prompts')
-        .select('*')
-        .order('created_at', { ascending: false })
-      if (!error && data) setPrompts(data)
-      setLoading(false)
+      try {
+        const { data, error } = await supabase
+          .from('prompts')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(100)
+        if (!error && data) setPrompts(data)
+      } catch (e) {
+        console.error('fetchPrompts error:', e)
+      } finally {
+        setLoading(false)
+      }
     }
     fetchPrompts()
   }, [])
