@@ -270,6 +270,8 @@ export default function Navbar() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setShowMenu(false)
+    setUser(null)
+    window.location.href = '/'
   }
 
   const avatarUrl = user?.user_metadata?.avatar_url
