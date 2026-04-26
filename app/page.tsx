@@ -323,7 +323,7 @@ function HomeInner() {
           .from('prompts')
           .select('*')
           .order('created_at', { ascending: false })
-          .limit(100)
+          .limit(2000)
         if (!error && data) setPrompts(data)
       } catch (e) {
         console.error('fetchPrompts error:', e)
