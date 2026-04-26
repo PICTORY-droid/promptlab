@@ -126,7 +126,7 @@ export default function PersonaPage() {
               <p style={{ fontSize: '10px', color: '#484f58', fontFamily: 'monospace', lineHeight: 1.7, margin: 0 }}>
                 ✓ 서로 다른 프롬프트 복사 시에만 카운트 &nbsp;|&nbsp;
                 ✓ 하루 최대 <span style={{ color: '#8b949e' }}>30개</span>까지 인정 &nbsp;|&nbsp;
-                ✓ 같은 프롬프트 반복 복사 → 1회 처리 &nbsp;|&nbsp;
+                ✓ 같은 프롬프트 반복 복사 → 1회 처리<br/>
                 ✓ 어뷰징 감지 시 경고 후 제외
               </p>
             </div>
