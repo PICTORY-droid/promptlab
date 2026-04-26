@@ -5,7 +5,7 @@ import { supabase } from '@/app/lib/supabase'
 import type { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 
-declare global { interface Window { _shareData: { text: string; encText: string; encUrl: string; encTitle: string; url: string } } }
+declare global { interface Window { _shareData: { text: string; encText: string; encUrl: string; encTitle: string; url: string }; Kakao: { init: (key: string) => void; isInitialized: () => boolean; Share: { sendDefault: (options: Record<string, unknown>) => void } } } }
 
 interface UserPrompt {
   id: string
@@ -37,6 +37,23 @@ export default function MyCollectionPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [copied, setCopied] = useState<string | null>(null)
+
+  useEffect(() => {
+    // 카카오 SDK 로드
+    if (typeof window !== 'undefined') {
+      if (!window.Kakao) {
+        const script = document.createElement('script')
+        script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js'
+        script.async = true
+        script.onload = () => {
+          if (!window.Kakao.isInitialized()) window.Kakao.init('8d2c2590ce75f2f21d3bb4bf6b437e61')
+        }
+        document.head.appendChild(script)
+      } else if (!window.Kakao.isInitialized()) {
+        window.Kakao.init('8d2c2590ce75f2f21d3bb4bf6b437e61')
+      }
+    }
+  }, [])
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
