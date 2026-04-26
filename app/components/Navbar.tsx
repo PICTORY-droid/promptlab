@@ -304,18 +304,20 @@ export default function Navbar() {
           <div className="flex items-center gap-2 flex-shrink-0">
             <span className="hidden sm:inline text-xs px-2 py-1 rounded" style={{ background: '#21262d', color: '#3fb950', fontFamily: 'monospace', border: '1px solid #30363d' }}>v2.0.1</span>
             {mounted && (
-              <button onClick={() => { window.location.href = '/bigbang' }}
-                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
-                style={{ background: '#1a2d1a', color: '#3fb950', border: '1px solid #238636', fontFamily: 'monospace', cursor: 'pointer' }}>
-                ⚡ <span>빅뱅</span>
-              </button>
-              <button onClick={() => {
-                if (user) { window.location.href = '/persona' }
-                else { alert('회원 전용 메뉴입니다.\n로그인 후 이용해주세요.'); }
-              }} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
-                style={{ background: '#2d1f3d', color: '#bc8cff', border: '1px solid #8957e5', fontFamily: 'monospace', cursor: 'pointer', textDecoration: 'none' }}>
-                🤖 {user ? <span style={{ marginLeft: '2px' }}>AI 페르소나</span> : <span style={{ marginLeft: '2px' }}>AI</span>}
-              </button>
+              <>
+                <button onClick={() => { window.location.href = '/bigbang' }}
+                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
+                  style={{ background: '#1a2d1a', color: '#3fb950', border: '1px solid #238636', fontFamily: 'monospace', cursor: 'pointer' }}>
+                  ⚡ <span>빅뱅</span>
+                </button>
+                <button onClick={() => {
+                  if (user) { window.location.href = '/persona' }
+                  else { alert('회원 전용 메뉴입니다.\n로그인 후 이용해주세요.'); }
+                }} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
+                  style={{ background: '#2d1f3d', color: '#bc8cff', border: '1px solid #8957e5', fontFamily: 'monospace', cursor: 'pointer', textDecoration: 'none' }}>
+                  🤖 {user ? <span style={{ marginLeft: '2px' }}>AI 페르소나</span> : <span style={{ marginLeft: '2px' }}>AI</span>}
+                </button>
+              </>
             )}
 
             {mounted && (
