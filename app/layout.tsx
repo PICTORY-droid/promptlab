@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${SITE_URL}/og-image.png`,
+        url: `${SITE_URL}/og-image-v2.png`,
         width: 1200,
         height: 630,
         alt: 'PromptLab',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PromptLab - 프롬프트 공유 커뮤니티',
     description: 'AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.',
-    images: [`${SITE_URL}/og-image.png`],
+    images: [`${SITE_URL}/og-image-v2.png`],
   },
 };
 
