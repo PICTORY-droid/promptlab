@@ -448,6 +448,7 @@ function HomeInner() {
         <div className="mb-8 sm:mb-12 text-center">
           <TypingAnimation />
         </div>
+        <div className="flex gap-2 mb-5 sm:mb-6">
 
           <div className="relative flex-1">
             <input
