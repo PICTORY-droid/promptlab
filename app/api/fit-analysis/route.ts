@@ -1,15 +1,11 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
-
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
 
 export async function POST(req: NextRequest) {
   try {
-    const { coverLetter } = await req.json();
+    const { coverLetter, resumeText } = await req.json();
+    const text = coverLetter || resumeText;
 
-    if (!coverLetter || typeof coverLetter !== "string") {
+    if (!text || typeof text !== "string") {
       return NextResponse.json({ error: "자소서 내용을 전달해주세요." }, { status: 400 });
     }
 
@@ -18,7 +14,7 @@ export async function POST(req: NextRequest) {
 아래 자기소개서를 ATS 4대 기준으로 채점하고 레드플래그를 탐지해주세요.
 
 ## 분석 대상 자소서
-${coverLetter}
+${text}
 
 ## ATS 4대 채점 기준 (각 25점, 총 100점)
 1. 키워드 매칭 - 직무 관련 키워드 포함도
@@ -61,17 +57,27 @@ ${coverLetter}
 
 (3~5줄 전체 평가 및 개선 우선순위)`;
 
-    const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 2000,
-      messages: [{ role: "user", content: prompt }],
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-pro-exp-03-25",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 2000,
+      }),
     });
 
-    const text = response.content[0].type === "text" ? response.content[0].text : "";
-    return NextResponse.json({ result: text });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || "OpenRouter 오류");
+
+    const resultText = data.choices?.[0]?.message?.content || "";
+    return NextResponse.json({ result: resultText });
   } catch (error: unknown) {
     console.error("Fit-analysis API error:", error);
     const message = error instanceof Error ? error.message : "알 수 없는 오류";
-    return NextResponse.json({ error: `Claude API 오류: ${message}` }, { status: 500 });
+    return NextResponse.json({ error: `API 오류: ${message}` }, { status: 500 });
   }
 }
