@@ -42,10 +42,14 @@ export default function PersonaPage() {
   })
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) { setUser(session.user) }
       else { router.push('/') }
     })
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) setUser(session.user)
+    })
+    return () => subscription.unsubscribe()
   }, [])
 
   const preview = form.name && form.role ? `당신은 ${form.name}입니다.
