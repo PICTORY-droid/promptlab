@@ -209,13 +209,12 @@ export default function Navbar() {
     }
 
     const setupRealtime = (userId: string) => {
-      if (realtimeSub) supabase.removeChannel(realtimeSub)
-      realtimeSub = supabase
-        .channel('user_activity_' + userId)
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'user_activity', filter: 'user_id=eq.' + userId }, (payload) => {
+      if (realtimeSub) { supabase.removeChannel(realtimeSub); realtimeSub = null }
+      const ch = supabase.channel('user_activity_' + userId + '_' + Date.now())
+      ch.on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'user_activity', filter: 'user_id=eq.' + userId }, (payload) => {
           setTotalCopied((payload.new as { total_copied: number }).total_copied || 0)
-        })
-        .subscribe()
+        }).subscribe()
+      realtimeSub = ch
     }
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
