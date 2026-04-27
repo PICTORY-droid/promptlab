@@ -241,6 +241,12 @@ export default function Navbar() {
 
   const handleLogin = async (provider: 'google' | 'kakao') => {
     setShowLoginModal(false)
+    const ua = navigator.userAgent.toLowerCase()
+    const isKakao = ua.includes('kakaotalk')
+    if (provider === 'google' && isKakao) {
+      alert('카카오톡 브라우저에서는 구글 로그인이 제한됩니다.\n우측 하단 \'\'\'...\'\'\'메뉴 > 다른 브라우저로 열기를 선택해주세요.')
+      return
+    }
     await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: window.location.origin + '/auth/callback', scopes: provider === 'kakao' ? 'profile_nickname profile_image' : undefined },
