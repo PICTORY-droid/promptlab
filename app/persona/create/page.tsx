@@ -42,19 +42,10 @@ export default function PersonaPage() {
   })
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) { setUser(session.user); return }
-      // 세션 없으면 onAuthStateChange로 한 번 더 대기
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session?.user) { setUser(session.user) }
-        else { router.push('/') }
-        subscription.unsubscribe()
-      })
-      // 3초 후에도 세션 없으면 홈으로
-      setTimeout(() => { if (!session?.user) router.push('/') }, 3000)
-    }
-    checkAuth()
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) { setUser(session.user) }
+      else { router.push('/') }
+    })
   }, [])
 
   const preview = form.name && form.role ? `당신은 ${form.name}입니다.
