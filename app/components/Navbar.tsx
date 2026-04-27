@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 import { supabase } from '../lib/supabase'
 import type { User } from '@supabase/supabase-js'
-
 
 function getGrade(totalCopied: number) {
   if (totalCopied >= 500) return 'diamond'
@@ -22,7 +22,6 @@ function GradeAvatar({ avatarUrl, displayName, grade }: { avatarUrl?: string; di
       }
     </div>
   )
-
   if (grade === 'normal') {
     return (
       <div style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -31,7 +30,6 @@ function GradeAvatar({ avatarUrl, displayName, grade }: { avatarUrl?: string; di
       </div>
     )
   }
-
   if (grade === 'bronze') {
     return (
       <div style={{ position: 'relative', width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -47,7 +45,6 @@ function GradeAvatar({ avatarUrl, displayName, grade }: { avatarUrl?: string; di
       </div>
     )
   }
-
   if (grade === 'silver') {
     return (
       <div style={{ position: 'relative', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -65,7 +62,6 @@ function GradeAvatar({ avatarUrl, displayName, grade }: { avatarUrl?: string; di
       </div>
     )
   }
-
   if (grade === 'gold') {
     return (
       <div style={{ position: 'relative', width: '42px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -75,19 +71,15 @@ function GradeAvatar({ avatarUrl, displayName, grade }: { avatarUrl?: string; di
           @keyframes pl-gold-aura { 0%,100% { box-shadow: 0 0 15px 4px rgba(212,175,55,0.6); } 50% { box-shadow: 0 0 35px 10px rgba(255,215,0,0.9); } }
           .pl-gold-outer { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(#b8860b,#ffd700,#daa520,#ffe066,#b8860b,#ffd700,#daa520,#ffe066,#b8860b); animation: pl-gold-spin 3s linear infinite, pl-gold-aura 1.5s ease-in-out infinite; }
           .pl-gold-inner { position: absolute; inset: 4px; border-radius: 50%; background: conic-gradient(#ffd700,#b8860b,#ffe066,#daa520,#ffd700); animation: pl-gold-rev 1.5s linear infinite; }
-          .pl-gold-dots { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 50% 3%,#ffd700 2px,transparent 3px),radial-gradient(circle at 85% 15%,#ffd700 2px,transparent 3px),radial-gradient(circle at 97% 50%,#ffd700 2px,transparent 3px),radial-gradient(circle at 85% 85%,#ffd700 2px,transparent 3px),radial-gradient(circle at 50% 97%,#ffd700 2px,transparent 3px),radial-gradient(circle at 15% 85%,#ffd700 2px,transparent 3px),radial-gradient(circle at 3% 50%,#ffd700 2px,transparent 3px),radial-gradient(circle at 15% 15%,#ffd700 2px,transparent 3px); animation: pl-gold-spin 4s linear infinite; z-index: 2; }
           .pl-gold-mask { position: absolute; inset: 8px; border-radius: 50%; background: #0d1117; z-index: 1; }
         `}</style>
         <div className="pl-gold-outer"></div>
         <div className="pl-gold-inner"></div>
         <div className="pl-gold-mask"></div>
-        <div className="pl-gold-dots"></div>
         <div style={{ position: 'relative', zIndex: 3 }}>{inner}</div>
       </div>
     )
   }
-
-  // diamond
   return (
     <div style={{ position: 'relative', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <style>{`
@@ -173,14 +165,11 @@ function CursorTrail() {
       animId = requestAnimationFrame(animate)
     }
     const handleResize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
-    const onTouch = (e: TouchEvent) => { for (let i = 0; i < 3; i++) { particles.push({ x: e.touches[0].clientX, y: e.touches[0].clientY, size: Math.random() * 4 + 1, alpha: 1, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, color: colors[Math.floor(Math.random() * colors.length)] }) } }
     window.addEventListener('mousemove', onMove)
-    window.addEventListener('touchmove', onTouch)
     window.addEventListener('resize', handleResize)
     animate()
     return () => {
       window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('touchmove', onTouch)
       window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animId)
     }
@@ -189,12 +178,15 @@ function CursorTrail() {
 }
 
 export default function Navbar() {
+  const pathname = usePathname()
   const [time, setTime] = useState('')
   const [mounted, setMounted] = useState(false)
   const [user, setUser] = useState<User | null>(null)
   const [showMenu, setShowMenu] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
   const [totalCopied, setTotalCopied] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
+  const loginRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -220,12 +212,7 @@ export default function Navbar() {
       if (realtimeSub) supabase.removeChannel(realtimeSub)
       realtimeSub = supabase
         .channel('user_activity_' + userId)
-        .on('postgres_changes', {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'user_activity',
-          filter: 'user_id=eq.' + userId,
-        }, (payload) => {
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'user_activity', filter: 'user_id=eq.' + userId }, (payload) => {
           setTotalCopied((payload.new as { total_copied: number }).total_copied || 0)
         })
         .subscribe()
@@ -233,20 +220,12 @@ export default function Navbar() {
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null)
-      if (session?.user) {
-        await loadActivity(session.user.id)
-        setupRealtime(session.user.id)
-      }
+      if (session?.user) { await loadActivity(session.user.id); setupRealtime(session.user.id) }
     })
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) {
-        await loadActivity(session.user.id)
-        setupRealtime(session.user.id)
-      } else {
-        if (realtimeSub) supabase.removeChannel(realtimeSub)
-      }
+      if (session?.user) { await loadActivity(session.user.id); setupRealtime(session.user.id) }
+      else { if (realtimeSub) supabase.removeChannel(realtimeSub) }
     })
 
     return () => { clearInterval(interval); subscription.unsubscribe(); if (realtimeSub) supabase.removeChannel(realtimeSub) }
@@ -255,12 +234,14 @@ export default function Navbar() {
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) setShowMenu(false)
+      if (loginRef.current && !loginRef.current.contains(e.target as Node)) setShowLoginModal(false)
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
   const handleLogin = async (provider: 'google' | 'kakao') => {
+    setShowLoginModal(false)
     await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: window.location.origin + '/auth/callback', scopes: provider === 'kakao' ? 'profile_nickname profile_image' : undefined },
@@ -276,13 +257,21 @@ export default function Navbar() {
 
   const avatarUrl = user?.user_metadata?.avatar_url
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || '사용자'
+  const grade = getGrade(totalCopied)
+
+  const TAB_MENUS = [
+    { href: '/bigbang', label: '⚡ 빅뱅', activeColor: '#3fb950', activeBorder: '#238636' },
+    { href: '/persona', label: '🤖 AI 페르소나', activeColor: '#bc8cff', activeBorder: '#8957e5', authRequired: true },
+  ]
 
   return (
     <>
       <MatrixRain />
       <CursorTrail />
-      <nav className="sticky top-0 z-50 border-b" style={{ background: '#0d1117', borderColor: '#30363d' }}>
-        <div className="px-3 py-1 flex items-center gap-2 border-b" style={{ borderColor: '#21262d', background: '#161b22' }}>
+      <nav className="sticky top-0 z-50" style={{ background: '#0d1117', borderBottom: '1px solid #30363d' }}>
+
+        {/* 터미널 상단 탭바 */}
+        <div className="px-3 py-1 flex items-center gap-2" style={{ borderBottom: '1px solid #21262d', background: '#161b22' }}>
           <div className="flex gap-1.5">
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
@@ -292,95 +281,128 @@ export default function Navbar() {
             <span className="hidden sm:inline">promptlab — zsh — 80×24</span>
             <span className="sm:hidden">promptlab</span>
           </span>
-          <span className="ml-auto text-xs flex-shrink-0" style={{ color: '#8b949e', fontFamily: 'monospace' }}>{mounted ? time : ''}</span>
+          <span className="ml-auto text-xs flex-shrink-0" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
+            {mounted ? time : ''}
+          </span>
         </div>
 
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2">
-          <div onClick={() => window.location.href = '/'} className="flex items-center gap-1 sm:gap-2 group min-w-0 cursor-pointer">
-            <img src="/logo-icon.png" alt="PromptLab" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
-            <span className="text-lg sm:text-2xl font-bold tracking-tight" style={{ color: '#e6edf3', fontFamily: 'monospace' }}>Prompt</span>
-            <span className="text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff', fontFamily: 'monospace' }}>Lab</span>
-            <span className="blink ml-0.5 text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff' }}>_</span>
-          </div>
+        {/* 메인 Navbar - 1줄: 로고 + 로그인/프로필 */}
+        <div className="max-w-6xl mx-auto px-3 sm:px-4" style={{ paddingTop: '10px', paddingBottom: '0' }}>
+          <div className="flex items-center justify-between gap-2" style={{ marginBottom: '6px' }}>
 
-          <div className="flex flex-col items-end gap-1 flex-shrink-0">
-            <span className="hidden sm:inline text-xs" style={{ color: '#484f58', fontFamily: 'monospace' }}>프롬프트를 제대로 알면 AI 수준이 달라진다</span>
-            <div className="flex items-center gap-2">
-            <span className="hidden sm:inline text-xs px-2 py-1 rounded" style={{ background: '#21262d', color: '#3fb950', fontFamily: 'monospace', border: '1px solid #30363d' }}>v2.0.1</span>
-            {mounted && (
-              <>
-                <button onClick={() => { window.location.href = '/bigbang' }}
-                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
-                  style={{ background: '#1a2d1a', color: '#3fb950', border: '1px solid #238636', fontFamily: 'monospace', cursor: 'pointer' }}>
-                  ⚡ <span>빅뱅</span>
-                </button>
-                <button onClick={() => {
-                  if (user) { window.location.href = '/persona' }
-                  else { alert('회원 전용 메뉴입니다.\n로그인 후 이용해주세요.'); }
-                }} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
-                  style={{ background: '#2d1f3d', color: '#bc8cff', border: '1px solid #8957e5', fontFamily: 'monospace', cursor: 'pointer', textDecoration: 'none' }}>
-                  🤖 {user ? <span style={{ marginLeft: '2px' }}>AI 페르소나</span> : <span style={{ marginLeft: '2px' }}>AI</span>}
-                </button>
-              </>
-            )}
+            {/* 로고 */}
+            <div onClick={() => window.location.href = '/'} className="flex items-center gap-1 sm:gap-2 cursor-pointer flex-shrink-0">
+              <img src="/logo-icon.png" alt="PromptLab" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
+              <span className="text-lg sm:text-xl font-bold" style={{ color: '#e6edf3', fontFamily: 'monospace' }}>Prompt</span>
+              <span className="text-lg sm:text-xl font-bold" style={{ color: '#58a6ff', fontFamily: 'monospace' }}>Lab</span>
+              <span className="blink text-lg sm:text-xl font-bold" style={{ color: '#58a6ff' }}>_</span>
+            </div>
 
-            {mounted && (
-              user ? (
-                <div className="relative" ref={menuRef}>
-                  <button onClick={() => setShowMenu(!showMenu)}
-                    style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <GradeAvatar avatarUrl={avatarUrl} displayName={displayName} grade={getGrade(totalCopied)} />
-                  </button>
-                  {showMenu && (
-                    <div style={{ position: 'absolute', right: 0, top: '40px', background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', minWidth: '160px', zIndex: 100, overflow: 'hidden' }}>
-                      <div style={{ padding: '10px 14px', borderBottom: '1px solid #21262d' }}>
-                        <div style={{ color: '#e6edf3', fontSize: '12px', fontFamily: 'monospace', fontWeight: 700 }}>{displayName}</div>
-                        <div style={{ color: '#8b949e', fontSize: '10px', fontFamily: 'monospace', marginTop: '2px' }}>{user.email}</div>
+            {/* 슬로건 (PC만) */}
+            <span className="hidden md:inline text-xs" style={{ color: '#484f58', fontFamily: 'monospace', flex: 1, textAlign: 'center' }}>
+              프롬프트를 제대로 알면 AI 수준이 달라진다
+            </span>
+
+            {/* 오른쪽: 버전 + 로그인/프로필 */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="hidden sm:inline text-xs px-2 py-1 rounded" style={{ background: '#21262d', color: '#3fb950', fontFamily: 'monospace', border: '1px solid #30363d' }}>
+                v2.0.1
+              </span>
+
+              {mounted && (
+                user ? (
+                  <div className="relative" ref={menuRef}>
+                    <button onClick={() => setShowMenu(!showMenu)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <GradeAvatar avatarUrl={avatarUrl} displayName={displayName} grade={grade} />
+                    </button>
+                    {showMenu && (
+                      <div style={{ position: 'absolute', right: 0, top: '44px', background: '#161b22', border: '1px solid #30363d', borderRadius: '10px', minWidth: '170px', zIndex: 100, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
+                        <div style={{ padding: '10px 14px', borderBottom: '1px solid #21262d' }}>
+                          <div style={{ color: '#e6edf3', fontSize: '12px', fontFamily: 'monospace', fontWeight: 700 }}>{displayName}</div>
+                          <div style={{ color: '#8b949e', fontSize: '10px', fontFamily: 'monospace', marginTop: '2px' }}>{user.email}</div>
+                        </div>
+                        <a href="/my-collection" style={{ display: 'block', padding: '10px 14px', color: '#58a6ff', fontSize: '12px', fontFamily: 'monospace', textDecoration: 'none', borderBottom: '1px solid #21262d' }}
+                          onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
+                          onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
+                          📁 내 컬렉션
+                        </a>
+                        <button onClick={handleLogout} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', color: '#f85149', fontSize: '12px', fontFamily: 'monospace', background: 'none', border: 'none', cursor: 'pointer' }}
+                          onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
+                          onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
+                          ⏏ 로그아웃
+                        </button>
                       </div>
-                      <a href="/my-collection" style={{ display: 'block', padding: '10px 14px', color: '#58a6ff', fontSize: '12px', fontFamily: 'monospace', textDecoration: 'none', borderBottom: '1px solid #21262d' }}
-                        onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
-                        onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
-                        📁 내 컬렉션
-                      </a>
-
-                      <button onClick={handleLogout}
-                        style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', color: '#f85149', fontSize: '12px', fontFamily: 'monospace', background: 'none', border: 'none', cursor: 'pointer' }}
-                        onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
-                        onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
-                        ⏏ 로그아웃
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="relative">
-                  <button
-                    onClick={() => { const m = document.getElementById('login-modal'); if(m) m.style.display = m.style.display === 'flex' ? 'none' : 'flex' }}
-                    style={{ background: '#21262d', border: '1px solid #30363d', borderRadius: '8px', padding: '6px 14px', color: '#e6edf3', fontSize: '12px', fontFamily: 'monospace', cursor: 'pointer' }}
-                    onMouseOver={e => (e.currentTarget.style.borderColor = '#58a6ff')}
-                    onMouseOut={e => (e.currentTarget.style.borderColor = '#30363d')}>
-                    로그인
-                  </button>
-                  <div id="login-modal" style={{ display: 'none', position: 'absolute', right: 0, top: '40px', background: '#161b22', border: '1px solid #30363d', borderRadius: '10px', padding: '10px', flexDirection: 'column', gap: '6px', zIndex: 200, minWidth: '180px' }}>
-                    <button onClick={() => handleLogin('google')}
-                      style={{ background: '#21262d', border: '1px solid #30363d', borderRadius: '6px', padding: '9px 14px', color: '#e6edf3', fontSize: '12px', fontFamily: 'monospace', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', whiteSpace: 'nowrap' }}
+                    )}
+                  </div>
+                ) : (
+                  <div className="relative" ref={loginRef}>
+                    <button onClick={() => setShowLoginModal(!showLoginModal)}
+                      style={{ background: '#21262d', border: '1px solid #30363d', borderRadius: '8px', padding: '6px 14px', color: '#e6edf3', fontSize: '12px', fontFamily: 'monospace', cursor: 'pointer', whiteSpace: 'nowrap' }}
                       onMouseOver={e => (e.currentTarget.style.borderColor = '#58a6ff')}
                       onMouseOut={e => (e.currentTarget.style.borderColor = '#30363d')}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" style={{flexShrink:0}}><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                      구글로 로그인
+                      로그인
                     </button>
-                    <button onClick={() => handleLogin('kakao')}
-                      style={{ background: '#FEE500', border: '1px solid #FEE500', borderRadius: '6px', padding: '9px 14px', color: '#191919', fontSize: '12px', fontFamily: 'monospace', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', whiteSpace: 'nowrap' }}
-                      onMouseOver={e => (e.currentTarget.style.opacity = '0.85')}
-                      onMouseOut={e => (e.currentTarget.style.opacity = '1')}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#191919" style={{flexShrink:0}}><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.7 1.68 5.07 4.2 6.48l-1.08 3.96L9.6 18.9c.78.12 1.58.18 2.4.18 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/></svg>
-                      카카오로 로그인
-                    </button>
+                    {showLoginModal && (
+                      <div style={{ position: 'absolute', right: 0, top: '40px', background: '#161b22', border: '1px solid #30363d', borderRadius: '10px', padding: '10px', zIndex: 200, minWidth: '180px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#484f58', margin: '0 0 4px' }}>// 로그인 방법 선택</p>
+                        <button onClick={() => handleLogin('google')}
+                          style={{ background: '#21262d', border: '1px solid #30363d', borderRadius: '6px', padding: '9px 14px', color: '#e6edf3', fontSize: '12px', fontFamily: 'monospace', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', whiteSpace: 'nowrap' }}
+                          onMouseOver={e => (e.currentTarget.style.borderColor = '#58a6ff')}
+                          onMouseOut={e => (e.currentTarget.style.borderColor = '#30363d')}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" style={{ flexShrink: 0 }}><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                          구글로 로그인
+                        </button>
+                        <button onClick={() => handleLogin('kakao')}
+                          style={{ background: '#FEE500', border: '1px solid #FEE500', borderRadius: '6px', padding: '9px 14px', color: '#191919', fontSize: '12px', fontFamily: 'monospace', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', whiteSpace: 'nowrap' }}
+                          onMouseOver={e => (e.currentTarget.style.opacity = '0.85')}
+                          onMouseOut={e => (e.currentTarget.style.opacity = '1')}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#191919" style={{ flexShrink: 0 }}><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.7 1.68 5.07 4.2 6.48l-1.08 3.96L9.6 18.9c.78.12 1.58.18 2.4.18 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/></svg>
+                          카카오로 로그인
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )
-            )}
+                )
+              )}
             </div>
+          </div>
+
+          {/* 탭 메뉴바 - 2줄 */}
+          <div style={{ display: 'flex', alignItems: 'center', borderTop: '1px solid #21262d', marginLeft: '-12px', marginRight: '-12px', paddingLeft: '12px' }}>
+            {TAB_MENUS.map((tab) => {
+              const isActive = pathname === tab.href
+              return (
+                <button
+                  key={tab.href}
+                  onClick={() => {
+                    if (tab.authRequired && !user) {
+                      alert('회원 전용 메뉴입니다.\n로그인 후 이용해주세요.')
+                      return
+                    }
+                    window.location.href = tab.href
+                  }}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    borderBottom: isActive ? '2px solid ' + tab.activeColor : '2px solid transparent',
+                    color: isActive ? tab.activeColor : '#6e7681',
+                    padding: '8px 16px',
+                    fontFamily: 'monospace',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    whiteSpace: 'nowrap',
+                    transition: 'color 0.15s, border-color 0.15s',
+                  }}
+                  onMouseOver={e => { if (!isActive) { e.currentTarget.style.color = tab.activeColor; e.currentTarget.style.borderBottomColor = tab.activeBorder } }}
+                  onMouseOut={e => { if (!isActive) { e.currentTarget.style.color = '#6e7681'; e.currentTarget.style.borderBottomColor = 'transparent' } }}
+                >
+                  {tab.label}
+                </button>
+              )
+            })}
           </div>
         </div>
       </nav>
