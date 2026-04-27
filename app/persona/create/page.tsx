@@ -129,7 +129,7 @@ ${form.forbidden ? `\n[금지 주제]\n${form.forbidden}` : ''}
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
             <button onClick={() => window.open(shareUrl, '_blank')}
               style={{ flex: 1, padding: '10px', background: '#1f6feb', color: '#fff', border: 'none', borderRadius: '8px', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer' }}>
               👁 미리보기
@@ -138,6 +138,19 @@ ${form.forbidden ? `\n[금지 주제]\n${form.forbidden}` : ''}
               style={{ flex: 1, padding: '10px', background: 'transparent', color: '#8b949e', border: '1px solid #30363d', borderRadius: '8px', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer' }}>
               + 새로 만들기
             </button>
+          </div>
+          <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#484f58', margin: '0 0 8px' }}>// 링크 복사 후 아래 AI에 붙여넣으세요</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '24px' }}>
+            <button onClick={() => window.open('https://chat.openai.com', '_blank')}
+              style={{ padding: '11px', background: '#1a2d1a', border: '1px solid #238636', borderRadius: '8px', color: '#3fb950', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
+              ↗ ChatGPT
+            </button>
+            <button onClick={() => window.open('https://claude.ai', '_blank')}
+              style={{ padding: '11px', background: '#1f2d3d', border: '1px solid #1f6feb', borderRadius: '8px', color: '#58a6ff', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
+              ↗ Claude
+            </button>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', display: 'none' }}>
           </div>
 
           <button onClick={() => router.push('/')}
