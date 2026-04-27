@@ -296,7 +296,7 @@ function HomeInner() {
   const searchParams = useSearchParams()
 
   const [prompts, setPrompts] = useState<Prompt[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(() => searchParams.get('category') || 'All')
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
   const [showCategories, setShowCategories] = useState(false)
