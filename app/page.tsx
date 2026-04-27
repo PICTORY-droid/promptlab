@@ -296,7 +296,7 @@ function HomeInner() {
   const searchParams = useSearchParams()
 
   const [prompts, setPrompts] = useState<Prompt[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState(() => searchParams.get('category') || 'All')
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
   const [showCategories, setShowCategories] = useState(false)
@@ -324,10 +324,11 @@ function HomeInner() {
           .select('*')
           .order('created_at', { ascending: false })
           .limit(2000)
-        if (!error && data) setPrompts(data)
+        if (error) console.error('supabase error:', error)
+        if (data) setPrompts(data)
+        setLoading(false)
       } catch (e) {
         console.error('fetchPrompts error:', e)
-      } finally {
         setLoading(false)
       }
     }
