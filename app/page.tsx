@@ -1,8 +1,8 @@
 'use client'
 
 import { supabase } from '@/app/lib/supabase'
-import { useState, useEffect, useRef, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import GravityEffect from '@/app/components/GravityEffect'
 import NeuralNetwork from '@/app/components/NeuralNetwork'
 import HologramCard from '@/app/components/HologramCard'
@@ -293,20 +293,14 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
 
 function HomeInner() {
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const [prompts, setPrompts] = useState<Prompt[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState(() => searchParams.get('category') || 'All')
-  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
+  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
   const [showCategories, setShowCategories] = useState(false)
-  const [currentPage, setCurrentPage] = useState(() => {
-    const page = parseInt(searchParams.get('page') || '1', 10)
-    return isNaN(page) || page < 1 ? 1 : page
-  })
-  const [sortBy, setSortBy] = useState<'latest' | 'popular'>(() =>
-    (searchParams.get('sort') as 'latest' | 'popular') || 'latest'
-  )
+  const [currentPage, setCurrentPage] = useState(1)
+  const [sortBy, setSortBy] = useState<'latest' | 'popular'>('latest')
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   useEffect(() => {
@@ -547,14 +541,6 @@ function HomeInner() {
 
 export default function Home() {
   return (
-    <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
-        <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
-          <span style={{ color: '#3fb950' }}>$</span> loading<span style={{ animation: 'blink 1s infinite' }}>_</span>
-        </div>
-      </main>
-    }>
-      <HomeInner />
-    </Suspense>
+    <HomeInner />
   )
 }
