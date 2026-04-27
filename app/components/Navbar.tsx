@@ -295,7 +295,7 @@ export default function Navbar() {
           <span className="ml-auto text-xs flex-shrink-0" style={{ color: '#8b949e', fontFamily: 'monospace' }}>{mounted ? time : ''}</span>
         </div>
 
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center gap-2">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2">
           <div onClick={() => window.location.href = '/'} className="flex items-center gap-1 sm:gap-2 group min-w-0 cursor-pointer">
             <img src="/logo-icon.png" alt="PromptLab" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
             <span className="text-lg sm:text-2xl font-bold tracking-tight" style={{ color: '#e6edf3', fontFamily: 'monospace' }}>Prompt</span>
