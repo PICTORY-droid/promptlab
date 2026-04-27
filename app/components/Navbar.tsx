@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { usePathname } from 'next/navigation'
 import { supabase } from '../lib/supabase'
 import type { User } from '@supabase/supabase-js'
 
@@ -178,7 +177,6 @@ function CursorTrail() {
 }
 
 export default function Navbar() {
-  const pathname = usePathname()
   const [time, setTime] = useState('')
   const [mounted, setMounted] = useState(false)
   const [user, setUser] = useState<User | null>(null)
@@ -375,7 +373,7 @@ export default function Navbar() {
           {/* 탭 메뉴바 - 2줄 */}
           <div style={{ display: 'flex', alignItems: 'center', borderTop: '1px solid #21262d', marginLeft: '-12px', marginRight: '-12px', paddingLeft: '12px' }}>
             {TAB_MENUS.map((tab) => {
-              const isActive = pathname === tab.href
+              const isActive = typeof window !== 'undefined' && window.location.pathname === tab.href
               return (
                 <button
                   key={tab.href}
