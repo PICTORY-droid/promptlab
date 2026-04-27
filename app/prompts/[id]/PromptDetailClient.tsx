@@ -987,23 +987,7 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
                     <span className="hidden sm:inline">작성자</span>
                   </button>
                 )}
-                <button onClick={handleLike} disabled={isLiking}
-                  className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
-                  style={{ background: 'transparent', color: liked ? '#ff7b72' : '#8b949e', border: liked ? '1px solid #f85149' : '1px solid #484f58' }}>
-                  <span>♥</span>
-                  <span className="font-bold">{prompt.likes}</span>
-                </button>
-                <button onClick={handleDislike} disabled={isDisliking}
-                  className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
-                  style={{ background: 'transparent', color: disliked ? '#ff7b72' : '#8b949e', border: disliked ? '1px solid #f85149' : '1px solid #484f58' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={disliked ? "#ff7b72" : "#8b949e"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M8 15s1.5-2 4-2 4 2 4 2"/>
-                    <line x1="9" y1="9" x2="9.01" y2="9" strokeWidth="3"/>
-                    <line x1="15" y1="9" x2="15.01" y2="9" strokeWidth="3"/>
-                  </svg>
-                  <span className="font-bold">{prompt.dislikes ?? 0}</span>
-                </button>
+
                 <button
                   onClick={() => setShowShareModal(true)}
                   className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
@@ -1037,8 +1021,7 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
                 </div>
               </div>
               <div className="flex sm:block items-center gap-4 sm:gap-0">
-                <p className="text-xs mb-0 sm:mb-1 w-16 sm:w-auto flex-shrink-0" style={{ color: '#484f58' }}>// views</p>
-                <p className="text-sm" style={{ color: '#e6edf3' }}>◎ {prompt.views}</p>
+
               </div>
             </div>
 
