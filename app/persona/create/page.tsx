@@ -48,9 +48,9 @@ export default function PersonaPage() {
       if (session?.user) { setUser(session.user) }
       else { window.location.href = '/' }
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) { setUser(session.user) }
-      else { window.location.href = '/' }
+      else if (event === 'SIGNED_OUT') { window.location.href = '/' }
     })
     return () => subscription.unsubscribe()
   }, [])
