@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import ScrollProgressBar from "./components/ScrollProgressBar";
-import Script from "next/script";
+import Script from "next/script"
+import SWRProvider from "./components/SWRProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -72,6 +73,7 @@ export default function RootLayout({
           `}
         </Script>
         <ScrollProgressBar />
+        <SWRProvider>
         <Navbar />
         {children}
         <footer className="mt-auto py-4 text-center font-mono"
@@ -117,7 +119,8 @@ export default function RootLayout({
             background-size: 200px 200px;
           }
         `}</style>
-      </body>
+      </SWRProvider>
+    </body>
     </html>
   );
 }
