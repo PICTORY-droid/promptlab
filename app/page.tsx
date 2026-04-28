@@ -2,7 +2,8 @@
 
 import { supabase } from '@/app/lib/supabase'
 import { useState, useEffect, useRef } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import useSWR from 'swr'
 import GravityEffect from '@/app/components/GravityEffect'
 import NeuralNetwork from '@/app/components/NeuralNetwork'
 import HologramCard from '@/app/components/HologramCard'
@@ -294,8 +295,6 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
 function HomeInner() {
   const router = useRouter()
 
-  const [prompts, setPrompts] = useState<Prompt[]>([])
-  const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [showCategories, setShowCategories] = useState(false)
@@ -310,36 +309,20 @@ function HomeInner() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const pathname = usePathname()
-  const fetchPrompts = async () => {
-    console.log('fetchPrompts 실행됨')
-    setLoading(true)
-    try {
+  const { data: swrPrompts, isLoading: loading } = useSWR(
+    'prompts',
+    async () => {
       const { data, error } = await supabase
         .from('prompts')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(2000)
-      if (!error && data) setPrompts(data)
-    } catch (e) {
-      console.error('fetchPrompts error:', e)
-    } finally {
-      setLoading(false)
-    }
-  }
-  useEffect(() => {
-    fetchPrompts()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  useEffect(() => {
-    const handlePageShow = (e: PageTransitionEvent) => {
-      if (e.persisted) { window.location.reload() }
-    }
-    window.addEventListener('pageshow', handlePageShow)
-    return () => window.removeEventListener('pageshow', handlePageShow)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+      if (error) throw error
+      return data ?? []
+    },
+    { revalidateOnFocus: false }
+  )
+  const prompts = swrPrompts ?? []
 
   const updateURL = (page: number, category: string, query: string, sort: string = sortBy) => {
     const params = new URLSearchParams()
