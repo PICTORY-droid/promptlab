@@ -1,8 +1,8 @@
 'use client'
 import { SWRConfig } from 'swr'
-import { useEffect, useState } from 'react'
 
 function localStorageProvider() {
+  if (typeof window === 'undefined') return new Map()
   const map = new Map<string, any>(
     JSON.parse(localStorage.getItem('pl-swr-cache') || '[]')
   )
@@ -14,9 +14,6 @@ function localStorageProvider() {
 }
 
 export default function SWRProvider({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => { setMounted(true) }, [])
-  if (!mounted) return <>{children}</>
   return (
     <SWRConfig value={{ provider: localStorageProvider }}>
       {children}
