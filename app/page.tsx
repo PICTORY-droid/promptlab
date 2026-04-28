@@ -231,7 +231,7 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
     if (selectedCategory !== 'All') params.set('category', selectedCategory)
     if (searchQuery.trim()) params.set('q', searchQuery)
     const queryStr = params.toString()
-    router.replace(queryStr ? `/?${queryStr}` : '/', { scroll: false })
+    window.history.replaceState(null, '', queryStr ? `/?${queryStr}` : '/')
     router.push(`/prompts/${prompt.id}`)
   }
 
@@ -293,8 +293,6 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
 }
 
 function HomeInner() {
-  const router = useRouter()
-
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [showCategories, setShowCategories] = useState(false)
@@ -331,7 +329,7 @@ function HomeInner() {
     if (query.trim()) params.set('q', query)
     if (sort !== 'latest') params.set('sort', sort)
     const queryStr = params.toString()
-    router.replace(queryStr ? `/?${queryStr}` : '/', { scroll: false })
+    window.history.replaceState(null, '', queryStr ? `/?${queryStr}` : '/')
   }
 
   const handleSortChange = (sort: 'latest' | 'popular') => {
