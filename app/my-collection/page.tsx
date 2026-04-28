@@ -76,6 +76,7 @@ export default function MyCollectionPage() {
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
+    console.log('🔍 data:', data, 'error:', error)
     if (!error && data) setPrompts(data)
     setLoading(false)
   }
