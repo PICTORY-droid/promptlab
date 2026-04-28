@@ -34,6 +34,7 @@ export default function PersonaPage() {
   const [systemPrompt, setSystemPrompt] = useState('')
   const [copied, setCopied] = useState(false)
 
+  const [previewText, setPreviewText] = useState('')
   const [form, setForm] = useState({
     name: '',
     role: '',
@@ -54,21 +55,17 @@ export default function PersonaPage() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const preview = form.name && form.role ? `당신은 ${form.name}입니다.
-
-[역할]
-${form.role}
-
-[말투]
-${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'professional' ? '전문적이고 격식있게' : form.tone === 'concise' ? '간결하고 핵심만' : '유쾌하고 재미있게'} 대화하세요.
-${form.expertise ? `\n[전문 분야]\n${form.expertise}` : ''}
-${form.forbidden ? `\n[금지 주제]\n${form.forbidden}` : ''}
-
-[첫 인사]
-"안녕하세요! 저는 ${form.name}입니다. 무엇이든 도와드릴게요! 😊"` : ''
 
   const handleSubmit = async () => {
-    if (!form.name || !form.role || !user) return
+    if (!form.name || !form.role) return
+    if (!user) { alert('로그인이 필요합니다.'); return }
+    setPreviewText(`당신은 ${form.name}입니다.
+[역할]
+${form.role}
+[말투]
+${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'professional' ? '전문적이고 격식있게' : form.tone === 'concise' ? '간결하고 핵심만' : '유쾌하고 재미있게'} 대화하세요.
+[첫 인사]
+"안녕하세요! 저는 ${form.name}입니다. 무엇이든 도와드릴게요! 😊"`)
     setLoading(true)
     try {
       const res = await fetch('/api/persona', {
@@ -268,9 +265,9 @@ ${form.forbidden ? `\n[금지 주제]\n${form.forbidden}` : ''}
                 <span style={{ fontFamily: 'monospace', fontSize: '11px', color: '#8b949e', marginLeft: '6px' }}>system-prompt.md — 미리보기</span>
               </div>
               <div style={{ padding: '20px', minHeight: '300px' }}>
-                {preview ? (
+                {previewText ? (
                   <pre style={{ fontFamily: 'monospace', fontSize: '12px', color: '#e6edf3', whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.7, margin: 0 }}>
-                    {preview}
+                    {previewText}
                   </pre>
                 ) : (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '280px', flexDirection: 'column', gap: '12px' }}>
