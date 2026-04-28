@@ -377,13 +377,10 @@ export default function Navbar() {
               return (
                 <button
                   key={tab.href}
-                  onClick={async () => {
-                    if (tab.authRequired) {
-                      const { data: { session } } = await supabase.auth.getSession()
-                      if (!session?.user) {
-                        alert('회원 전용 메뉴입니다.\n로그인 후 이용해주세요.')
-                        return
-                      }
+                  onClick={() => {
+                    if (tab.authRequired && !user) {
+                      alert('회원 전용 메뉴입니다.\n로그인 후 이용해주세요.')
+                      return
                     }
                     window.location.href = tab.href
                   }}
