@@ -32,6 +32,7 @@ export default function MyCollectionPage() {
   const [user, setUser] = useState<User | null>(null)
   const [prompts, setPrompts] = useState<UserPrompt[]>([])
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({ title: '', content: '', description: '', category: '' })
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -55,6 +56,8 @@ export default function MyCollectionPage() {
     }
   }, [])
 
+  useEffect(() => { setMounted(true) }, [])
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('🔍 session:', session)
@@ -76,7 +79,6 @@ export default function MyCollectionPage() {
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
-    console.log('🔍 data:', data, 'error:', error)
     if (!error && data) setPrompts(data)
     setLoading(false)
   }
@@ -139,6 +141,7 @@ export default function MyCollectionPage() {
     fontFamily: 'monospace', fontSize: '13px', outline: 'none',
   }
 
+  if (!mounted) return null
   if (loading && prompts.length === 0) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
