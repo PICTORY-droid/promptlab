@@ -67,6 +67,7 @@ ${form.role}
 ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'professional' ? '전문적이고 격식있게' : form.tone === 'concise' ? '간결하고 핵심만' : '유쾌하고 재미있게'} 대화하세요.
 [첫 인사]
 "안녕하세요! 저는 ${form.name}입니다. 무엇이든 도와드릴게요! 😊"`)
+    if (!previewText) { return }
     setLoading(true)
     try {
       const res = await fetch('/api/persona', {
