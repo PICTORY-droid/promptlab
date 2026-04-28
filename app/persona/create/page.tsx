@@ -72,7 +72,7 @@ ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'profes
       const res = await fetch('/api/persona', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, userId: user.id }),
+        body: JSON.stringify({ ...form, userId: session.user.id }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
