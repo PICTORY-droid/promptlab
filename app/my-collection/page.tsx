@@ -64,6 +64,7 @@ export default function MyCollectionPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session?.user) { window.location.href = '/'; return }
       setUser(session.user)
+      fetchPrompts(session.user.id)
     })
     return () => subscription.unsubscribe()
   }, [])
