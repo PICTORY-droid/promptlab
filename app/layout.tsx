@@ -73,8 +73,8 @@ export default function RootLayout({
           `}
         </Script>
         <ScrollProgressBar />
-        <SWRProvider>
         <Navbar />
+        <SWRProvider>
         {children}
         <footer className="mt-auto py-4 text-center font-mono"
           style={{ borderTop: '1px solid #21262d' }}>
