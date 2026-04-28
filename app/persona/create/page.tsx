@@ -58,7 +58,8 @@ export default function PersonaPage() {
 
   const handleSubmit = async () => {
     if (!form.name || !form.role) return
-    if (!user) { alert('로그인이 필요합니다.'); return }
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) { alert('로그인이 필요합니다.'); return }
     setPreviewText(`당신은 ${form.name}입니다.
 [역할]
 ${form.role}
