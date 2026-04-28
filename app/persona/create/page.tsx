@@ -300,6 +300,17 @@ ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'profes
                 </div>
               ))}
             </div>
+            {/* ChatGPT / Claude 바로가기 */}
+            <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <button onClick={() => window.open('https://chat.openai.com', '_blank')}
+                style={{ padding: '11px', background: '#1a2d1a', border: '1px solid #238636', borderRadius: '8px', color: '#3fb950', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
+                ↗ ChatGPT
+              </button>
+              <button onClick={() => window.open('https://claude.ai', '_blank')}
+                style={{ padding: '11px', background: '#1f2d3d', border: '1px solid #1f6feb', borderRadius: '8px', color: '#58a6ff', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
+                ↗ Claude
+              </button>
+            </div>
           </div>
         </div>
       </div>
