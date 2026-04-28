@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/app/lib/supabase'
+import useSWR from 'swr'
 import { useRouter } from 'next/navigation'
 
 interface Prompt {
@@ -39,15 +40,10 @@ export default function BigBangPage() {
   const [showCards, setShowCards] = useState(false)
   const [bangCode, setBangCode] = useState('')
 
+  const { data: swrData } = useSWR('prompts')
   useEffect(() => {
-    supabase.from('prompts').select('id, title, description, category').limit(500).then(({ data, error }) => {
-      if (error) console.error('프롬프트 로드 오류:', error)
-      if (data) {
-        console.log('로드된 프롬프트 수:', data.length)
-        setPrompts(data)
-      }
-    })
-  }, [])
+    if (swrData && swrData.length > 0) setPrompts(swrData)
+  }, [swrData])
 
   useEffect(() => {
     const canvas = canvasRef.current
