@@ -299,6 +299,8 @@ function HomeInner() {
   const [currentPage, setCurrentPage] = useState(1)
   const [sortBy, setSortBy] = useState<'latest' | 'popular'>('latest')
   const [isSmallScreen, setIsSmallScreen] = useState(false)
+  // SWR 로딩 전에 localStorage 캐시에서 바로 보여주기
+  const [cachedPrompts, setCachedPrompts] = useState<Prompt[] | null>(null)
 
   useEffect(() => {
     const handleResize = () => setIsSmallScreen(window.innerWidth < 640)
@@ -307,7 +309,14 @@ function HomeInner() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const { data: swrPrompts, isLoading: loading } = useSWR(
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('pl-prompts-v2')
+      if (raw) setCachedPrompts(JSON.parse(raw))
+    } catch {}
+  }, [])
+
+  const { data: swrPrompts } = useSWR(
     'prompts',
     async () => {
       const timeout = new Promise<{ data: null; error: Error }>(resolve =>
@@ -320,9 +329,21 @@ function HomeInner() {
       if (error) throw error
       return data ?? []
     },
-    { revalidateOnFocus: false, keepPreviousData: true, errorRetryCount: 1 }
+    {
+      revalidateOnFocus: false,
+      keepPreviousData: true,
+      errorRetryCount: 1,
+      onSuccess: (data) => {
+        // 성공하면 즉시 로컬 캐시에 저장 (beforeunload 의존 안 함)
+        try { localStorage.setItem('pl-prompts-v2', JSON.stringify(data)) } catch {}
+      },
+    }
   )
-  const prompts = swrPrompts ?? []
+
+  // SWR 데이터 우선, 없으면 캐시, 없으면 빈 배열
+  const prompts = swrPrompts ?? cachedPrompts ?? []
+  // 둘 다 없을 때만 로딩 표시
+  const loading = !swrPrompts && cachedPrompts === null
 
   const updateURL = (page: number, category: string, query: string, sort: string = sortBy) => {
     const params = new URLSearchParams()
