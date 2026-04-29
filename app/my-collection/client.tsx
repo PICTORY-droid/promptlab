@@ -32,7 +32,6 @@ export default function MyCollectionPage() {
   const [user, setUser] = useState<User | null>(null)
   const [prompts, setPrompts] = useState<UserPrompt[]>([])
   const [loading, setLoading] = useState(true)
-  const [mounted, setMounted] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({ title: '', content: '', description: '', category: '' })
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -56,8 +55,6 @@ export default function MyCollectionPage() {
     }
   }, [])
 
-  useEffect(() => { setMounted(true) }, [])
-
   const fetchPrompts = async (userId: string) => {
     const { data, error } = await supabase
       .from('user_prompts')
@@ -69,34 +66,21 @@ export default function MyCollectionPage() {
   }
 
   useEffect(() => {
-    let isMounted = true
-
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!isMounted) return
       if (session?.user) {
         setUser(session.user)
         fetchPrompts(session.user.id)
       } else {
-        router.push('/')
-        setLoading(false)
+        router.replace('/')
       }
-    }).catch(() => {
-      if (isMounted) setLoading(false)
+    }).catch(() => setLoading(false))
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') router.replace('/')
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!isMounted) return
-      if (event === 'SIGNED_OUT') {
-        setUser(null)
-        router.push('/')
-      }
-    })
-
-    return () => {
-      isMounted = false
-      subscription.unsubscribe()
-    }
-  }, [router])
+    return () => subscription.unsubscribe()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleEdit = (p: UserPrompt) => {
     setEditingId(p.id)
@@ -156,7 +140,6 @@ export default function MyCollectionPage() {
     fontFamily: 'monospace', fontSize: '13px', outline: 'none',
   }
 
-  if (!mounted) return null
   if (loading && prompts.length === 0) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
