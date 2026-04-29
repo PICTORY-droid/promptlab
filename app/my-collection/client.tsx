@@ -56,12 +56,27 @@ export default function MyCollectionPage() {
   }, [])
 
   const fetchPrompts = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('user_prompts')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-    if (!error && data) setPrompts(data)
+    // 캐시가 있으면 즉시 표시 (로딩 없이)
+    try {
+      const cached = localStorage.getItem(`pl-collection-${userId}`)
+      if (cached) {
+        setPrompts(JSON.parse(cached))
+        setLoading(false)
+      }
+    } catch {}
+
+    // 백그라운드에서 최신 데이터 가져오기 (10초 타임아웃)
+    const timeout = new Promise<{ data: null; error: Error }>(resolve =>
+      setTimeout(() => resolve({ data: null, error: new Error('timeout') }), 10000)
+    )
+    const { data, error } = await Promise.race([
+      supabase.from('user_prompts').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+      timeout,
+    ])
+    if (!error && data) {
+      setPrompts(data)
+      try { localStorage.setItem(`pl-collection-${userId}`, JSON.stringify(data)) } catch {}
+    }
     setLoading(false)
   }
 
