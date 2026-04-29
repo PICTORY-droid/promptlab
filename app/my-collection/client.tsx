@@ -58,21 +58,36 @@ export default function MyCollectionPage() {
 
   useEffect(() => { setMounted(true) }, [])
 
+  // 1단계: 세션 확인 → user 상태만 설정
   useEffect(() => {
+    let isMounted = true
+
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('🔍 session:', session)
-      if (session?.user) { setUser(session.user); fetchPrompts(session.user.id) }
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) return
       if (session?.user) {
         setUser(session.user)
-        fetchPrompts(session.user.id)
-      } else if (event === 'SIGNED_OUT') {
-        window.location.href = '/'
+      } else {
+        router.push('/')
+        setLoading(false)
+      }
+    }).catch(() => {
+      if (isMounted) setLoading(false)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) return
+      if (event === 'SIGNED_OUT') {
+        setUser(null)
+        router.push('/')
       }
     })
-    return () => subscription.unsubscribe()
-  }, [])
+
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+    }
+  }, [router])
+
   const fetchPrompts = async (userId: string) => {
     const { data, error } = await supabase
       .from('user_prompts')
@@ -82,6 +97,11 @@ export default function MyCollectionPage() {
     if (!error && data) setPrompts(data)
     setLoading(false)
   }
+
+  // 2단계: user가 확인되면 딱 한 번만 데이터 fetch
+  useEffect(() => {
+    if (user) fetchPrompts(user.id)
+  }, [user])
 
   const handleEdit = (p: UserPrompt) => {
     setEditingId(p.id)

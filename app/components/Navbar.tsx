@@ -252,10 +252,15 @@ export default function Navbar() {
   }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
     setShowMenu(false)
     setUser(null)
-    window.location.href = '/'
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+    } catch {}
+    // SWR 캐시 초기화 (이전 사용자 데이터 제거)
+    try { localStorage.removeItem('pl-swr-cache') } catch {}
+    try { sessionStorage.removeItem('pl_prompts') } catch {}
+    window.location.replace('/')
   }
 
   const avatarUrl = user?.user_metadata?.avatar_url
