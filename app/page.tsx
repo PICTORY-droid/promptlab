@@ -307,12 +307,6 @@ function HomeInner() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const getFallback = () => {
-    try {
-      const c = sessionStorage.getItem('pl_prompts')
-      return c ? JSON.parse(c) : undefined
-    } catch { return undefined }
-  }
   const { data: swrPrompts, isLoading: loading } = useSWR(
     'prompts',
     async () => {
@@ -322,11 +316,9 @@ function HomeInner() {
         .order('created_at', { ascending: false })
         .limit(2000)
       if (error) throw error
-      const result = data ?? []
-      try { sessionStorage.setItem('pl_prompts', JSON.stringify(result)) } catch {}
-      return result
+      return data ?? []
     },
-    { revalidateOnFocus: false, keepPreviousData: true, fallbackData: getFallback() }
+    { revalidateOnFocus: false, keepPreviousData: true }
   )
   const prompts = swrPrompts ?? []
 
