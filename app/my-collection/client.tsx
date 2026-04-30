@@ -87,30 +87,47 @@ export default function MyCollectionPage() {
 
   useEffect(() => {
     let mounted = true
+    let initialized = false
 
-    // getSession()은 localStorage에서 즉시 읽기 — INITIAL_SESSION 이벤트 대기보다 빠름
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!mounted) return
+    const initialize = (session: { user: User } | null) => {
+      if (initialized) return
+      initialized = true
       if (session?.user) {
-        setUser(session.user)
+        if (mounted) setUser(session.user)
         fetchPrompts(session.user.id)
       } else {
-        setLoading(false)
-        router.replace('/')
+        if (mounted) {
+          setLoading(false)
+          router.replace('/')
+        }
       }
-    })
+    }
 
+    // getSession: localStorage에서 즉시 읽기 (fast path)
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => initialize(session))
+      .catch(() => {})
+
+    // onAuthStateChange: INITIAL_SESSION을 fallback으로 처리
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted) return
-      if (event === 'SIGNED_OUT') {
+      if (event === 'INITIAL_SESSION') {
+        initialize(session)
+      } else if (event === 'SIGNED_OUT') {
         router.replace('/')
       } else if (event === 'TOKEN_REFRESHED' && session?.user) {
         setUser(session.user)
       }
     })
 
+    // 최후 안전망: 5초 후에도 초기화 안 됐으면 강제 종료
+    const safetyTimer = setTimeout(() => {
+      if (!initialized) initialize(null)
+    }, 5000)
+
     return () => {
       mounted = false
+      clearTimeout(safetyTimer)
       subscription.unsubscribe()
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
