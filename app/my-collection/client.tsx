@@ -87,26 +87,41 @@ export default function MyCollectionPage() {
 
   useEffect(() => {
     let redirectTimer: ReturnType<typeof setTimeout> | null = null
+    let fetchCalled = false
+
+    const doFetch = (u: User) => {
+      if (fetchCalled) return
+      fetchCalled = true
+      if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
+      setUser(u)
+      fetchPrompts(u.id)
+    }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') {
         if (session?.user) {
-          if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
-          setUser(session.user)
-          fetchPrompts(session.user.id)
+          doFetch(session.user)
         } else {
-          redirectTimer = setTimeout(() => {
+          // null이면 토큰 만료일 수 있음 — getSession()으로 실제 상태 재확인
+          // getSession()은 내부에서 토큰 갱신까지 처리
+          supabase.auth.getSession().then(({ data: { session: s } }) => {
+            if (s?.user) {
+              doFetch(s.user)
+            } else {
+              redirectTimer = setTimeout(() => {
+                setLoading(false)
+                router.replace('/')
+              }, 500)
+            }
+          }).catch(() => {
             setLoading(false)
             router.replace('/')
-          }, 1500)
+          })
         }
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
-        if (session?.user) {
-          setUser(session.user)
-          fetchPrompts(session.user.id)
-        }
+        if (session?.user) doFetch(session.user)
       } else if (event === 'SIGNED_OUT') {
+        if (redirectTimer) clearTimeout(redirectTimer)
         router.replace('/')
       }
     })
