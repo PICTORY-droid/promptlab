@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/app/lib/supabase'
-import useSWR from 'swr'
 import { useRouter } from 'next/navigation'
 
 interface Prompt {
@@ -38,15 +37,6 @@ export default function BigBangPage() {
   const [orbGlow, setOrbGlow] = useState(false)
   const [showCards, setShowCards] = useState(false)
   const [bangCode, setBangCode] = useState('')
-
-  const { data: prompts = [], isLoading: promptsLoading } = useSWR<Prompt[]>('prompts', async () => {
-    const { data, error } = await supabase
-      .from('prompts')
-      .select('id, title, description, category')
-      .order('created_at', { ascending: false })
-    if (error) throw error
-    return data ?? []
-  })
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -87,16 +77,21 @@ export default function BigBangPage() {
 
   const triggerBigBang = async () => {
     if (banging) return
-    if (promptsLoading || prompts.length === 0) { setStatus('// 프롬프트 로딩 중... 잠시 후 다시 클릭해주세요'); return }
     setBanging(true)
     setShowCards(false)
     setResults([])
     setStatus('// 우주 수축 중...')
-
     setOrbScale(3)
     setOrbGlow(true)
 
-    await new Promise(r => setTimeout(r, 500))
+    // 오브 클릭 시 직접 fetch (마운트 시 대기 불필요)
+    const { data: allPrompts } = await supabase
+      .from('prompts')
+      .select('id, title, description, category')
+      .order('created_at', { ascending: false })
+      .limit(500)
+
+    await new Promise(r => setTimeout(r, 300))
     setOrbScale(0)
     setStatus('// ⚡ 빅뱅 발생!')
 
@@ -104,16 +99,17 @@ export default function BigBangPage() {
     setOrbScale(1)
     setOrbGlow(false)
 
+    const pool = allPrompts ?? []
     const keywords = [kw1, kw2, kw3].filter(Boolean)
     let filtered = keywords.length > 0
-      ? prompts.filter(p => {
+      ? pool.filter(p => {
           const text = (p.title + p.description + p.category).toLowerCase()
           return keywords.some(k => text.includes(k.toLowerCase()))
         })
       : []
 
     if (filtered.length < 3) {
-      filtered = [...prompts].sort(() => Math.random() - 0.5).slice(0, 12)
+      filtered = [...pool].sort(() => Math.random() - 0.5).slice(0, 12)
     } else {
       filtered = filtered.slice(0, 12)
     }
@@ -229,8 +225,8 @@ export default function BigBangPage() {
         </div>
 
         {/* 상태 */}
-        <div style={{ textAlign: 'center', fontFamily: 'monospace', fontSize: '10px', minHeight: '20px', marginBottom: '16px', letterSpacing: '1px', color: promptsLoading ? '#8b949e' : '#3fb950' }}>
-          {promptsLoading ? '// 프롬프트 데이터 수신 중...' : status}
+        <div style={{ textAlign: 'center', fontFamily: 'monospace', fontSize: '10px', minHeight: '20px', marginBottom: '16px', letterSpacing: '1px', color: '#3fb950' }}>
+          {status}
         </div>
 
         {/* 결과 카드 */}
