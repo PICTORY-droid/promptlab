@@ -8,17 +8,13 @@ export default function AuthCallbackPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const code = new URL(window.location.href).searchParams.get('code')
-    if (code) {
-      supabase.auth.exchangeCodeForSession(code).then(() => {
-        router.replace('/')
-      }).catch(() => {
-        router.replace('/')
-      })
-    } else {
-      // fragment(#access_token=...) 방식은 Supabase SDK가 detectSessionInUrl로 자동 처리
+    // Supabase SDK는 createClient 시점에 initialize()를 자동 실행하고
+    // URL의 code(PKCE) 또는 access_token(Implicit)을 자동으로 처리하여 세션을 localStorage에 저장함
+    // exchangeCodeForSession을 별도 호출하면 일회용 code를 중복 사용하여 실패함
+    // initialize() 완료를 기다린 후 redirect만 수행
+    supabase.auth.initialize().then(() => {
       router.replace('/')
-    }
+    })
   }, [router])
 
   return (
