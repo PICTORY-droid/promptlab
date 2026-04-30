@@ -56,7 +56,7 @@ export default function MyCollectionPage() {
   }, [])
 
   const fetchPrompts = async (userId: string) => {
-    // 캐시가 있으면 즉시 표시 (로딩 없이)
+    // 캐시가 있으면 즉시 표시
     try {
       const cached = localStorage.getItem(`pl-collection-${userId}`)
       if (cached) {
@@ -65,39 +65,58 @@ export default function MyCollectionPage() {
       }
     } catch {}
 
-    // 백그라운드에서 최신 데이터 가져오기 (10초 타임아웃)
-    const timeout = new Promise<{ data: null; error: Error }>(resolve =>
-      setTimeout(() => resolve({ data: null, error: new Error('timeout') }), 10000)
-    )
-    const { data, error } = await Promise.race([
-      supabase.from('user_prompts').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
-      timeout,
-    ])
-    if (!error && data) {
-      setPrompts(data)
-      try { localStorage.setItem(`pl-collection-${userId}`, JSON.stringify(data)) } catch {}
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 8000)
+    try {
+      const { data, error } = await supabase
+        .from('user_prompts')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .abortSignal(controller.signal)
+      clearTimeout(timeoutId)
+      if (!error && data) {
+        setPrompts(data)
+        try { localStorage.setItem(`pl-collection-${userId}`, JSON.stringify(data)) } catch {}
+      }
+    } catch {
+      clearTimeout(timeoutId)
     }
     setLoading(false)
   }
 
   useEffect(() => {
-    // getSession()은 Supabase 초기화 전 null을 반환할 수 있음
-    // INITIAL_SESSION 이벤트는 초기화 완료 후 반드시 한 번 발생
+    let redirectTimer: ReturnType<typeof setTimeout> | null = null
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') {
         if (session?.user) {
+          if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
           setUser(session.user)
           fetchPrompts(session.user.id)
         } else {
-          setLoading(false)
-          router.replace('/')
+          // autoRefreshToken으로 토큰 갱신 중일 수 있으므로 즉시 리다이렉트하지 않고 대기
+          redirectTimer = setTimeout(() => {
+            setLoading(false)
+            router.replace('/')
+          }, 1500)
+        }
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        // 토큰 갱신 완료 후 세션 복구
+        if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
+        if (session?.user) {
+          setUser(session.user)
+          fetchPrompts(session.user.id)
         }
       } else if (event === 'SIGNED_OUT') {
         router.replace('/')
       }
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      if (redirectTimer) clearTimeout(redirectTimer)
+      subscription.unsubscribe()
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleEdit = (p: UserPrompt) => {

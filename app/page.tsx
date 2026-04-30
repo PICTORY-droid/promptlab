@@ -12,7 +12,6 @@ interface Prompt {
   id: string
   title: string
   description: string
-  content: string
   category: string
   author_name: string
   likes: number
@@ -319,22 +318,28 @@ function HomeInner() {
   const { data: swrPrompts } = useSWR(
     'prompts',
     async () => {
-      const timeout = new Promise<{ data: null; error: Error }>(resolve =>
-        setTimeout(() => resolve({ data: null, error: new Error('timeout') }), 10000)
-      )
-      const { data, error } = await Promise.race([
-        supabase.from('prompts').select('*').order('created_at', { ascending: false }).limit(2000),
-        timeout,
-      ])
-      if (error) throw error
-      return data ?? []
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+      try {
+        const { data, error } = await supabase
+          .from('prompts')
+          .select('id, title, description, category, author_name, views, likes, created_at')
+          .order('created_at', { ascending: false })
+          .limit(2000)
+          .abortSignal(controller.signal)
+        clearTimeout(timeoutId)
+        if (error) throw error
+        return data ?? []
+      } catch (e) {
+        clearTimeout(timeoutId)
+        throw e
+      }
     },
     {
       revalidateOnFocus: false,
       keepPreviousData: true,
       errorRetryCount: 1,
       onSuccess: (data) => {
-        // 성공하면 즉시 로컬 캐시에 저장 (beforeunload 의존 안 함)
         try { localStorage.setItem('pl-prompts-v2', JSON.stringify(data)) } catch {}
       },
     }

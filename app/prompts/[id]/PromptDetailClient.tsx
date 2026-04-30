@@ -648,6 +648,7 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
   const [prompt, setPrompt] = useState<Prompt | null>(null)
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(false)
   const [isLiking, setIsLiking] = useState(false)
   const [isDisliking, setIsDisliking] = useState(false)
   const [liked, setLiked] = useState(false)
@@ -718,15 +719,74 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
   }, [handleKeyDown])
 
   useEffect(() => {
+    let mounted = true
+    let hasCachedData = false
+
+    // 1순위: 이전에 방문한 상세 캐시 (content 포함 전체 데이터)
+    try {
+      const promptCache = localStorage.getItem(`pl-prompt-${id}`)
+      if (promptCache) {
+        const found: Prompt = JSON.parse(promptCache)
+        if (found?.content) {
+          setPrompt(found)
+          setLoading(false)
+          hasCachedData = true
+        }
+      }
+    } catch {}
+
+    // 2순위: 메인 페이지 캐시 (content 있는 경우만 — 구버전 캐시 호환)
+    if (!hasCachedData) {
+      try {
+        const mainCache = localStorage.getItem('pl-prompts-v2')
+        if (mainCache) {
+          const all: Prompt[] = JSON.parse(mainCache)
+          const found = all.find(p => p.id === id)
+          if (found?.content) {
+            setPrompt(found)
+            setLoading(false)
+            hasCachedData = true
+          }
+        }
+      } catch {}
+    }
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 8000)
+
     const fetchAndIncrement = async () => {
-      const { data, error } = await supabase
-        .from('prompts').select('*').eq('id', id).single()
-      if (error || !data) { notFound(); return }
-      setPrompt(data)
-      setLoading(false)
-      await supabase.from('prompts').update({ views: (data.views || 0) + 1 }).eq('id', id)
+      try {
+        const { data, error } = await supabase
+          .from('prompts')
+          .select('*')
+          .eq('id', id)
+          .abortSignal(controller.signal)
+          .single()
+        clearTimeout(timeoutId)
+        if (!mounted) return
+        if (error || !data) { notFound(); return }
+        setPrompt(data)
+        setLoading(false)
+        // 상세 캐시 저장 (다음 방문 시 즉시 표시)
+        try { localStorage.setItem(`pl-prompt-${id}`, JSON.stringify(data)) } catch {}
+        supabase.from('prompts').update({ views: (data.views || 0) + 1 }).eq('id', id)
+      } catch {
+        clearTimeout(timeoutId)
+        if (!mounted) return
+        // 타임아웃: 캐시 데이터 없으면 오류 표시, 있으면 캐시 데이터 유지
+        if (!hasCachedData) {
+          setFetchError(true)
+          setLoading(false)
+        }
+      }
     }
     fetchAndIncrement()
+
+    return () => {
+      mounted = false
+      clearTimeout(timeoutId)
+      controller.abort()
+    }
   }, [id])
 
   const handleAuthConfirm = async (pw: string) => {
@@ -876,6 +936,23 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
         <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
           <span style={{ color: '#3fb950' }}>$</span> loading prompt
           <span className="blink">_</span>
+        </div>
+      </main>
+    )
+  }
+
+  if (fetchError && !prompt) {
+    return (
+      <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
+        <div className="text-center font-mono px-4">
+          <p className="text-base mb-2" style={{ color: '#f85149' }}>// 연결 시간 초과</p>
+          <p className="text-sm mb-6" style={{ color: '#8b949e' }}>$ 네트워크 상태를 확인하고 다시 시도해주세요</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2.5 rounded-lg font-mono text-sm"
+            style={{ background: 'transparent', color: '#58a6ff', border: '1px solid #58a6ff', cursor: 'pointer' }}>
+            // 재시도
+          </button>
         </div>
       </main>
     )

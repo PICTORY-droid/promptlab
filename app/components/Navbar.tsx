@@ -196,13 +196,29 @@ export default function Navbar() {
     const interval = setInterval(updateTime, 1000)
 
     let realtimeSub: ReturnType<typeof supabase.channel> | null = null
+    let activityLoaded = false  // 중복 호출 방지
 
     const loadActivity = async (userId: string) => {
-      const { data } = await supabase.from('user_activity').select('total_copied').eq('user_id', userId).single()
-      if (data) {
-        setTotalCopied(data.total_copied || 0)
-      } else {
-        await supabase.from('user_activity').insert({ user_id: userId, total_copied: 0, daily_copied: 0 })
+      if (activityLoaded) return
+      activityLoaded = true
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      try {
+        const { data } = await supabase
+          .from('user_activity')
+          .select('total_copied')
+          .eq('user_id', userId)
+          .abortSignal(controller.signal)
+          .single()
+        clearTimeout(timeoutId)
+        if (data) {
+          setTotalCopied(data.total_copied || 0)
+        } else {
+          supabase.from('user_activity').insert({ user_id: userId, total_copied: 0, daily_copied: 0 })
+        }
+      } catch {
+        clearTimeout(timeoutId)
+        activityLoaded = false  // 실패 시 재시도 허용
       }
     }
 
@@ -215,14 +231,17 @@ export default function Navbar() {
       realtimeSub = ch
     }
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) { await loadActivity(session.user.id); setupRealtime(session.user.id) }
-    })
+    // getSession() 제거 — onAuthStateChange의 INITIAL_SESSION으로 통합
+    // (두 곳에서 loadActivity 동시 호출되던 문제 해결)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) { await loadActivity(session.user.id); setupRealtime(session.user.id) }
-      else { if (realtimeSub) supabase.removeChannel(realtimeSub) }
+      if (session?.user) {
+        await loadActivity(session.user.id)
+        setupRealtime(session.user.id)
+      } else {
+        activityLoaded = false
+        if (realtimeSub) supabase.removeChannel(realtimeSub)
+      }
     })
 
     return () => { clearInterval(interval); subscription.unsubscribe(); if (realtimeSub) supabase.removeChannel(realtimeSub) }
