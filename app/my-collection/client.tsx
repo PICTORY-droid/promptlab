@@ -34,9 +34,9 @@ function readUserFromStorage(): User | null {
   if (typeof window === 'undefined') return null
   try {
     const stored = JSON.parse(localStorage.getItem('supabase.auth.token') || 'null')
-    if (stored?.user && stored?.expires_at && Date.now() < stored.expires_at * 1000) {
-      return stored.user as User
-    }
+    // expires_at 체크 제거: 만료된 토큰이어도 user 즉시 반환
+    // autoRefreshToken:true 로 SDK가 자동 갱신하고 TOKEN_REFRESHED 이벤트로 업데이트됨
+    return stored?.user ?? null
   } catch {}
   return null
 }
