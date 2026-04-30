@@ -173,17 +173,25 @@ export default function MyCollectionPage() {
     fontFamily: 'monospace', fontSize: '13px', outline: 'none',
   }
 
-  if (loading && prompts.length === 0) {
-    return (
-      <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
-        <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
-          <span style={{ color: '#3fb950' }}>$</span> loading collection<span className="blink">_</span>
-        </div>
-      </main>
-    )
-  }
-
   const selected = prompts.find(p => p.id === selectedId)
+
+  const SkeletonCard = () => (
+    <div className="rounded-xl overflow-hidden" style={{ background: '#161b22', border: '1px solid #30363d' }}>
+      <div className="flex items-center px-3 py-1.5" style={{ background: '#21262d', borderBottom: '1px solid #30363d' }}>
+        <div className="flex gap-1.5 mr-3">
+          <div className="w-2 h-2 rounded-full" style={{ background: '#30363d' }}></div>
+          <div className="w-2 h-2 rounded-full" style={{ background: '#30363d' }}></div>
+          <div className="w-2 h-2 rounded-full" style={{ background: '#30363d' }}></div>
+        </div>
+        <div className="h-3 rounded w-32" style={{ background: '#21262d', border: '1px solid #30363d' }}></div>
+      </div>
+      <div className="p-4">
+        <div className="h-4 rounded w-3/4 mb-2 animate-pulse" style={{ background: '#21262d' }}></div>
+        <div className="h-3 rounded w-1/2 mb-4 animate-pulse" style={{ background: '#21262d' }}></div>
+        <div className="h-20 rounded animate-pulse" style={{ background: '#0d1117', border: '1px solid #21262d' }}></div>
+      </div>
+    </div>
+  )
 
   return (
     <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }} suppressHydrationWarning>
@@ -382,11 +390,15 @@ export default function MyCollectionPage() {
             <span className="blink" style={{ color: '#bc8cff' }}>_</span>
           </h1>
           <p className="font-mono text-xs" style={{ color: '#484f58' }}>
-            // {displayName} · {prompts.length}개의 프롬프트
+            // {displayName} · {loading && prompts.length === 0 ? '...' : `${prompts.length}개의 프롬프트`}
           </p>
         </div>
 
-        {prompts.length === 0 ? (
+        {loading && prompts.length === 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
+          </div>
+        ) : prompts.length === 0 ? (
           <div className="text-center py-20 font-mono">
             <p className="text-4xl mb-4">📭</p>
             <p style={{ color: '#8b949e' }}>// 아직 저장된 프롬프트가 없습니다</p>
