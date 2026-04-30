@@ -90,10 +90,9 @@ export default function MyCollectionPage() {
     return () => subscription.unsubscribe()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // SWR로 데이터 페칭 - 메인 페이지와 동일한 SWRProvider(localStorage) 사용
-  // key가 null이면 fetch 안 함 (user 없을 때)
-  const { data: prompts = [], mutate } = useSWR<UserPrompt[]>(
-    user ? `user-prompts-${user.id}` : null,
+  // authChecked 후에만 fetch - INITIAL_SESSION 완료로 JWT가 확보된 시점
+  const { data: prompts = [], isLoading: promptsLoading, mutate } = useSWR<UserPrompt[]>(
+    (user && authChecked) ? `user-prompts-${user.id}` : null,
     async () => {
       const { data, error } = await supabase
         .from('user_prompts')
@@ -375,7 +374,13 @@ export default function MyCollectionPage() {
           </p>
         </div>
 
-        {prompts.length === 0 ? (
+        {promptsLoading ? (
+          <div className="text-center py-20 font-mono">
+            <span style={{ color: '#58a6ff' }}>$</span>
+            <span style={{ color: '#e6edf3' }}> loading prompts</span>
+            <span className="blink" style={{ color: '#58a6ff' }}>_</span>
+          </div>
+        ) : prompts.length === 0 ? (
           <div className="text-center py-20 font-mono">
             <p className="text-4xl mb-4">📭</p>
             <p style={{ color: '#8b949e' }}>// 아직 저장된 프롬프트가 없습니다</p>
