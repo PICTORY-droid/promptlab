@@ -88,45 +88,56 @@ export default function MyCollectionPage() {
   useEffect(() => {
     let mounted = true
     let initialized = false
+    let redirectTimer: ReturnType<typeof setTimeout> | null = null
 
-    const initialize = (session: { user: User } | null) => {
-      if (initialized) return
+    const loadUser = (user: User) => {
+      if (initialized || !mounted) return
       initialized = true
-      if (session?.user) {
-        if (mounted) setUser(session.user)
-        fetchPrompts(session.user.id)
-      } else {
-        if (mounted) {
+      if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
+      setUser(user)
+      fetchPrompts(user.id)
+    }
+
+    const scheduleRedirect = () => {
+      if (initialized || redirectTimer) return
+      // 세션 없을 때 즉시 리다이렉트 하지 않고 TOKEN_REFRESHED 기다림
+      redirectTimer = setTimeout(() => {
+        if (!initialized && mounted) {
           setLoading(false)
           router.replace('/')
         }
-      }
+      }, 1500)
     }
 
-    // getSession: localStorage에서 즉시 읽기 (fast path)
+    // fast path: localStorage에서 즉시 읽기
     supabase.auth.getSession()
-      .then(({ data: { session } }) => initialize(session))
-      .catch(() => {})
+      .then(({ data: { session } }) => {
+        if (!mounted) return
+        if (session?.user) loadUser(session.user)
+        else scheduleRedirect()
+      })
+      .catch(() => { if (mounted) scheduleRedirect() })
 
-    // onAuthStateChange: INITIAL_SESSION을 fallback으로 처리
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted) return
-      if (event === 'INITIAL_SESSION') {
-        initialize(session)
+      if (session?.user && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+        // 토큰 갱신 완료 또는 로그인 — 항상 loadUser 시도
+        loadUser(session.user)
       } else if (event === 'SIGNED_OUT') {
-        router.replace('/')
-      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-        setUser(session.user)
+        if (redirectTimer) clearTimeout(redirectTimer)
+        if (mounted) { setLoading(false); router.replace('/') }
       }
+      // INITIAL_SESSION with null → 무시 (getSession이 TOKEN_REFRESHED 기다림)
     })
 
-    // 최후 안전망: 5초 후에도 초기화 안 됐으면 강제 종료
+    // 5초 안전망
     const safetyTimer = setTimeout(() => {
-      if (!initialized) initialize(null)
+      if (!initialized && mounted) { setLoading(false); router.replace('/') }
     }, 5000)
 
     return () => {
       mounted = false
+      if (redirectTimer) clearTimeout(redirectTimer)
       clearTimeout(safetyTimer)
       subscription.unsubscribe()
     }
