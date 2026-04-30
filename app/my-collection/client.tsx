@@ -56,7 +56,6 @@ export default function MyCollectionPage() {
   }, [])
 
   const fetchPrompts = async (userId: string) => {
-    // 캐시가 있으면 즉시 표시
     try {
       const cached = localStorage.getItem(`pl-collection-${userId}`)
       if (cached) {
@@ -65,48 +64,55 @@ export default function MyCollectionPage() {
       }
     } catch {}
 
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 8000)
     try {
       const { data, error } = await supabase
         .from('user_prompts')
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
-        .abortSignal(controller.signal)
-      clearTimeout(timeoutId)
       if (!error && data) {
         setPrompts(data)
         try { localStorage.setItem(`pl-collection-${userId}`, JSON.stringify(data)) } catch {}
       }
-    } catch {
-      clearTimeout(timeoutId)
-    }
+    } catch {}
+
     setLoading(false)
   }
 
   useEffect(() => {
+    let fetched = false
     let redirectTimer: ReturnType<typeof setTimeout> | null = null
 
+    const doFetch = (u: User) => {
+      if (fetched) return
+      fetched = true
+      if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
+      setUser(u)
+      fetchPrompts(u.id)
+    }
+
+    // getSession()은 토큰 만료 시 내부에서 자동 갱신까지 처리 후 반환
+    // INITIAL_SESSION에 의존하지 않으므로 타이밍 경쟁 없음
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        doFetch(session.user)
+      } else {
+        redirectTimer = setTimeout(() => {
+          setLoading(false)
+          router.replace('/')
+        }, 300)
+      }
+    }).catch(() => {
+      setLoading(false)
+      router.replace('/')
+    })
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'INITIAL_SESSION') {
-        if (session?.user) {
-          if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
-          setUser(session.user)
-          fetchPrompts(session.user.id)
-        } else {
-          redirectTimer = setTimeout(() => {
-            setLoading(false)
-            router.replace('/')
-          }, 1500)
-        }
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
-        if (session?.user) {
-          setUser(session.user)
-          fetchPrompts(session.user.id)
-        }
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        doFetch(session.user)
       } else if (event === 'SIGNED_OUT') {
+        if (redirectTimer) clearTimeout(redirectTimer)
+        setLoading(false)
         router.replace('/')
       }
     })
