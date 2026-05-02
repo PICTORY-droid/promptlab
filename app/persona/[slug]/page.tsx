@@ -25,7 +25,8 @@ const TONE_LABEL: Record<string, string> = {
 }
 
 export default function PersonaSlugPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params)
+  const resolvedParams = use(params)
+  const slug = String(resolvedParams?.slug || '').trim()
   const router = useRouter()
   const [persona, setPersona] = useState<PersonaCard | null>(null)
   const [loading, setLoading] = useState(true)
