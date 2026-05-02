@@ -49,17 +49,44 @@ export default function PersonaSlugPage({ params }: { params: Promise<{ slug: st
   }, [])
 
   useEffect(() => {
+    let alive = true
+
+    const timer = setTimeout(() => {
+      if (alive) setLoading(false)
+    }, 4000)
+
     const fetch = async () => {
-      const { data, error } = await supabase
-        .from('persona_cards')
-        .select('*')
-        .eq('slug', slug)
-        .single()
-      if (error || !data) { setLoading(false); return }
-      setPersona(data)
-      setLoading(false)
+      try {
+        const { data, error } = await supabase
+          .from('persona_cards')
+          .select('*')
+          .eq('slug', slug)
+          .maybeSingle()
+
+        if (!alive) return
+
+        if (error || !data) {
+          setPersona(null)
+          return
+        }
+
+        setPersona(data)
+      } catch {
+        if (alive) setPersona(null)
+      } finally {
+        if (alive) {
+          clearTimeout(timer)
+          setLoading(false)
+        }
+      }
     }
+
     fetch()
+
+    return () => {
+      alive = false
+      clearTimeout(timer)
+    }
   }, [slug])
 
   const handleCopy = async () => {
