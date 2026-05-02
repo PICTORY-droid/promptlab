@@ -346,7 +346,13 @@ export default function Navbar() {
                           <div style={{ color: '#e6edf3', fontSize: '12px', fontFamily: 'monospace', fontWeight: 700 }}>{displayName}</div>
                           <div style={{ color: '#8b949e', fontSize: '10px', fontFamily: 'monospace', marginTop: '2px' }}>{user.email}</div>
                         </div>
-                        <a href="/my-personas" style={{ display: 'block', padding: '10px 14px', color: '#58a6ff', fontSize: '12px', fontFamily: 'monospace', textDecoration: 'none', borderBottom: '1px solid #21262d' }}
+                        <a href="/my-collection"
+              style={{ display: 'block', padding: '10px 14px', color: '#bc8cff', fontSize: '12px', fontFamily: 'monospace', textDecoration: 'none', borderBottom: '1px solid #21262d' }}
+              onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
+              onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
+              📁 내 컬렉션
+            </a>
+            <a href="/my-personas" style={{ display: 'block', padding: '10px 14px', color: '#58a6ff', fontSize: '12px', fontFamily: 'monospace', textDecoration: 'none', borderBottom: '1px solid #21262d' }}
                           onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
                           onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
                           🤖 AI 페르소나
