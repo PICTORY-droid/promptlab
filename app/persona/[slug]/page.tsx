@@ -33,6 +33,7 @@ export default function PersonaSlugPage() {
   const [shareMenuOpen, setShareMenuOpen] = useState(false)
 
   useEffect(() => {
+    if (!slug) return
     if (typeof window !== 'undefined') {
       if (!window.Kakao) {
         const script = document.createElement('script')
