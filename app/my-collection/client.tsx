@@ -54,6 +54,12 @@ export default function MyCollectionPage() {
   // 마운트 즉시 localStorage에서 동기적으로 user 읽기 → INITIAL_SESSION 대기 없이 즉시 SWR key 설정
   const [user, setUser] = useState<User | null>(readUserFromStorage)
   const [authChecked, setAuthChecked] = useState(false)
+  const [cachedPrompts, setCachedPrompts] = useState<UserPrompt[]>(() => {
+    try {
+      const c = typeof window !== 'undefined' ? localStorage.getItem('my_collection_cache') : null
+      return c ? JSON.parse(c) : []
+    } catch { return [] }
+  })
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({ title: '', content: '', description: '', category: '' })
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -400,7 +406,7 @@ export default function MyCollectionPage() {
           </p>
         </div>
 
-        {(!authChecked && !!user) || promptsLoading ? (
+        {((!authChecked && !!user && prompts.length === 0) || (promptsLoading && prompts.length === 0)) ? (
           <div className="text-center py-20 font-mono">
             <span style={{ color: '#58a6ff' }}>$</span>
             <span style={{ color: '#e6edf3' }}> loading prompts</span>
