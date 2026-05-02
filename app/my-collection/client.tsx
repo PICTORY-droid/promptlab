@@ -30,7 +30,15 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 
 // SupabaseClient.ts: defaultStorageKey = `sb-${hostname.split('.')[0]}-auth-token`
 // URL: hkijkcoshdzzmaxiihzm.supabase.co → key: sb-hkijkcoshdzzmaxiihzm-auth-token
-const SUPABASE_STORAGE_KEY = `sb-${new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname.split('.')[0]}-auth-token`
+const getSupabaseKey = () => {
+  try {
+    const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\n/g, '').trim()
+    return `sb-${new URL(url).hostname.split('.')[0]}-auth-token`
+  } catch {
+    return 'sb-auth-token'
+  }
+}
+const SUPABASE_STORAGE_KEY = getSupabaseKey()
 
 function readUserFromStorage(): User | null {
   if (typeof window === 'undefined') return null
