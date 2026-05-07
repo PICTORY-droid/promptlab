@@ -322,7 +322,7 @@ ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'profes
             {/* 내 페르소나 카드 이동 */}
             <button onClick={() => router.push('/my-personas')}
               style={{ marginTop: '12px', width: '100%', padding: '12px', background: 'transparent', color: '#bc8cff', border: '1px solid #8957e5', borderRadius: '8px', fontFamily: 'monospace', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>
-              🤖 내 페르소나 카드
+              🤖 내 페르소나 카드에 저장
             </button>
           </div>
         </div>
