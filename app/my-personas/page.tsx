@@ -82,14 +82,10 @@ export default function MyPersonasPage() {
     <div style={{
       padding: 'clamp(28px, 7vw, 56px)'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+      <div style={{ marginBottom: '20px' }}>
         <h2 style={{ color: '#fff', margin: 0, fontFamily: 'monospace' }}>
           내 페르소나
         </h2>
-        <button onClick={() => router.push('/persona/create')}
-          style={{ padding: '9px 18px', background: 'transparent', color: '#bc8cff', border: '1px solid #8957e5', borderRadius: '8px', fontFamily: 'monospace', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
-          ⑂ 새 페르소나 만들기
-        </button>
       </div>
 
       {personas.length === 0 && (
