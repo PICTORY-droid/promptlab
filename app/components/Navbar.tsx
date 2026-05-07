@@ -103,6 +103,8 @@ function GradeAvatar({ avatarUrl, displayName, grade }: { avatarUrl?: string; di
 
 function MatrixRain() {
   useEffect(() => {
+    if (window.innerWidth < 768) return
+
     const canvas = document.getElementById('matrix-canvas-global') as HTMLCanvasElement
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -125,10 +127,22 @@ function MatrixRain() {
         drops[i]++
       })
     }
-    const interval = setInterval(draw, 33)
+    let intervalId: ReturnType<typeof setInterval> | null = setInterval(draw, 33)
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (intervalId) { clearInterval(intervalId); intervalId = null }
+      } else {
+        if (!intervalId) intervalId = setInterval(draw, 33)
+      }
+    }
     const handleResize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('resize', handleResize)
-    return () => { clearInterval(interval); window.removeEventListener('resize', handleResize) }
+    return () => {
+      if (intervalId) clearInterval(intervalId)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
   return <canvas id="matrix-canvas-global" style={{ position: 'fixed', top: 0, left: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.15 }} />
 }
@@ -136,6 +150,8 @@ function MatrixRain() {
 function CursorTrail() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
+    if (window.innerWidth < 768) return
+
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -145,12 +161,8 @@ function CursorTrail() {
     interface Particle { x: number; y: number; size: number; alpha: number; vx: number; vy: number; color: string }
     const particles: Particle[] = []
     const colors = ['#3fb950', '#58a6ff', '#bc8cff', '#39c5cf']
-    let animId: number
-    const onMove = (e: MouseEvent) => {
-      for (let i = 0; i < 3; i++) {
-        particles.push({ x: e.clientX, y: e.clientY, size: Math.random() * 4 + 1, alpha: 1, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, color: colors[Math.floor(Math.random() * colors.length)] })
-      }
-    }
+    let animId = 0
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -161,16 +173,27 @@ function CursorTrail() {
         ctx.shadowBlur = 8; ctx.shadowColor = p.color
         ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); ctx.restore()
       }
-      animId = requestAnimationFrame(animate)
+      if (particles.length > 0) {
+        animId = requestAnimationFrame(animate)
+      } else {
+        animId = 0  // 파티클 소진 시 루프 중단
+      }
     }
+
+    const onMove = (e: MouseEvent) => {
+      for (let i = 0; i < 3; i++) {
+        particles.push({ x: e.clientX, y: e.clientY, size: Math.random() * 4 + 1, alpha: 1, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, color: colors[Math.floor(Math.random() * colors.length)] })
+      }
+      if (!animId) animId = requestAnimationFrame(animate)  // 루프 재시작
+    }
+
     const handleResize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('resize', handleResize)
-    animate()
     return () => {
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('resize', handleResize)
-      cancelAnimationFrame(animId)
+      if (animId) cancelAnimationFrame(animId)
     }
   }, [])
   return <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, left: 0, zIndex: 1, pointerEvents: 'none' }} />

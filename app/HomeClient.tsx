@@ -213,7 +213,7 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
             setTimeout(() => {
               el.style.opacity = '1'
               el.style.transform = 'translateY(0)'
-            }, index * 80)
+            }, Math.min(index * 50, 300))
             observer.disconnect()
           }
         })

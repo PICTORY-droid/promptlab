@@ -1,8 +1,8 @@
 'use client'
 
 import { supabase } from '@/app/lib/supabase'
-import { notFound, useRouter } from 'next/navigation'
-import { useState, useEffect, useCallback, use } from 'react'
+import { notFound, useRouter, useParams } from 'next/navigation'
+import { useState, useEffect, useCallback } from 'react'
 import type { User } from '@supabase/supabase-js'
 
 declare global {
@@ -641,9 +641,10 @@ function useEasterEgg() {
 
 const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a']
 
-export default function PromptDetailClient({ params }: { params: Promise<{ id: string }> }) {
+export default function PromptDetailClient() {
   const router = useRouter()
-  const { id } = use(params)
+  const params = useParams()
+  const id = String(params?.id || '').trim()
 
   const [prompt, setPrompt] = useState<Prompt | null>(null)
   const [copied, setCopied] = useState(false)
@@ -752,7 +753,7 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
     }
 
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 8000)
+    const timeoutId = setTimeout(() => controller.abort(), 15000)
 
     const fetchAndIncrement = async () => {
       try {
