@@ -44,6 +44,8 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 
 const CATEGORIES = ['All', 'Coding', 'Marketing', 'Writing', 'Education', 'General', 'Other', 'Finance', 'Legal', 'Health', 'Career', 'Business', 'Parenting', 'Lifestyle', 'Tech', 'Real Estate', 'Food', 'Beauty', 'Agriculture', 'Social', 'Psychology', 'Environment', 'Global']
 
+const PAGE_SIZE = 30
+
 function TypingAnimation() {
   const fullText = "// 프롬프트를 제대로 알면 AI 수준이 달라진다"
   const [scanProgress, setScanProgress] = useState(0)
@@ -289,20 +291,62 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
   )
 }
 
-export default function HomeClient({ initialPrompts }: { initialPrompts: Prompt[] }) {
+interface HomeClientProps {
+  initialPrompts: Prompt[]
+  initialCount: number
+}
+
+export default function HomeClient({ initialPrompts, initialCount }: HomeClientProps) {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
+  const [appliedSearch, setAppliedSearch] = useState('')
   const [showCategories, setShowCategories] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [sortBy, setSortBy] = useState<'latest' | 'popular'>('latest')
-  const [isSmallScreen, setIsSmallScreen] = useState(false)
+
+  const [prompts, setPrompts] = useState<Prompt[]>(initialPrompts)
+  const [totalCount, setTotalCount] = useState(initialCount)
+  const [loading, setLoading] = useState(false)
+
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    const handleResize = () => setIsSmallScreen(window.innerWidth < 640)
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    const isDefault =
+      selectedCategory === 'All' &&
+      appliedSearch === '' &&
+      currentPage === 1 &&
+      sortBy === 'latest'
+
+    if (isDefault) {
+      setPrompts(initialPrompts)
+      setTotalCount(initialCount)
+      return
+    }
+
+    let cancelled = false
+    setLoading(true)
+
+    const params = new URLSearchParams()
+    if (selectedCategory !== 'All') params.set('category', selectedCategory)
+    if (appliedSearch) params.set('q', appliedSearch)
+    if (sortBy !== 'latest') params.set('sort', sortBy)
+    if (currentPage > 1) params.set('page', String(currentPage))
+
+    fetch(`/api/prompts?${params}`)
+      .then(r => r.json())
+      .then(({ data, count }: { data: Prompt[]; count: number }) => {
+        if (!cancelled) {
+          setPrompts(data ?? [])
+          setTotalCount(count ?? 0)
+          setLoading(false)
+        }
+      })
+      .catch(() => { if (!cancelled) setLoading(false) })
+
+    return () => { cancelled = true }
+  }, [selectedCategory, appliedSearch, currentPage, sortBy, initialPrompts, initialCount])
+
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE)
 
   const updateURL = (page: number, category: string, query: string, sort: string = sortBy) => {
     const params = new URLSearchParams()
@@ -320,21 +364,6 @@ export default function HomeClient({ initialPrompts }: { initialPrompts: Prompt[
     updateURL(1, selectedCategory, searchQuery, sort)
   }
 
-  const filtered = initialPrompts
-    .filter(p => {
-      const matchCat = selectedCategory === 'All' || p.category === selectedCategory
-      const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.author_name.toLowerCase().includes(searchQuery.toLowerCase())
-      return matchCat && matchSearch
-    })
-    .sort((a, b) => sortBy === 'popular' ? (b.views - a.views) : 0)
-
-  const itemsPerPage = isSmallScreen ? 20 : 30
-  const totalPages = Math.ceil(filtered.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedPrompts = filtered.slice(startIndex, startIndex + itemsPerPage)
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
     updateURL(page, selectedCategory, searchQuery)
@@ -347,7 +376,18 @@ export default function HomeClient({ initialPrompts }: { initialPrompts: Prompt[
     updateURL(1, cat, searchQuery)
   }
 
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value)
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
+    searchTimerRef.current = setTimeout(() => {
+      setAppliedSearch(value)
+      setCurrentPage(1)
+    }, 400)
+  }
+
   const handleSearch = () => {
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
+    setAppliedSearch(searchQuery)
     setCurrentPage(1)
     updateURL(1, selectedCategory, searchQuery)
     if (searchQuery.trim()) {
@@ -421,7 +461,7 @@ export default function HomeClient({ initialPrompts }: { initialPrompts: Prompt[
             <input
               type="text"
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={e => handleSearchChange(e.target.value)}
               placeholder="단어로 검색하세요"
               style={{
                 width: '100%', padding: '8px 12px',
@@ -431,7 +471,7 @@ export default function HomeClient({ initialPrompts }: { initialPrompts: Prompt[
               }}
               onFocus={e => e.target.style.borderColor = '#58a6ff'}
               onBlur={e => e.target.style.borderColor = '#30363d'}
-              onKeyPress={e => e.key === 'Enter' && handleSearch()}
+              onKeyDown={e => e.key === 'Enter' && handleSearch()}
             />
           </div>
           <button
@@ -484,26 +524,28 @@ export default function HomeClient({ initialPrompts }: { initialPrompts: Prompt[
           ))}
         </div>
 
-        {filtered.length === 0 ? (
-          <div className="text-center py-20 font-mono" style={{ color: '#484f58' }}>
-            <p>// 프롬프트가 없습니다</p>
-            <p className="text-sm mt-2">// 첫 번째 프롬프트를 공유해보세요!</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              {paginatedPrompts.map((prompt, index) => (
-                <PromptCard key={prompt.id} prompt={prompt} index={index}
-                  currentPage={currentPage} selectedCategory={selectedCategory} searchQuery={searchQuery} />
-              ))}
+        <div style={{ opacity: loading ? 0.5 : 1, transition: 'opacity 0.2s' }}>
+          {prompts.length === 0 && !loading ? (
+            <div className="text-center py-20 font-mono" style={{ color: '#484f58' }}>
+              <p>// 프롬프트가 없습니다</p>
+              <p className="text-sm mt-2">// 첫 번째 프롬프트를 공유해보세요!</p>
             </div>
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
-                {getPaginationButtons()}
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                {prompts.map((prompt, index) => (
+                  <PromptCard key={prompt.id} prompt={prompt} index={index}
+                    currentPage={currentPage} selectedCategory={selectedCategory} searchQuery={searchQuery} />
+                ))}
               </div>
-            )}
-          </>
-        )}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
+                  {getPaginationButtons()}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </main>
   )
