@@ -56,6 +56,25 @@ export default function PersonaPage() {
   }, [])
 
 
+  const handleSaveToMyPersonas = async () => {
+    if (!form.name || !form.role || !previewText) return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/persona', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, userId: user?.id ?? '' }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      router.push('/my-personas')
+    } catch (e) {
+      alert('저장 중 오류가 발생했습니다.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleSubmit = async () => {
     if (!form.name || !form.role) return
     if (!previewText) {
@@ -319,6 +338,12 @@ ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'profes
                 ↗ Claude
               </button>
             </div>
+            {previewText && (
+              <button onClick={handleSaveToMyPersonas} disabled={loading}
+                style={{ marginTop: '12px', width: '100%', padding: '12px', background: 'transparent', color: '#bc8cff', border: '1px solid #8957e5', borderRadius: '8px', fontFamily: 'monospace', fontSize: '13px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer' }}>
+                {loading ? '⏳ 저장 중...' : '🤖 내 페르소나 카드에 저장'}
+              </button>
+            )}
           </div>
         </div>
       </div>
