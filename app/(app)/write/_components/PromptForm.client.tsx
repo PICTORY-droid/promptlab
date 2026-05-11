@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import type { PromptCategory } from "@/features/prompts/types/category.types";
 import { createPromptAction, type CreatePromptActionState } from "../actions";
 import Button from "@/shared/ui/button";
 import ErrorMessage from "@/shared/ui/error-message";
@@ -11,6 +12,11 @@ import Textarea from "@/shared/ui/textarea";
 const initialState: CreatePromptActionState = {
   ok: true,
   message: "",
+};
+
+type PromptFormProps = {
+  categories: PromptCategory[];
+  categoryLoadMessage: string | null;
 };
 
 function SubmitButton() {
@@ -23,7 +29,10 @@ function SubmitButton() {
   );
 }
 
-export default function PromptForm() {
+export default function PromptForm({
+  categories,
+  categoryLoadMessage,
+}: PromptFormProps) {
   const [state, formAction] = useActionState(createPromptAction, initialState);
 
   return (
@@ -38,11 +47,24 @@ export default function PromptForm() {
       </label>
 
       <label className="block space-y-2">
-        <span className="text-sm font-semibold text-slate-700">카테고리 ID</span>
-        <Input
+        <span className="text-sm font-semibold text-slate-700">카테고리</span>
+        <select
           name="categoryId"
-          placeholder="선택 입력, Supabase category id"
-        />
+          defaultValue=""
+          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+        >
+          <option value="">카테고리 없음</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+        {categoryLoadMessage ? (
+          <span className="block text-xs text-red-600">
+            카테고리를 불러오지 못했습니다. {categoryLoadMessage}
+          </span>
+        ) : null}
       </label>
 
       <label className="block space-y-2">

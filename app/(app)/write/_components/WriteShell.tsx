@@ -1,3 +1,4 @@
+import type { PromptCategory } from "@/features/prompts/types/category.types";
 import Badge from "@/shared/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import PromptForm from "./PromptForm.client";
@@ -5,9 +6,16 @@ import PromptForm from "./PromptForm.client";
 type WriteShellProps = {
   email: string;
   userId: string;
+  categories: PromptCategory[];
+  categoryLoadMessage: string | null;
 };
 
-export default function WriteShell({ email, userId }: WriteShellProps) {
+export default function WriteShell({
+  email,
+  userId,
+  categories,
+  categoryLoadMessage,
+}: WriteShellProps) {
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-10">
       <section className="mx-auto flex max-w-6xl flex-col gap-6">
@@ -31,12 +39,15 @@ export default function WriteShell({ email, userId }: WriteShellProps) {
             <CardHeader>
               <CardTitle>프롬프트 정보</CardTitle>
               <CardDescription>
-                제목, 사용 목적, 본문, 예시, 공개 범위를 입력한 뒤 Supabase에 저장합니다.
+                제목, 카테고리, 사용 목적, 본문, 예시, 공개 범위를 입력한 뒤 Supabase에 저장합니다.
               </CardDescription>
             </CardHeader>
 
             <CardContent>
-              <PromptForm />
+              <PromptForm
+                categories={categories}
+                categoryLoadMessage={categoryLoadMessage}
+              />
             </CardContent>
           </Card>
 
