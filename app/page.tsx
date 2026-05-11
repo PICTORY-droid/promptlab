@@ -57,54 +57,58 @@ const privatePublicRules = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-16">
-      <section className="mx-auto flex max-w-7xl flex-col gap-10">
-        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <div className="space-y-6">
+    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
+      <section className="mx-auto flex max-w-7xl flex-col gap-6 sm:gap-8 lg:gap-10">
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="space-y-5 sm:space-y-6">
             <Badge>PromptLab v3</Badge>
 
-            <div className="space-y-4">
-              <h1 className="max-w-4xl text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
+            <div className="space-y-3 sm:space-y-4">
+              <h1 className="max-w-4xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
                 프롬프트를 만들고, 저장하고, 안전하게 공개하는 AI 작업실
               </h1>
 
-              <p className="max-w-2xl text-base leading-8 text-slate-600">
+              <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
                 PromptLab은 프롬프트 작성, 개인 보관, 공개 게시, AI SafeCheck
                 검사, 리포트 관리를 하나로 연결한 프롬프트 작업 공간입니다.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
               <Link href="/write">
-                <Button>프롬프트 작성하기</Button>
+                <Button className="w-full sm:w-auto">프롬프트 작성하기</Button>
               </Link>
               <Link href="/safecheck">
-                <Button variant="secondary">AI SafeCheck 열기</Button>
+                <Button variant="secondary" className="w-full sm:w-auto">
+                  AI SafeCheck 열기
+                </Button>
               </Link>
               <Link href="/prompts">
-                <Button variant="ghost">공개 프롬프트 보기</Button>
+                <Button variant="ghost" className="w-full sm:w-auto">
+                  공개 프롬프트 보기
+                </Button>
               </Link>
             </div>
           </div>
 
           <Card>
-            <CardHeader>
+            <CardHeader className="p-5 sm:p-6">
               <CardTitle>AI SafeCheck inside</CardTitle>
               <CardDescription>
                 공개하거나 저장하기 전, 위험한 프롬프트를 먼저 점검합니다.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+            <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+              <div className="space-y-2 sm:space-y-3">
                 {workflowItems.map((item, index) => (
                   <div
                     key={item}
                     className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white">
                       {index + 1}
                     </span>
-                    <span className="text-sm font-semibold text-slate-800">
+                    <span className="text-sm font-semibold leading-5 text-slate-800">
                       {item}
                     </span>
                   </div>
@@ -114,10 +118,10 @@ export default function HomePage() {
           </Card>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-4">
           {featureCards.map((feature) => (
             <Card key={feature.title}>
-              <CardHeader>
+              <CardHeader className="p-5 sm:p-6">
                 <CardTitle>{feature.title}</CardTitle>
                 <CardDescription>{feature.description}</CardDescription>
               </CardHeader>
@@ -126,21 +130,21 @@ export default function HomePage() {
         </div>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="p-5 sm:p-6">
             <CardTitle>개인 보관과 공개 게시를 분리합니다</CardTitle>
             <CardDescription>
               테스트 프롬프트가 바로 공개되지 않도록 기본은 비공개와 초안 중심으로 운영합니다.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid gap-5 md:grid-cols-2">
+          <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+            <div className="grid gap-4 sm:gap-5 md:grid-cols-2">
               {privatePublicRules.map((rule) => (
                 <div
                   key={rule.state}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5"
                 >
                   <Badge>{rule.state}</Badge>
-                  <h2 className="mt-4 text-lg font-bold text-slate-950">
+                  <h2 className="mt-4 text-base font-bold text-slate-950 sm:text-lg">
                     {rule.title}
                   </h2>
                   <p className="mt-2 text-sm leading-7 text-slate-600">
@@ -153,7 +157,7 @@ export default function HomePage() {
         </Card>
 
         <Card className="border-emerald-100 bg-emerald-50">
-          <CardHeader>
+          <CardHeader className="p-5 sm:p-6">
             <CardTitle className="text-emerald-950">
               검사 원문은 저장하지 않습니다
             </CardTitle>
@@ -161,7 +165,7 @@ export default function HomePage() {
               SafeCheck 리포트에는 원문 프롬프트, 고객명, 전화번호, 이메일, 회사기밀 원문을 저장하지 않습니다.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="rounded-2xl bg-white/70 p-4">
                 <p className="text-sm font-semibold text-emerald-950">
