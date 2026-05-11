@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/server/auth/get-current-user";
+import { getSafeCheckReports } from "@/features/safecheck/server/get-safecheck-reports";
 import ReportsShell from "./_components/ReportsShell";
 
 export default async function ReportsPage() {
@@ -9,10 +10,14 @@ export default async function ReportsPage() {
     redirect("/login");
   }
 
+  const reportsResult = await getSafeCheckReports(currentUser.user.id);
+
   return (
     <ReportsShell
       email={currentUser.user.email ?? "로그인 사용자"}
       userId={currentUser.user.id}
+      reports={reportsResult.ok ? reportsResult.reports : []}
+      reportLoadMessage={reportsResult.ok ? null : reportsResult.message}
     />
   );
 }
