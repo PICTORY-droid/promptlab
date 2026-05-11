@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
+import ArchivePromptButton from "./ArchivePromptButton.client";
 
 type DashboardPromptCardProps = {
   prompt: Prompt;
@@ -17,6 +18,8 @@ type DashboardPromptCardProps = {
 export default function DashboardPromptCard({
   prompt,
 }: DashboardPromptCardProps) {
+  const isArchived = prompt.status === "archived";
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -42,13 +45,20 @@ export default function DashboardPromptCard({
           수정일: {new Date(prompt.updatedAt).toLocaleDateString("ko-KR")}
         </p>
 
+        {isArchived ? (
+          <p className="mt-4 rounded-2xl bg-slate-100 p-3 text-xs leading-5 text-slate-500">
+            보관 처리된 프롬프트입니다. 공개 목록에는 표시되지 않습니다.
+          </p>
+        ) : null}
+
         <div className="mt-5 flex flex-wrap gap-2">
           <Link href={`/prompts/${prompt.id}`}>
             <Button variant="secondary">상세 보기</Button>
           </Link>
           <Link href={`/prompts/${prompt.id}/edit`}>
-            <Button>수정하기</Button>
+            <Button disabled={isArchived}>수정하기</Button>
           </Link>
+          <ArchivePromptButton promptId={prompt.id} disabled={isArchived} />
         </div>
       </CardContent>
     </Card>
