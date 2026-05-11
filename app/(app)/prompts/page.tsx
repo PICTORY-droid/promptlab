@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getPublicPrompts } from "@/features/prompts/server/get-prompts";
 import Badge from "@/shared/ui/badge";
+import PageHeader from "@/shared/ui/page-header";
+import PageShell from "@/shared/ui/page-shell";
 import Button from "@/shared/ui/button";
 import EmptyState from "@/shared/ui/empty-state";
 import PromptList from "./_components/PromptList";
@@ -9,8 +11,8 @@ export default async function PromptsPage() {
   const result = await getPublicPrompts();
 
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-10">
-      <section className="mx-auto flex max-w-6xl flex-col gap-6">
+    <PageShell>
+      <section className="flex flex-col gap-5 sm:gap-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="space-y-3">
             <Badge>PromptLab Library</Badge>
@@ -47,6 +49,6 @@ export default async function PromptsPage() {
           <PromptList prompts={result.prompts} />
         )}
       </section>
-    </main>
+    </PageShell>
   );
 }
