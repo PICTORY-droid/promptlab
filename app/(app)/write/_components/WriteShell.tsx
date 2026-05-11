@@ -54,6 +54,36 @@ export default function WriteShell({
           <aside className="flex flex-col gap-6">
             <Card>
               <CardHeader>
+                <CardTitle>공개 범위와 상태 안내</CardTitle>
+                <CardDescription>
+                  저장한 프롬프트가 어디에 보이는지 결정하는 기준입니다.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 text-sm leading-6 text-slate-600">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="font-semibold text-slate-950">비공개 + 초안</p>
+                    <p className="mt-1">
+                      개인 작업용입니다. 다른 사용자에게 보이지 않고, 본인 대시보드에서만 관리합니다.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="font-semibold text-slate-950">공개 + 게시</p>
+                    <p className="mt-1">
+                      다른 사용자도 공개 프롬프트 목록에서 볼 수 있습니다.
+                    </p>
+                  </div>
+
+                  <p>
+                    처음 저장할 때는 비공개, 초안을 권장합니다. 검토가 끝난 프롬프트만 공개, 게시로 바꾸세요.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>AI SafeCheck</CardTitle>
                 <CardDescription>
                   저장 전 검사 모듈이 연결될 영역입니다.
