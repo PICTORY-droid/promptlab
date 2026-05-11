@@ -21,3 +21,20 @@ export async function signInWithGoogleAction() {
 
   redirect(data.url);
 }
+
+export async function signInWithKakaoAction() {
+  const supabase = await createSupabaseServerClient();
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "kakao",
+    options: {
+      redirectTo: `${SITE_URL}/auth/callback`,
+    },
+  });
+
+  if (error || !data.url) {
+    redirect("/login?error=kakao_oauth_failed");
+  }
+
+  redirect(data.url);
+}

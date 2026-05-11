@@ -1,6 +1,6 @@
-import GoogleLoginButton from "./GoogleLoginButton";
 import LoginDivider from "./LoginDivider";
 import MagicLinkLoginForm from "./MagicLinkLoginForm.client";
+import SocialLoginButtons from "./SocialLoginButtons";
 
 export default function LoginForm() {
   return (
@@ -14,12 +14,12 @@ export default function LoginForm() {
             로그인
           </h1>
           <p className="text-sm leading-6 text-slate-600">
-            Google 계정으로 바로 로그인하거나, 이메일 매직링크로 로그인할 수 있습니다.
+            Google, Kakao 계정으로 바로 로그인하거나, 이메일 매직링크로 로그인할 수 있습니다.
           </p>
         </div>
 
         <div className="mt-6 space-y-5">
-          <GoogleLoginButton />
+          <SocialLoginButtons />
           <LoginDivider />
           <MagicLinkLoginForm />
         </div>
