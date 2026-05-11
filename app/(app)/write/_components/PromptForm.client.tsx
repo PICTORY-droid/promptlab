@@ -140,7 +140,7 @@ export default function PromptForm({
           name="promptBody"
           className="min-h-44 sm:min-h-60"
           placeholder={`예:
-너는 고객 응대 담당자입니다.
+당신은 고객 응대 담당자입니다.
 아래 고객 문의를 정중하고 명확한 이메일 답변으로 작성하세요.
 확인되지 않은 내용은 단정하지 말고, 필요한 경우 확인 후 안내한다고 표현하세요.`}
           maxLength={FIELD_LIMITS.promptBody}
