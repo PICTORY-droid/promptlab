@@ -25,7 +25,7 @@ function SubmitButton({ disabled }: { disabled?: boolean }) {
       variant="danger"
       disabled={pending || disabled}
     >
-      {pending ? "보관 중" : "보관하기"}
+      {pending ? "보관 중" : "보관"}
     </Button>
   );
 }

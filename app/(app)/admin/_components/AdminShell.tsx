@@ -21,7 +21,7 @@ export default function AdminShell({ email }: AdminShellProps) {
             관리자 설정
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            PromptLab의 프롬프트 공개 기준, SafeCheck 정책, 리포트 보안 기준을 관리하는 화면입니다.
+            프롬프트 공개 기준, SafeCheck 저장 기준, 리포트 보안 원칙을 확인합니다.
           </p>
           <p className="text-xs text-slate-500">로그인 계정: {email}</p>
         </div>
@@ -31,7 +31,7 @@ export default function AdminShell({ email }: AdminShellProps) {
             <CardHeader>
               <CardTitle>프롬프트 공개 기준</CardTitle>
               <CardDescription>
-                기본 운영 기준입니다.
+                공개 목록에 표시되는 기준입니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -78,33 +78,32 @@ export default function AdminShell({ email }: AdminShellProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>현재 구현된 관리 범위</CardTitle>
+            <CardTitle>운영 기준 요약</CardTitle>
             <CardDescription>
-              이 화면은 현재 구현된 정책을 사용자에게 명확히 보여주는 용도입니다.
+              PromptLab에서 프롬프트를 안전하게 관리하기 위한 기본 원칙입니다.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="rounded-2xl bg-slate-50 p-4">
                 <p className="text-sm font-semibold text-slate-950">
-                  적용 중인 기능
+                  프롬프트 관리
                 </p>
                 <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
-                  <li>Supabase Auth 로그인 보호</li>
-                  <li>Prompt CRUD, 보관, 복구</li>
-                  <li>SafeCheck 검사와 저장 차단 정책</li>
-                  <li>SafeCheck 리포트 저장과 원문 미저장 안내</li>
+                  <li>개인 작업용 프롬프트는 비공개 초안으로 보관합니다.</li>
+                  <li>공개할 프롬프트는 SafeCheck 검사 후 게시합니다.</li>
+                  <li>더 이상 사용하지 않는 프롬프트는 보관 처리합니다.</li>
                 </ul>
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-4">
                 <p className="text-sm font-semibold text-slate-950">
-                  운영 원칙
+                  보안 관리
                 </p>
                 <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
-                  <li>공개 전에 안전 검사를 먼저 권장합니다.</li>
-                  <li>개인 작업용 프롬프트는 대시보드에서만 관리합니다.</li>
-                  <li>공개 화면에는 작성자 식별 정보와 날짜를 노출하지 않습니다.</li>
+                  <li>공개 화면에는 작성자 식별 정보를 노출하지 않습니다.</li>
+                  <li>SafeCheck 리포트에는 검사 원문을 저장하지 않습니다.</li>
+                  <li>위험 판정이 있는 프롬프트는 공개 전에 수정합니다.</li>
                 </ul>
               </div>
             </div>
