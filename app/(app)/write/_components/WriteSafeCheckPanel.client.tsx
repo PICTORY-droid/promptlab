@@ -21,7 +21,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" variant="secondary" disabled={pending}>
+    <Button type="submit" variant="secondary" disabled={pending} className="w-full sm:w-auto">
       {pending ? "검사 중" : "본문 검사하기"}
     </Button>
   );
@@ -50,7 +50,7 @@ export default function WriteSafeCheckPanel() {
           <span className="text-sm font-semibold text-slate-700">
             검사할 프롬프트 본문
           </span>
-          <span className="text-xs text-slate-400">
+          <span className="shrink-0 text-xs text-slate-400">
             {textLength.toLocaleString("ko-KR")} /{" "}
             {MAX_PROMPT_LENGTH.toLocaleString("ko-KR")}자
           </span>
@@ -58,7 +58,7 @@ export default function WriteSafeCheckPanel() {
 
         <Textarea
           name="promptText"
-          className="min-h-44"
+          className="min-h-36 sm:min-h-44"
           maxLength={MAX_PROMPT_LENGTH}
           placeholder="왼쪽 프롬프트 본문을 복사해 붙여넣고 검사하세요."
           onChange={(event) => setTextLength(event.currentTarget.value.length)}
@@ -75,7 +75,7 @@ export default function WriteSafeCheckPanel() {
       <SubmitButton />
 
       {!state.result ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5">
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 sm:p-5">
           <p className="text-sm font-semibold text-slate-800">
             아직 검사 결과가 없습니다.
           </p>
@@ -88,7 +88,7 @@ export default function WriteSafeCheckPanel() {
           <div className="flex flex-wrap items-center gap-2">
             <Badge>{getLevelLabel(state.result.level)}</Badge>
             <Badge>점수 {state.result.score}</Badge>
-                  {state.reportId ? <Badge>리포트 저장됨</Badge> : null}
+            {state.reportId ? <Badge>리포트 저장됨</Badge> : null}
           </div>
 
           {state.result.findings.length === 0 ? (
@@ -118,7 +118,7 @@ export default function WriteSafeCheckPanel() {
                     {finding.reason}
                   </p>
 
-                  <p className="mt-2 text-xs leading-5 text-slate-500">
+                  <p className="mt-2 break-words text-xs leading-5 text-slate-500">
                     탐지값: {finding.matches.join(", ")}
                   </p>
                 </div>

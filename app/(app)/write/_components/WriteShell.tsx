@@ -16,29 +16,29 @@ export default function WriteShell({
   categoryLoadMessage,
 }: WriteShellProps) {
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-10">
-      <section className="mx-auto flex max-w-6xl flex-col gap-6">
+    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 sm:py-10">
+      <section className="mx-auto flex max-w-6xl flex-col gap-5 sm:gap-6">
         <div className="space-y-3">
           <Badge>개인 작성</Badge>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-950">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
             프롬프트 작성
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
             저장 전 AI SafeCheck로 개인정보, 회사기밀, 저작권 위험, 허위·과장 표현을 검사합니다.
           </p>
-          <p className="text-xs text-slate-500">로그인 계정: {email}</p>
+          <p className="break-all text-xs text-slate-500">로그인 계정: {email}</p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
+        <div className="grid gap-5 lg:grid-cols-[1.4fr_0.8fr] lg:gap-6">
           <Card>
-            <CardHeader>
+            <CardHeader className="p-5 sm:p-6">
               <CardTitle>프롬프트 정보</CardTitle>
               <CardDescription>
                 제목, 카테고리, 사용 목적, 본문, 예시, 공개 범위를 입력한 뒤 저장합니다.
               </CardDescription>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
               <PromptForm
                 categories={categories}
                 categoryLoadMessage={categoryLoadMessage}
@@ -46,27 +46,27 @@ export default function WriteShell({
             </CardContent>
           </Card>
 
-          <aside className="flex flex-col gap-6">
+          <aside className="flex flex-col gap-5 sm:gap-6">
             <Card>
-              <CardHeader>
+              <CardHeader className="p-5 sm:p-6">
                 <CardTitle>저장 전 AI SafeCheck</CardTitle>
                 <CardDescription>
                   왼쪽 프롬프트 본문을 복사해 붙여넣고 저장 전 위험 요소를 검사합니다.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
                 <WriteSafeCheckPanel />
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader>
+              <CardHeader className="p-5 sm:p-6">
                 <CardTitle>공개 범위와 상태 안내</CardTitle>
                 <CardDescription>
                   저장한 프롬프트가 어디에 보이는지 결정하는 기준입니다.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
                 <div className="space-y-4 text-sm leading-6 text-slate-600">
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <p className="font-semibold text-slate-950">비공개 + 초안</p>
@@ -90,13 +90,13 @@ export default function WriteShell({
             </Card>
 
             <Card>
-              <CardHeader>
+              <CardHeader className="p-5 sm:p-6">
                 <CardTitle>작성 기준</CardTitle>
                 <CardDescription>
                   v3에서는 양보다 품질을 우선합니다.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
                 <ul className="space-y-2 text-sm leading-6 text-slate-600">
                   <li>고품질 프롬프트만 저장합니다.</li>
                   <li>개인정보와 회사기밀을 포함하지 않습니다.</li>

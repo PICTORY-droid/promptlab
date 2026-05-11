@@ -32,7 +32,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending}>
+    <Button type="submit" disabled={pending} className="w-full sm:w-auto">
       {pending ? "저장 중" : "프롬프트 저장"}
     </Button>
   );
@@ -46,7 +46,7 @@ function FieldCounter({
   max: number;
 }) {
   return (
-    <span className="text-xs text-slate-400">
+    <span className="shrink-0 text-xs text-slate-400">
       {current.toLocaleString("ko-KR")} / {max.toLocaleString("ko-KR")}자
     </span>
   );
@@ -65,7 +65,7 @@ export default function PromptForm({
   const [safetyNotesLength, setSafetyNotesLength] = useState(0);
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form action={formAction} className="space-y-4 sm:space-y-5">
       <label className="block space-y-2">
         <span className="flex items-center justify-between gap-3">
           <span className="text-sm font-semibold text-slate-700">제목</span>
@@ -121,6 +121,7 @@ export default function PromptForm({
         </span>
         <Textarea
           name="promptBody"
+          className="min-h-44 sm:min-h-60"
           placeholder="AI에게 입력할 프롬프트를 작성하세요."
           maxLength={FIELD_LIMITS.promptBody}
           onChange={(event) => setPromptBodyLength(event.currentTarget.value.length)}
@@ -138,7 +139,7 @@ export default function PromptForm({
         </span>
         <Textarea
           name="exampleInput"
-          className="min-h-28"
+          className="min-h-24 sm:min-h-28"
           placeholder="프롬프트 사용 예시 입력값을 작성하세요."
           maxLength={FIELD_LIMITS.exampleInput}
           onChange={(event) => setExampleInputLength(event.currentTarget.value.length)}
@@ -152,7 +153,7 @@ export default function PromptForm({
         </span>
         <Textarea
           name="exampleOutput"
-          className="min-h-28"
+          className="min-h-24 sm:min-h-28"
           placeholder="예상되는 출력 형태를 작성하세요."
           maxLength={FIELD_LIMITS.exampleOutput}
           onChange={(event) => setExampleOutputLength(event.currentTarget.value.length)}
@@ -166,14 +167,14 @@ export default function PromptForm({
         </span>
         <Textarea
           name="safetyNotes"
-          className="min-h-28"
+          className="min-h-24 sm:min-h-28"
           placeholder="개인정보, 회사기밀, 저작권 위험 등 사용 시 주의할 내용을 적어주세요."
           maxLength={FIELD_LIMITS.safetyNotes}
           onChange={(event) => setSafetyNotesLength(event.currentTarget.value.length)}
         />
       </label>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <label className="block space-y-2">
           <span className="text-sm font-semibold text-slate-700">공개 범위</span>
           <select
@@ -201,9 +202,9 @@ export default function PromptForm({
 
       {!state.ok ? <ErrorMessage message={state.message} /> : null}
 
-      <div className="flex flex-wrap gap-3">
+      <div className="grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
         <SubmitButton />
-        <Button type="button" variant="secondary" disabled>
+        <Button type="button" variant="secondary" disabled className="w-full sm:w-auto">
           AI SafeCheck 연결 예정
         </Button>
       </div>

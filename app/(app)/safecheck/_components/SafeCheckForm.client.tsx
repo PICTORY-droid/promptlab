@@ -28,7 +28,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending}>
+    <Button type="submit" disabled={pending} className="w-full sm:w-auto">
       {pending ? "검사 중" : "검사하기"}
     </Button>
   );
@@ -51,23 +51,23 @@ export default function SafeCheckForm() {
   const [textLength, setTextLength] = useState(0);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+    <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:gap-6">
       <Card>
-        <CardHeader>
+        <CardHeader className="p-5 sm:p-6">
           <CardTitle>프롬프트 검사</CardTitle>
           <CardDescription>
             개인정보, 회사기밀, 계약정보, 저작권 위험, 허위·과장 표현을 검사합니다.
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
           <form action={formAction} className="space-y-4">
             <label className="block space-y-2">
               <span className="flex items-center justify-between gap-3">
                 <span className="text-sm font-semibold text-slate-700">
                   검사할 프롬프트 본문
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="shrink-0 text-xs text-slate-400">
                   {textLength.toLocaleString("ko-KR")} /{" "}
                   {MAX_PROMPT_LENGTH.toLocaleString("ko-KR")}자
                 </span>
@@ -75,7 +75,7 @@ export default function SafeCheckForm() {
 
               <Textarea
                 name="promptText"
-                className="min-h-72"
+                className="min-h-52 sm:min-h-72"
                 maxLength={MAX_PROMPT_LENGTH}
                 placeholder="검사할 프롬프트를 입력하세요."
                 onChange={(event) =>
@@ -96,18 +96,18 @@ export default function SafeCheckForm() {
         </CardContent>
       </Card>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5 sm:gap-6">
         <Card>
-          <CardHeader>
+          <CardHeader className="p-5 sm:p-6">
             <CardTitle>검사 결과</CardTitle>
             <CardDescription>
               룰 기반 검사 결과입니다. LLM은 사용하지 않습니다.
             </CardDescription>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
             {!state.result ? (
-              <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5">
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 sm:p-5">
                 <p className="text-sm font-semibold text-slate-800">
                   아직 검사 결과가 없습니다.
                 </p>
@@ -151,7 +151,7 @@ export default function SafeCheckForm() {
                           {finding.reason}
                         </p>
 
-                        <p className="mt-2 text-xs leading-5 text-slate-500">
+                        <p className="mt-2 break-words text-xs leading-5 text-slate-500">
                           탐지값: {finding.matches.join(", ")}
                         </p>
                       </div>
@@ -164,14 +164,14 @@ export default function SafeCheckForm() {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="p-5 sm:p-6">
             <CardTitle>안전 문장 안내</CardTitle>
             <CardDescription>
               위험 요소가 있으면 공개 전 수정 방향을 안내합니다.
             </CardDescription>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
             <div className="rounded-2xl bg-slate-50 p-4">
               <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
                 {state.result?.safePrompt ??
