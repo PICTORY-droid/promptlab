@@ -1,8 +1,6 @@
 import Badge from "@/shared/ui/badge";
-import Button from "@/shared/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
-import Input from "@/shared/ui/input";
-import Textarea from "@/shared/ui/textarea";
+import PromptForm from "./PromptForm.client";
 
 type WriteShellProps = {
   email: string;
@@ -33,56 +31,12 @@ export default function WriteShell({ email, userId }: WriteShellProps) {
             <CardHeader>
               <CardTitle>프롬프트 정보</CardTitle>
               <CardDescription>
-                제목, 카테고리, 사용 목적, 본문을 입력합니다. 실제 저장은 Prompt
-                CRUD 단계에서 연결합니다.
+                제목, 사용 목적, 본문, 예시, 공개 범위를 입력한 뒤 Supabase에 저장합니다.
               </CardDescription>
             </CardHeader>
 
             <CardContent>
-              <div className="space-y-5">
-                <label className="block space-y-2">
-                  <span className="text-sm font-semibold text-slate-700">제목</span>
-                  <Input placeholder="예: 고객 응대 이메일 작성 프롬프트" />
-                </label>
-
-                <label className="block space-y-2">
-                  <span className="text-sm font-semibold text-slate-700">카테고리</span>
-                  <Input placeholder="예: 업무, 글쓰기, 마케팅, 음악 생성" />
-                </label>
-
-                <label className="block space-y-2">
-                  <span className="text-sm font-semibold text-slate-700">사용 목적</span>
-                  <Input placeholder="이 프롬프트를 어떤 상황에서 쓰는지 적어주세요." />
-                </label>
-
-                <label className="block space-y-2">
-                  <span className="text-sm font-semibold text-slate-700">프롬프트 본문</span>
-                  <Textarea placeholder="AI에게 입력할 프롬프트를 작성하세요. 저장 전 AI SafeCheck 검사를 연결할 예정입니다." />
-                </label>
-
-                <label className="block space-y-2">
-                  <span className="text-sm font-semibold text-slate-700">예시 입력</span>
-                  <Textarea
-                    className="min-h-28"
-                    placeholder="프롬프트 사용 예시 입력값을 작성하세요."
-                  />
-                </label>
-
-                <label className="block space-y-2">
-                  <span className="text-sm font-semibold text-slate-700">예시 출력</span>
-                  <Textarea
-                    className="min-h-28"
-                    placeholder="예상되는 출력 형태를 작성하세요."
-                  />
-                </label>
-
-                <div className="flex flex-wrap gap-3">
-                  <Button disabled>저장 기능 연결 예정</Button>
-                  <Button variant="secondary" disabled>
-                    AI SafeCheck 연결 예정
-                  </Button>
-                </div>
-              </div>
+              <PromptForm />
             </CardContent>
           </Card>
 
