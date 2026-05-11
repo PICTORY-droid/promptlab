@@ -54,7 +54,7 @@ export default function DashboardPromptCard({
 
         <div className="mt-5 flex flex-wrap gap-2">
           <Link href={`/prompts/${prompt.id}`}>
-            <Button variant="secondary">상세보기</Button>
+            <Button variant="secondary">상세</Button>
           </Link>
 
           {isArchived ? (
