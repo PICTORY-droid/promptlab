@@ -24,7 +24,8 @@ export default function WriteShell({
             프롬프트 작성
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            저장 전 AI SafeCheck로 개인정보, 회사기밀, 저작권 위험, 허위·과장 표현을 검사합니다.
+            좋은 프롬프트는 역할, 작업 목표, 입력 예시, 출력 형식, 주의사항이 분명해야 합니다.
+            저장 전 AI SafeCheck로 위험 표현을 먼저 확인하세요.
           </p>
           <p className="break-all text-xs text-slate-500">로그인 계정: {email}</p>
         </div>
@@ -34,7 +35,7 @@ export default function WriteShell({
             <CardHeader className="p-5 sm:p-6">
               <CardTitle>프롬프트 정보</CardTitle>
               <CardDescription>
-                제목, 카테고리, 사용 목적, 본문, 예시, 공개 범위를 입력한 뒤 저장합니다.
+                제목과 사용 목적은 나중에 찾기 쉽게, 본문과 예시는 실제 사용자가 바로 따라 쓸 수 있게 작성하세요.
               </CardDescription>
             </CardHeader>
 
@@ -51,7 +52,7 @@ export default function WriteShell({
               <CardHeader className="p-5 sm:p-6">
                 <CardTitle>저장 전 AI SafeCheck</CardTitle>
                 <CardDescription>
-                  왼쪽 프롬프트 본문을 복사해 붙여넣고 저장 전 위험 요소를 검사합니다.
+                  프롬프트 본문을 저장하기 전에 개인정보, 회사기밀, 저작권 위험, 과장 표현을 검사합니다.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
@@ -63,7 +64,7 @@ export default function WriteShell({
               <CardHeader className="p-5 sm:p-6">
                 <CardTitle>공개 범위와 상태 안내</CardTitle>
                 <CardDescription>
-                  저장한 프롬프트가 어디에 보이는지 결정하는 기준입니다.
+                  저장한 프롬프트가 본인에게만 보일지, 공개 목록에 보일지 결정합니다.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
@@ -78,7 +79,7 @@ export default function WriteShell({
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <p className="font-semibold text-slate-950">공개 + 게시</p>
                     <p className="mt-1">
-                      다른 사용자도 공개 프롬프트 목록에서 볼 수 있습니다.
+                      공개 프롬프트 목록에 표시됩니다. 다른 사용자가 볼 수 있으므로 SafeCheck 검사 후 설정하세요.
                     </p>
                   </div>
 
@@ -93,15 +94,15 @@ export default function WriteShell({
               <CardHeader className="p-5 sm:p-6">
                 <CardTitle>작성 기준</CardTitle>
                 <CardDescription>
-                  v3에서는 양보다 품질을 우선합니다.
+                  저장하기 전에 아래 기준을 확인하세요.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
                 <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                  <li>고품질 프롬프트만 저장합니다.</li>
-                  <li>개인정보와 회사기밀을 포함하지 않습니다.</li>
-                  <li>저작권 위험이 있는 요청은 수정합니다.</li>
-                  <li>사용 목적과 예시를 함께 작성합니다.</li>
+                  <li>AI의 역할과 작업 목표를 먼저 적습니다.</li>
+                  <li>원하는 말투, 형식, 분량을 구체적으로 적습니다.</li>
+                  <li>개인정보, 회사기밀, 실제 고객 정보는 넣지 않습니다.</li>
+                  <li>출력 예시를 함께 적으면 재사용하기 쉽습니다.</li>
                 </ul>
               </CardContent>
             </Card>

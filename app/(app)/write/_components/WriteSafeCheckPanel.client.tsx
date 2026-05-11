@@ -60,15 +60,19 @@ export default function WriteSafeCheckPanel() {
           name="promptText"
           className="min-h-36 sm:min-h-44"
           maxLength={MAX_PROMPT_LENGTH}
-          placeholder="왼쪽 프롬프트 본문을 복사해 붙여넣고 검사하세요."
+          placeholder="왼쪽의 프롬프트 본문만 복사해 붙여넣고 검사하세요."
           onChange={(event) => setTextLength(event.currentTarget.value.length)}
           required
         />
       </label>
 
-      <p className="text-xs leading-5 text-slate-500">
-        현재는 저장 폼과 검사 폼을 분리했습니다. 검사 결과를 확인한 뒤 왼쪽 저장 버튼을 누르세요.
-      </p>
+      <div className="rounded-2xl bg-slate-50 p-4 text-xs leading-5 text-slate-500">
+        <p className="font-semibold text-slate-700">검사 기준</p>
+        <p className="mt-2">
+          개인정보, 회사기밀, 계약정보, 저작권 위험, 허위·과장 표현을 검사합니다.
+          검사 결과가 안전하면 저장하고, 위험이 있으면 본문을 수정한 뒤 다시 검사하세요.
+        </p>
+      </div>
 
       {!state.ok ? <ErrorMessage message={state.message} /> : null}
 
@@ -80,7 +84,7 @@ export default function WriteSafeCheckPanel() {
             아직 검사 결과가 없습니다.
           </p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            프롬프트 본문을 붙여넣고 검사하기를 누르세요.
+            프롬프트 본문을 붙여넣고 본문 검사하기를 누르세요.
           </p>
         </div>
       ) : (
@@ -97,7 +101,7 @@ export default function WriteSafeCheckPanel() {
                 탐지된 위험 요소가 없습니다.
               </p>
               <p className="mt-1 text-sm leading-6 text-emerald-800">
-                공개 전 최종 문맥 검토는 별도로 진행하세요.
+                저장 전 마지막으로 실제 개인정보나 내부자료가 들어가지 않았는지 확인하세요.
               </p>
             </div>
           ) : (
@@ -128,7 +132,7 @@ export default function WriteSafeCheckPanel() {
 
           <div className="rounded-2xl bg-slate-50 p-4">
             <p className="mb-2 text-sm font-semibold text-slate-800">
-              안전 문장 안내
+              수정 안내
             </p>
             <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
               {state.result.safePrompt}
