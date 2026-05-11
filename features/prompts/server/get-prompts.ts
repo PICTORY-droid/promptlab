@@ -9,6 +9,9 @@ const PROMPT_SELECT_COLUMNS = `
   id,
   user_id,
   category_id,
+  promptlab_categories (
+    name
+  ),
   title,
   use_case,
   prompt_body,

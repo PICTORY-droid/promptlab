@@ -18,7 +18,8 @@ export default function PromptCard({ prompt }: PromptCardProps) {
     <Link href={`/prompts/${prompt.id}`} className="block">
       <Card className="h-full transition hover:-translate-y-0.5 hover:shadow-md">
         <CardHeader>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {prompt.categoryName ? <Badge>{prompt.categoryName}</Badge> : null}
             <Badge variant={prompt.visibility === "public" ? "success" : "default"}>
               {prompt.visibility}
             </Badge>

@@ -22,6 +22,7 @@ export default function PromptDetail({ prompt }: PromptDetailProps) {
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2">
+            {prompt.categoryName ? <Badge>{prompt.categoryName}</Badge> : null}
             <Badge variant={prompt.visibility === "public" ? "success" : "default"}>
               {prompt.visibility}
             </Badge>

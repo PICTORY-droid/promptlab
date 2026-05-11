@@ -11,6 +11,7 @@ export type Prompt = {
   id: string;
   userId: string;
   categoryId: string | null;
+  categoryName: string | null;
   title: string;
   useCase: string | null;
   promptBody: string;
@@ -39,10 +40,20 @@ export type PromptCreateInput = {
 
 export type PromptUpdateInput = Partial<PromptCreateInput>;
 
+export type PromptCategoryJoinRow =
+  | {
+      name: string | null;
+    }
+  | {
+      name: string | null;
+    }[]
+  | null;
+
 export type PromptRow = {
   id: string;
   user_id: string;
   category_id: string | null;
+  promptlab_categories?: PromptCategoryJoinRow;
   title: string;
   use_case: string | null;
   prompt_body: string;
@@ -56,11 +67,24 @@ export type PromptRow = {
   updated_at: string;
 };
 
+function getCategoryName(category: PromptCategoryJoinRow | undefined) {
+  if (!category) {
+    return null;
+  }
+
+  if (Array.isArray(category)) {
+    return category[0]?.name ?? null;
+  }
+
+  return category.name ?? null;
+}
+
 export function mapPromptRowToPrompt(row: PromptRow): Prompt {
   return {
     id: row.id,
     userId: row.user_id,
     categoryId: row.category_id,
+    categoryName: getCategoryName(row.promptlab_categories),
     title: row.title,
     useCase: row.use_case,
     promptBody: row.prompt_body,
