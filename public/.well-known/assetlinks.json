@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "kr.io.promptlab.twa",
+      "sha256_cert_fingerprints": [
+        "76:4B:79:31:87:92:27:F3:2D:63:25:EE:CF:0B:7C:53:86:D8:66:98:32:11:79:4F:6B:7B:E6:9B:F7:E1:9B:3D"
+      ]
+    }
+  }
+]
