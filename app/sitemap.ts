@@ -1,34 +1,52 @@
-import { MetadataRoute } from 'next'
-import { supabase } from '@/app/lib/supabase'
+import type { MetadataRoute } from "next";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://promptlab.io.kr'
+const BASE_URL = "https://promptlab.io.kr";
 
-  // 프롬프트 목록 가져오기
-  const { data: prompts } = await supabase
-    .from('prompts')
-    .select('id, created_at')
-
-  const promptUrls = prompts?.map((prompt) => ({
-    url: `${baseUrl}/prompts/${prompt.id}`,
-    lastModified: new Date(prompt.created_at),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  })) || []
+export default function sitemap(): MetadataRoute.Sitemap {
+  const now = new Date();
 
   return [
     {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+      url: BASE_URL,
+      lastModified: now,
+      changeFrequency: "daily",
       priority: 1,
     },
     {
-      url: `${baseUrl}/create`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
+      url: `${BASE_URL}/login`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
+      url: `${BASE_URL}/dashboard`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/write`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/safecheck`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/admin`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.3,
+    },
+    {
+      url: `${BASE_URL}/reports`,
+      lastModified: now,
+      changeFrequency: "weekly",
       priority: 0.5,
     },
-    ...promptUrls,
-  ]
+  ];
 }
