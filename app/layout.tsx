@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import AppHeader from "./_components/AppHeader";
+import AppFooter from "./_components/AppFooter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -89,14 +90,7 @@ export default function RootLayout({
 
         {children}
 
-        <footer
-          className="mt-auto py-5 text-center"
-          style={{ borderTop: "1px solid #21262d" }}
-        >
-          <p className="text-xs font-medium" style={{ color: "#a0b4c8" }}>
-            © 2026 PromptLab · PICTORY-DROID
-          </p>
-        </footer>
+        <AppFooter />
 
         <style>{`
           @keyframes noise {

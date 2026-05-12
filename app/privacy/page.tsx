@@ -134,9 +134,9 @@ export default function PrivacyPage() {
         <PolicySection
           title="7. 문의"
           items={[
-            "Developer: PICTORY-DROID, Seoin Kim",
+            "제작·운영: PICTORY-DROID, Seoin Kim",
             "서비스 운영자: PromptLab",
-            "문의 이메일: oceanlumes@gmail.com",
+            "문의 이메일: pictory-droid@gmail.com",
             "운영 사이트: https://promptlab.io.kr",
           ]}
         />
