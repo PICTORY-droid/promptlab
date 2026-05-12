@@ -13,6 +13,8 @@ export default function AppFooter() {
         <FooterLink href="/privacy">개인정보 처리방침</FooterLink>
         <span className="text-slate-600">·</span>
         <FooterLink href="/contact">Contact</FooterLink>
+        <span className="text-slate-600">·</span>
+        <FooterLink href="/delete-account">계정 삭제</FooterLink>
       </nav>
 
       <p className="text-xs font-medium" style={{ color: "#a0b4c8" }}>
