@@ -15,10 +15,13 @@ export default function SafeCheckShell({ email }: SafeCheckShellProps) {
             프롬프트 안전 검사
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            PromptLab에 저장하거나 공개하기 전, 프롬프트 본문에 포함된 개인정보,
-            회사기밀, 계약정보, 저작권 위험, 허위·과장 표현을 검사합니다.
+            PromptLab에 저장하거나 공개하기 전, 프롬프트 본문에 포함된
+            개인정보, 회사기밀, 계약정보, 저작권 위험, 허위·과장 표현을
+            검사합니다.
           </p>
-          <p className="break-all text-xs text-slate-500">로그인 계정: {email}</p>
+          <p className="break-all text-xs text-slate-500">
+            로그인 계정: {email}
+          </p>
         </div>
 
         <SafeCheckForm />
