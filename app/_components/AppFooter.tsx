@@ -14,7 +14,7 @@ export default function AppFooter() {
         <span className="text-slate-600">·</span>
         <FooterLink href="/contact">Contact</FooterLink>
         <span className="text-slate-600">·</span>
-        <FooterLink href="/delete-account">계정 삭제</FooterLink>
+        <FooterLink href="/delete-account">계정·데이터 삭제</FooterLink>
       </nav>
 
       <p className="text-xs font-medium" style={{ color: "#a0b4c8" }}>
