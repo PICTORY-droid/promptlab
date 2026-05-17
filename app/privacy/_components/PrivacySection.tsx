@@ -1,8 +1,4 @@
-﻿import {
-  Card,
-  CardContent,
-  CardDescription,
-} from "@/shared/ui/card";
+﻿import { Card, CardContent, CardDescription } from "@/shared/ui/card";
 
 type PrivacySectionProps = {
   title: string;
