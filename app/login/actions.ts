@@ -4,8 +4,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/server/db/supabase-server";
 
-function getRequestOrigin() {
-  const requestHeaders = headers();
+async function getRequestOrigin() {
+  const requestHeaders = await headers();
   const host = requestHeaders.get("host");
   const protocol = requestHeaders.get("x-forwarded-proto") ?? "http";
 
@@ -18,7 +18,7 @@ function getRequestOrigin() {
 
 export async function signInWithGoogleAction() {
   const supabase = await createSupabaseServerClient();
-  const origin = getRequestOrigin();
+  const origin = await getRequestOrigin();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
@@ -36,7 +36,7 @@ export async function signInWithGoogleAction() {
 
 export async function signInWithKakaoAction() {
   const supabase = await createSupabaseServerClient();
-  const origin = getRequestOrigin();
+  const origin = await getRequestOrigin();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "kakao",
