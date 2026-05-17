@@ -5,16 +5,21 @@ import {
   CardTitle,
 } from "@/shared/ui/card";
 
+type DeleteInfoGroup = {
+  title: string;
+  items: string[];
+};
+
 type DeleteInfoSectionProps = {
   title: string;
   description?: string;
-  items: string[];
+  sections: DeleteInfoGroup[];
 };
 
 export default function DeleteInfoSection({
   title,
   description,
-  items,
+  sections,
 }: DeleteInfoSectionProps) {
   return (
     <Card>
@@ -29,13 +34,23 @@ export default function DeleteInfoSection({
             </div>
           </summary>
 
-          <ul className="mt-4 list-disc space-y-1.5 pl-5 text-sm leading-6 text-slate-600">
-            {items.map((item) => (
-              <li key={item} className="break-keep">
-                {item}
-              </li>
+          <div className="mt-4 grid gap-4">
+            {sections.map((section) => (
+              <section key={section.title} className="space-y-2">
+                <h2 className="text-sm font-semibold text-slate-800">
+                  {section.title}
+                </h2>
+
+                <ul className="list-disc space-y-1.5 pl-5 text-sm leading-6 text-slate-600">
+                  {section.items.map((item) => (
+                    <li key={item} className="break-keep">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </section>
             ))}
-          </ul>
+          </div>
         </details>
       </CardContent>
     </Card>
