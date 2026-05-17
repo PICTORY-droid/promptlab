@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/shared/ui/card";
 import EmptyState from "@/shared/ui/empty-state";
-import DashboardPromptViewToggle from "./DashboardPromptViewToggle.client";
+import DashboardPromptListRows from "./DashboardPromptListRows";
 
 type DashboardPromptListProps = {
   prompts: Prompt[];
@@ -27,7 +27,7 @@ export default function DashboardPromptList({
           <div>
             <CardTitle>내 프롬프트</CardTitle>
             <CardDescription>
-              그리드 또는 리스트로 관리합니다.
+              저장한 프롬프트를 리스트로 관리합니다.
             </CardDescription>
           </div>
 
@@ -54,7 +54,13 @@ export default function DashboardPromptList({
             }
           />
         ) : (
-          <DashboardPromptViewToggle prompts={prompts} />
+          <div className="space-y-3">
+            <p className="text-xs font-semibold text-slate-500">
+              총 {prompts.length.toLocaleString("ko-KR")}개
+            </p>
+
+            <DashboardPromptListRows prompts={prompts} />
+          </div>
         )}
       </CardContent>
     </Card>
