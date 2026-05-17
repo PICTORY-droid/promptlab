@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardTitle,
 } from "@/shared/ui/card";
 import PrivacySection from "./PrivacySection";
 import PrivacySummaryCards from "./PrivacySummaryCards";
@@ -14,34 +13,30 @@ const lastUpdated = "2026-05-13";
 export default function PrivacyShell() {
   return (
     <PageShell>
+      <p className="text-xs text-slate-500">
+        최종 업데이트: {lastUpdated}
+      </p>
+
       <PageHeader
         badge="Privacy Policy"
         title="개인정보 처리방침"
         description="PromptLab은 로그인, 저장, 문의, 사용 분석에 필요한 정보만 처리합니다."
-        meta={<>최종 업데이트: {lastUpdated}</>}
       />
 
       <Card className="border-emerald-100 bg-emerald-50">
-        <CardContent className="p-5 sm:p-6">
-          <div className="space-y-2">
-            <CardTitle className="text-emerald-950">
-              먼저 확인해 주세요
-            </CardTitle>
-            <CardDescription className="text-emerald-900">
-              PromptLab은 프롬프트 작성, 저장, 공개 전 점검, 문의 응대,
-              서비스 안정성 확인에 필요한 범위 안에서 개인정보를 처리합니다.
-              SafeCheck 원문과 민감정보는 저장을 최소화하는 방향으로 운영합니다.
-            </CardDescription>
-          </div>
+        <CardContent className="p-4 sm:p-6">
+          <CardDescription className="text-emerald-900">
+            SafeCheck 원문과 민감정보는 저장을 최소화하는 방향으로 운영합니다.
+          </CardDescription>
         </CardContent>
       </Card>
 
       <PrivacySummaryCards />
 
-      <div className="grid gap-4 sm:gap-5">
+      <div className="grid gap-3 sm:gap-4">
         <PrivacySection
           title="1. 처리하는 개인정보 항목"
-          description="PromptLab은 서비스 제공에 필요한 범위에서 아래 정보를 처리할 수 있습니다."
+          description="서비스 제공에 필요한 범위에서 처리할 수 있는 정보입니다."
           items={[
             "회원 식별 정보: Supabase Auth 또는 소셜 로그인 과정에서 이메일 주소, 소셜 로그인 식별자, 로그인 세션 정보가 처리될 수 있습니다.",
             "프롬프트 데이터: 사용자가 직접 저장한 프롬프트 제목, 사용 목적, 본문, 예시 입력, 예시 출력, 안전 주의사항, 공개 범위, 게시 상태가 저장될 수 있습니다.",
@@ -53,7 +48,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="2. 저장하지 않는 정보"
-          description="SafeCheck 리포트와 문의 내용에는 민감한 원문을 입력하지 않는 것을 원칙으로 합니다."
+          description="민감한 원문 저장은 최소화합니다."
           items={[
             "SafeCheck 리포트에는 검사 원문 프롬프트를 저장하지 않는 것을 원칙으로 합니다.",
             "SafeCheck 리포트에는 고객명, 전화번호, 이메일 같은 실제 개인정보 원문을 저장하지 않는 것을 원칙으로 합니다.",
@@ -65,7 +60,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="3. 개인정보 처리 목적"
-          description="처리한 정보는 아래 목적의 범위 안에서만 사용합니다."
+          description="처리한 정보는 아래 목적 범위 안에서만 사용합니다."
           items={[
             "사용자 로그인, 계정 식별, 세션 유지",
             "사용자별 프롬프트 생성, 조회, 수정, 보관, 복구",
@@ -80,7 +75,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="4. 보유 및 이용 기간"
-          description="개인정보는 처리 목적 달성에 필요한 기간 동안만 보유합니다."
+          description="개인정보는 필요한 기간 동안만 보유합니다."
           items={[
             "계정 정보는 회원이 서비스를 이용하는 기간 동안 보유하며, 계정 삭제 또는 삭제 요청 시 지체 없이 삭제하는 것을 원칙으로 합니다.",
             "사용자가 저장한 프롬프트 데이터는 사용자가 직접 삭제하거나 계정 삭제를 요청할 때까지 보유될 수 있습니다.",
@@ -93,7 +88,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="5. 개인정보의 파기"
-          description="보유 목적이 끝난 개인정보는 안전한 방법으로 파기합니다."
+          description="보유 목적이 끝난 개인정보는 안전하게 파기합니다."
           items={[
             "전자 파일 형태의 개인정보는 복구하기 어려운 방법으로 삭제합니다.",
             "외부 서비스에 저장된 정보는 해당 서비스의 관리 기능, 보존 정책, 백업 정책에 따라 삭제 또는 비식별 처리될 수 있습니다.",
@@ -103,7 +98,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="6. 외부 서비스 및 처리위탁"
-          description="PromptLab은 서비스 운영을 위해 아래 외부 서비스를 사용할 수 있습니다."
+          description="서비스 운영을 위해 사용하는 외부 서비스입니다."
           items={[
             "Supabase: 사용자 인증, 데이터베이스, 세션 관리",
             "Vercel: 웹 애플리케이션 배포, 호스팅, 기본 접속 로그와 오류 로그 처리",
@@ -117,7 +112,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="7. 정보주체의 권리"
-          description="사용자는 본인의 개인정보에 대해 열람, 수정, 삭제, 처리정지를 요청할 수 있습니다."
+          description="사용자는 개인정보 열람, 수정, 삭제, 처리정지를 요청할 수 있습니다."
           items={[
             "사용자는 본인이 작성한 프롬프트를 조회, 수정, 보관할 수 있습니다.",
             "사용자는 공개 상태의 프롬프트를 비공개 또는 초안 상태로 변경할 수 있습니다.",
@@ -129,7 +124,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="8. 안전성 확보 조치"
-          description="PromptLab은 개인정보 보호를 위해 기술적, 관리적 조치를 적용합니다."
+          description="개인정보 보호를 위한 기술적, 관리적 조치입니다."
           items={[
             "로그인한 사용자만 본인 프롬프트를 관리할 수 있도록 서버에서 사용자 정보를 확인합니다.",
             "공개 프롬프트 화면에는 작성자 이메일, 사용자 ID, 작성 날짜를 노출하지 않습니다.",
@@ -142,7 +137,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="9. 입력 금지 정보"
-          description="사용자는 서비스 이용 중 아래 정보를 입력하지 않아야 합니다."
+          description="서비스 이용 중 입력하지 않아야 할 정보입니다."
           items={[
             "주민등록번호, 여권번호, 운전면허번호 등 고유식별정보",
             "비밀번호, 인증번호, 결제정보, 카드번호, 계좌 비밀번호",
@@ -155,7 +150,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="10. 자동 수집 장치와 로그"
-          description="서비스 안정성 확인과 이용 흐름 분석을 위해 기본적인 기술 정보가 처리될 수 있습니다."
+          description="서비스 안정성과 사용성 개선을 위한 기술 정보입니다."
           items={[
             "PromptLab은 자체적으로 광고 식별자 또는 위치정보를 수집하지 않습니다.",
             "Vercel, Supabase, Tally, Google Analytics 등 외부 서비스가 접속 로그, 브라우저 정보, 기기 정보, 오류 로그, 서비스 이용 흐름 정보를 처리할 수 있습니다.",
@@ -167,7 +162,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="11. 처리방침의 변경"
-          description="개인정보 처리방침은 서비스 변경, 법령 개정, 운영 정책 변경에 따라 수정될 수 있습니다."
+          description="서비스와 법령 변경에 따라 수정될 수 있습니다."
           items={[
             "개인정보 처리방침이 변경되는 경우 본 페이지의 최종 업데이트 일자를 갱신합니다.",
             "중요한 변경이 있는 경우 서비스 화면, 공지, 또는 적절한 방법으로 안내할 수 있습니다.",
@@ -177,7 +172,7 @@ export default function PrivacyShell() {
 
         <PrivacySection
           title="12. 문의 및 개인정보 관련 연락처"
-          description="개인정보 관련 문의, 삭제 요청, 고충 처리는 아래 연락처로 요청할 수 있습니다."
+          description="개인정보 관련 문의와 삭제 요청 접수 경로입니다."
           items={[
             "서비스명: PromptLab",
             "제작·운영: PICTORY-DROID, Seoin Kim",
