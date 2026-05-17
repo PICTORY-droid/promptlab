@@ -18,23 +18,25 @@ export default function DeleteInfoSection({
 }: DeleteInfoSectionProps) {
   return (
     <Card>
-      <CardContent className="p-5 sm:p-6">
-        <div className="space-y-3">
-          <div className="space-y-1.5">
-            <CardTitle>{title}</CardTitle>
-            {description ? (
-              <CardDescription>{description}</CardDescription>
-            ) : null}
-          </div>
+      <CardContent className="p-4 sm:p-6">
+        <details>
+          <summary className="cursor-pointer list-none">
+            <div className="space-y-1.5">
+              <CardTitle>{title}</CardTitle>
+              {description ? (
+                <CardDescription>{description}</CardDescription>
+              ) : null}
+            </div>
+          </summary>
 
-          <ul className="list-disc space-y-1.5 pl-5 text-sm leading-6 text-slate-600">
+          <ul className="mt-4 list-disc space-y-1.5 pl-5 text-sm leading-6 text-slate-600">
             {items.map((item) => (
               <li key={item} className="break-keep">
                 {item}
               </li>
             ))}
           </ul>
-        </div>
+        </details>
       </CardContent>
     </Card>
   );
