@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardTitle,
 } from "@/shared/ui/card";
 import DeleteInfoSection from "./DeleteInfoSection";
 import DeleteRequestCard from "./DeleteRequestCard";
@@ -14,19 +13,22 @@ const lastUpdated = "2026-05-13";
 export default function DeleteAccountShell() {
   return (
     <PageShell>
+      <p className="text-xs text-slate-500">
+        최종 업데이트: {lastUpdated}
+      </p>
+
       <PageHeader
         badge="Account & Data Deletion"
         title="계정·데이터 삭제"
         description="PromptLab 연결과 저장 데이터 삭제를 요청하는 페이지입니다."
-        meta={<>최종 업데이트: {lastUpdated}</>}
       />
 
       <Card className="border-amber-200 bg-amber-50">
         <CardContent className="p-4 sm:p-6">
-          <div className="space-y-2">
-            <CardTitle className="text-amber-950">
+          <div className="space-y-1.5">
+            <p className="text-sm font-semibold text-amber-950">
               Google, Kakao 계정 삭제가 아닙니다
-            </CardTitle>
+            </p>
             <CardDescription className="text-amber-900">
               이 페이지는 PromptLab 서비스 계정 연결과 저장 데이터 삭제 요청만
               안내합니다.
@@ -39,7 +41,7 @@ export default function DeleteAccountShell() {
 
       <DeleteInfoSection
         title="삭제 전 확인사항"
-        description="삭제 대상, 제외 대상, 보관 기준을 한 번에 확인합니다."
+        description="삭제 대상, 제외 대상, 보관 기준 확인"
         sections={[
           {
             title: "삭제 대상",
