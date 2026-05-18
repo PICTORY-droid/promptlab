@@ -10,10 +10,41 @@ type PromptPublishFieldsProps = {
   ) => void;
 };
 
+type SaveMode = "private-draft" | "public-draft" | "public-published";
+
+function getSaveMode(draft: PromptDraftState): SaveMode {
+  if (draft.visibility === "public" && draft.status === "published") {
+    return "public-published";
+  }
+
+  if (draft.visibility === "public") {
+    return "public-draft";
+  }
+
+  return "private-draft";
+}
+
 export default function PromptPublishFields({
   draft,
   onChange,
 }: PromptPublishFieldsProps) {
+  function handleSaveModeChange(value: SaveMode) {
+    if (value === "public-published") {
+      onChange("visibility", "public");
+      onChange("status", "published");
+      return;
+    }
+
+    if (value === "public-draft") {
+      onChange("visibility", "public");
+      onChange("status", "draft");
+      return;
+    }
+
+    onChange("visibility", "private");
+    onChange("status", "draft");
+  }
+
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
@@ -25,48 +56,25 @@ export default function PromptPublishFields({
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block space-y-2">
-          <span className="text-sm font-semibold text-slate-700">공개 범위</span>
-          <select
-            value={draft.visibility}
-            onChange={(event) =>
-              onChange(
-                "visibility",
-                event.currentTarget.value === "public" ? "public" : "private",
-              )
-            }
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
-          >
-            <option value="private">비공개</option>
-            <option value="public">공개</option>
-          </select>
-        </label>
-
-        <label className="block space-y-2">
-          <span className="text-sm font-semibold text-slate-700">저장 상태</span>
-          <select
-            value={draft.status}
-            onChange={(event) =>
-              onChange(
-                "status",
-                event.currentTarget.value === "published"
-                  ? "published"
-                  : "draft",
-              )
-            }
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
-          >
-            <option value="draft">초안으로 저장</option>
-            <option value="published">게시 상태로 저장</option>
-          </select>
-        </label>
-      </div>
+      <label className="block space-y-2">
+        <span className="text-sm font-semibold text-slate-700">저장 방식</span>
+        <select
+          value={getSaveMode(draft)}
+          onChange={(event) =>
+            handleSaveModeChange(event.currentTarget.value as SaveMode)
+          }
+          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+        >
+          <option value="private-draft">비공개 초안</option>
+          <option value="public-draft">공개 초안</option>
+          <option value="public-published">공개 게시</option>
+        </select>
+      </label>
 
       <div className="rounded-2xl bg-slate-50 p-3">
         <p className="text-sm font-bold text-slate-950">권장 설정</p>
         <p className="mt-1 text-xs leading-5 text-slate-600">
-          처음 저장은 비공개, 초안이 안전합니다. 검토 후 공개와 게시로 바꾸세요.
+          처음 저장은 비공개 초안이 안전합니다. 검토 후 공개 게시로 바꾸세요.
         </p>
       </div>
     </div>
