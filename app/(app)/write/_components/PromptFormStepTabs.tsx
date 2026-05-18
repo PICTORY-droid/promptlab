@@ -6,9 +6,9 @@ const steps: Array<{
   key: PromptFormStep;
   label: string;
 }> = [
-  { key: "core", label: "작성" },
-  { key: "optional", label: "옵션" },
-  { key: "publish", label: "저장" },
+  { key: "core", label: "제목·본문" },
+  { key: "optional", label: "추가 정보" },
+  { key: "publish", label: "공개·저장" },
 ];
 
 type PromptFormStepTabsProps = {

@@ -24,13 +24,13 @@ export default function WriteShell({
       <header className="space-y-2">
         <Badge>개인 작성</Badge>
         <p className="max-w-2xl text-sm leading-6 text-slate-600">
-          작성 단계에 맞춰 프롬프트를 저장합니다.
+          제목과 본문을 먼저 작성한 뒤, 필요한 정보만 추가합니다.
         </p>
       </header>
 
       <Card>
         <CardHeader>
-          <CardTitle>작성 단계</CardTitle>
+          <CardTitle>프롬프트 작성</CardTitle>
         </CardHeader>
 
         <CardContent>
