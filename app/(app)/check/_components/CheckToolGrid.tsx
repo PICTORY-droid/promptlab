@@ -34,12 +34,7 @@ const upcomingTools: CheckToolCardProps[] = [
 export default function CheckToolGrid() {
   return (
     <section className="grid gap-4 sm:gap-5">
-      <div className="space-y-2">
-        <p className="text-sm font-semibold text-slate-800">
-          바로 사용 가능
-        </p>
-        <CheckToolCard {...primaryTool} />
-      </div>
+      <CheckToolCard {...primaryTool} />
 
       <div className="space-y-2">
         <p className="text-sm font-semibold text-slate-800">
