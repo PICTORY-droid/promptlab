@@ -13,11 +13,11 @@ export default function AppLogo() {
         className="h-10 w-10 rounded-2xl shadow-sm"
       />
       <span className="leading-tight">
-        <span className="block text-sm font-black tracking-tight text-slate-950">
+        <span className="block text-sm font-semibold tracking-tight text-slate-950">
           PromptLab
         </span>
         <span className="block text-xs font-medium text-slate-500">
-          AI SafeCheck inside
+          AI 입력 보안 점검
         </span>
       </span>
     </Link>

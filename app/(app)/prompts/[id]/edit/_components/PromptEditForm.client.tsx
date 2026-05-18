@@ -71,7 +71,6 @@ function FieldHelp({ children }: { children: React.ReactNode }) {
 }
 
 export default function PromptEditForm({
-  email,
   prompt,
   categories,
   categoryLoadMessage,
@@ -96,18 +95,17 @@ export default function PromptEditForm({
         badge="프롬프트 수정"
         title={prompt.title}
         description="저장된 프롬프트의 제목, 본문, 예시, 공개 범위, 상태를 수정합니다. 공개 게시 전에는 SafeCheck 검사를 다시 확인하세요."
-        meta={<>로그인 계정: {email}</>}
       />
 
       <Card>
-        <CardHeader className="p-5 sm:p-6">
+        <CardHeader>
           <CardTitle>수정 정보</CardTitle>
           <CardDescription>
             변경한 내용은 저장 후 바로 반영됩니다. 공개 + 게시 상태로 바꾸기 전에는 개인정보, 회사기밀, 저작권 위험, 과장 표현이 없는지 확인하세요.
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+        <CardContent>
           <form action={formAction} className="space-y-4 sm:space-y-5">
             <input type="hidden" name="promptId" value={prompt.id} />
 

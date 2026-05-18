@@ -18,7 +18,6 @@ type AppNavigationProps = {
 
 export default function AppNavigation({
   isLoggedIn,
-  email,
 }: AppNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -26,7 +25,7 @@ export default function AppNavigation({
     <div className="relative">
       <button
         type="button"
-        className="inline-flex min-h-10 items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition duration-150 ease-out hover:bg-slate-50 active:scale-[0.98] active:bg-slate-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-200 md:hidden"
+        className="inline-flex min-h-10 items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors duration-150 ease-out hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-200 md:hidden"
         onClick={() => setIsOpen((current) => !current)}
         aria-expanded={isOpen}
         aria-controls="mobile-navigation"
@@ -40,12 +39,6 @@ export default function AppNavigation({
             {item.label}
           </LinkButton>
         ))}
-
-        {email ? (
-          <span className="hidden max-w-48 truncate rounded-full bg-slate-100 px-4 py-2 text-xs text-slate-500 xl:inline">
-            {email}
-          </span>
-        ) : null}
 
         {isLoggedIn ? (
           <LinkButton href="/logout" useAnchor>
@@ -61,17 +54,6 @@ export default function AppNavigation({
           id="mobile-navigation"
           className="absolute right-0 top-12 z-50 w-72 rounded-3xl border border-slate-200 bg-white p-3 shadow-xl md:hidden"
         >
-          {email ? (
-            <div className="mb-2 rounded-2xl bg-slate-50 px-4 py-3">
-              <p className="text-xs font-semibold text-slate-500">
-                로그인 계정
-              </p>
-              <p className="mt-1 break-all text-sm font-bold text-slate-900">
-                {email}
-              </p>
-            </div>
-          ) : null}
-
           <div className="grid gap-1">
             {navigationItems.map((item) => (
               <LinkButton
