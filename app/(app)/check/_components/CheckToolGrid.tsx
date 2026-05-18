@@ -24,12 +24,6 @@ const upcomingTools: CheckToolCardProps[] = [
     variant: "compact",
   },
   {
-    title: "Humanize",
-    description: "규칙 기반으로 문장을 더 자연스럽게 다듬습니다.",
-    status: "준비 중",
-    variant: "compact",
-  },
-  {
     title: "Similarity",
     description: "중복 표현과 원문 반복 위험을 점검합니다.",
     status: "준비 중",
@@ -38,12 +32,6 @@ const upcomingTools: CheckToolCardProps[] = [
 ];
 
 const reviewTools: CheckToolCardProps[] = [
-  {
-    title: "Report",
-    description: "검사 기록을 리포트 형태로 정리합니다.",
-    status: "검토 예정",
-    variant: "mini",
-  },
   {
     title: "영상 자막 요약",
     description: "사용자가 붙여넣은 원고 기준으로 요약합니다.",
@@ -72,7 +60,7 @@ export default function CheckToolGrid() {
         <p className="text-sm font-semibold text-slate-800">
           준비 중인 검사
         </p>
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid gap-2 sm:grid-cols-3">
           {upcomingTools.map((tool) => (
             <CheckToolCard key={tool.title} {...tool} />
           ))}
@@ -83,7 +71,7 @@ export default function CheckToolGrid() {
         <p className="text-sm font-semibold text-slate-800">
           검토 예정
         </p>
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-2 sm:grid-cols-2">
           {reviewTools.map((tool) => (
             <CheckToolCard key={tool.title} {...tool} />
           ))}
