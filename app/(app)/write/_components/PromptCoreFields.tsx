@@ -55,7 +55,7 @@ export default function PromptCoreFields({
           value={draft.promptBody}
           placeholder={`예:
 당신은 고객 응대 담당자입니다.
-아래 문의를 정중한 답변으로 변경하세요.
+문의를 정중한 답변으로 변경하세요.
 확인되지 않은 내용은 단정하지 마세요.`}
           maxLength={limits.promptBody}
           onChange={(event) => onChange("promptBody", event.currentTarget.value)}
