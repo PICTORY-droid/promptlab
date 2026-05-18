@@ -44,7 +44,7 @@ export default function PromptPublishFields({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm font-semibold text-slate-700">상태</span>
+          <span className="text-sm font-semibold text-slate-700">저장 상태</span>
           <select
             value={draft.status}
             onChange={(event) =>
@@ -57,8 +57,8 @@ export default function PromptPublishFields({
             }
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
           >
-            <option value="draft">초안</option>
-            <option value="published">게시</option>
+            <option value="draft">초안으로 저장</option>
+            <option value="published">게시 상태로 저장</option>
           </select>
         </label>
       </div>
