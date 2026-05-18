@@ -4,7 +4,6 @@ import Button from "@/shared/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
@@ -24,15 +23,10 @@ export default function DashboardPromptList({
     <Card>
       <CardHeader className="p-4 pb-3 sm:p-5 sm:pb-3">
         <div className="flex items-center justify-between gap-3">
-          <div>
-            <CardTitle>내 프롬프트</CardTitle>
-            <CardDescription>
-              저장한 프롬프트를 리스트로 관리합니다.
-            </CardDescription>
-          </div>
+          <CardTitle>프롬프트 목록</CardTitle>
 
           <Link href="/write">
-            <Button className="whitespace-nowrap">작성</Button>
+            <Button className="whitespace-nowrap">새 작성</Button>
           </Link>
         </div>
       </CardHeader>
@@ -40,27 +34,21 @@ export default function DashboardPromptList({
       <CardContent className="p-4 pt-0 sm:p-5 sm:pt-0">
         {promptLoadMessage ? (
           <EmptyState
-            title="내 프롬프트를 불러오지 못했습니다"
+            title="프롬프트를 불러오지 못했습니다"
             description={promptLoadMessage}
           />
         ) : prompts.length === 0 ? (
           <EmptyState
-            title="저장한 프롬프트가 없습니다"
-            description="첫 프롬프트를 작성하세요."
+            title="저장된 프롬프트 없음"
+            description="프롬프트를 작성하면 여기에 표시됩니다."
             action={
               <Link href="/write">
-                <Button>작성하기</Button>
+                <Button>첫 프롬프트 작성</Button>
               </Link>
             }
           />
         ) : (
-          <div className="space-y-3">
-            <p className="text-xs font-semibold text-slate-500">
-              총 {prompts.length.toLocaleString("ko-KR")}개
-            </p>
-
-            <DashboardPromptListRows prompts={prompts} />
-          </div>
+          <DashboardPromptListRows prompts={prompts} />
         )}
       </CardContent>
     </Card>
