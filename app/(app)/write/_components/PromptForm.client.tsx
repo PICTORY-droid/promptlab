@@ -96,18 +96,17 @@ export default function PromptForm({
         />
       ) : null}
 
-      {step === "optional" ? (
-        <PromptOptionalFields
-          draft={draft}
-          limits={FIELD_LIMITS}
-          categories={categories}
-          categoryLoadMessage={categoryLoadMessage}
-          onChange={updateDraft}
-        />
-      ) : null}
-
-      {step === "publish" ? (
-        <PromptPublishFields draft={draft} onChange={updateDraft} />
+      {step === "settings" ? (
+        <div className="space-y-4">
+          <PromptOptionalFields
+            draft={draft}
+            limits={FIELD_LIMITS}
+            categories={categories}
+            categoryLoadMessage={categoryLoadMessage}
+            onChange={updateDraft}
+          />
+          <PromptPublishFields draft={draft} onChange={updateDraft} />
+        </div>
       ) : null}
 
       {!state.ok ? <ErrorMessage message={state.message} /> : null}

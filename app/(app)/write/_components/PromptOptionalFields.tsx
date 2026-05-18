@@ -2,15 +2,11 @@
 
 import type { PromptCategory } from "@/features/prompts/types/category.types";
 import type { PromptDraftState } from "./PromptForm.client";
-import Input from "@/shared/ui/input";
 import Textarea from "@/shared/ui/textarea";
 
 type PromptOptionalFieldsProps = {
   draft: PromptDraftState;
   limits: {
-    useCase: number;
-    exampleInput: number;
-    exampleOutput: number;
     safetyNotes: number;
   };
   categories: PromptCategory[];
@@ -50,58 +46,6 @@ export default function PromptOptionalFields({
             카테고리를 불러오지 못했습니다. {categoryLoadMessage}
           </span>
         ) : null}
-      </label>
-
-      <label className="block space-y-2">
-        <span className="flex items-center justify-between gap-3">
-          <span className="text-sm font-semibold text-slate-700">사용 목적</span>
-          <span className="text-xs text-slate-400">
-            {draft.useCase.length.toLocaleString("ko-KR")} /{" "}
-            {limits.useCase.toLocaleString("ko-KR")}자
-          </span>
-        </span>
-        <Input
-          value={draft.useCase}
-          placeholder="예: 고객 문의 답변을 빠르게 정리하려고 합니다."
-          maxLength={limits.useCase}
-          onChange={(event) => onChange("useCase", event.currentTarget.value)}
-        />
-      </label>
-
-      <label className="block space-y-2">
-        <span className="flex items-center justify-between gap-3">
-          <span className="text-sm font-semibold text-slate-700">원문 예시</span>
-          <span className="text-xs text-slate-400">
-            {draft.exampleInput.length.toLocaleString("ko-KR")} /{" "}
-            {limits.exampleInput.toLocaleString("ko-KR")}자
-          </span>
-        </span>
-        <Textarea
-          className="min-h-24"
-          value={draft.exampleInput}
-          placeholder="예: 배송 일정이 궁금하다는 고객 문의 원문"
-          maxLength={limits.exampleInput}
-          onChange={(event) => onChange("exampleInput", event.currentTarget.value)}
-        />
-      </label>
-
-      <label className="block space-y-2">
-        <span className="flex items-center justify-between gap-3">
-          <span className="text-sm font-semibold text-slate-700">
-            원하는 답변 예시
-          </span>
-          <span className="text-xs text-slate-400">
-            {draft.exampleOutput.length.toLocaleString("ko-KR")} /{" "}
-            {limits.exampleOutput.toLocaleString("ko-KR")}자
-          </span>
-        </span>
-        <Textarea
-          className="min-h-24"
-          value={draft.exampleOutput}
-          placeholder="예: 안녕하세요. 문의 주신 배송 일정 안내드립니다."
-          maxLength={limits.exampleOutput}
-          onChange={(event) => onChange("exampleOutput", event.currentTarget.value)}
-        />
       </label>
 
       <label className="block space-y-2">

@@ -32,26 +32,9 @@ export default function PromptFormActions({
           type="button"
           className="w-full"
           disabled={!canGoNextFromCore}
-          onClick={() => onStepChange("optional")}
+          onClick={() => onStepChange("settings")}
         >
-          다음
-        </Button>
-      </div>
-    );
-  }
-
-  if (currentStep === "optional") {
-    return (
-      <div className="sticky bottom-3 z-10 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => onStepChange("core")}
-        >
-          이전
-        </Button>
-        <Button type="button" onClick={() => onStepChange("publish")}>
-          다음
+          저장 설정으로 이동
         </Button>
       </div>
     );
@@ -62,7 +45,7 @@ export default function PromptFormActions({
       <Button
         type="button"
         variant="secondary"
-        onClick={() => onStepChange("optional")}
+        onClick={() => onStepChange("core")}
       >
         이전
       </Button>

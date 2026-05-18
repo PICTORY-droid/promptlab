@@ -1,14 +1,13 @@
 "use client";
 
-export type PromptFormStep = "core" | "optional" | "publish";
+export type PromptFormStep = "core" | "settings";
 
 const steps: Array<{
   key: PromptFormStep;
   label: string;
 }> = [
-  { key: "core", label: "제목·본문" },
-  { key: "optional", label: "추가 정보" },
-  { key: "publish", label: "공개·저장" },
+  { key: "core", label: "프롬프트 작성" },
+  { key: "settings", label: "저장 설정" },
 ];
 
 type PromptFormStepTabsProps = {
@@ -21,7 +20,7 @@ export default function PromptFormStepTabs({
   onStepChange,
 }: PromptFormStepTabsProps) {
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-2 gap-2">
       {steps.map((step) => {
         const isActive = step.key === currentStep;
 
