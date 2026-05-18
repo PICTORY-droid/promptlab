@@ -15,33 +15,18 @@ const upcomingTools: CheckToolCardProps[] = [
     title: "StyleCheck",
     description: "반복 표현과 과하게 정돈된 문장을 점검합니다.",
     status: "준비 중",
-    variant: "compact",
+    variant: "mini",
   },
   {
     title: "AI 문체 점검",
     description: "기계적으로 보일 수 있는 문장 패턴을 점검합니다.",
     status: "준비 중",
-    variant: "compact",
+    variant: "mini",
   },
   {
     title: "Similarity",
     description: "중복 표현과 원문 반복 위험을 점검합니다.",
     status: "준비 중",
-    variant: "compact",
-  },
-];
-
-const reviewTools: CheckToolCardProps[] = [
-  {
-    title: "영상 자막 요약",
-    description: "사용자가 붙여넣은 원고 기준으로 요약합니다.",
-    status: "검토 예정",
-    variant: "mini",
-  },
-  {
-    title: "YouTube 채널 카드",
-    description: "API, 개인정보, Play Store 정책 검토 후 판단합니다.",
-    status: "검토 예정",
     variant: "mini",
   },
 ];
@@ -58,21 +43,10 @@ export default function CheckToolGrid() {
 
       <div className="space-y-2">
         <p className="text-sm font-semibold text-slate-800">
-          준비 중인 검사
+          다음 검사 준비 중
         </p>
         <div className="grid gap-2 sm:grid-cols-3">
           {upcomingTools.map((tool) => (
-            <CheckToolCard key={tool.title} {...tool} />
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <p className="text-sm font-semibold text-slate-800">
-          검토 예정
-        </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {reviewTools.map((tool) => (
             <CheckToolCard key={tool.title} {...tool} />
           ))}
         </div>
