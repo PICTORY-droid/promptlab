@@ -62,10 +62,6 @@ export default function PromptCoreFields({
           required
         />
       </label>
-
-      <p className="rounded-2xl bg-slate-50 p-3 text-xs leading-5 text-slate-500">
-        모바일에서는 제목과 본문만 먼저 작성합니다. 예시와 공개 설정은 다음 단계에서 입력합니다.
-      </p>
     </div>
   );
 }
