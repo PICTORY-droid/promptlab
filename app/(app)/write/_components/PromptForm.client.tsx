@@ -53,10 +53,7 @@ const initialDraft: PromptDraftState = {
   status: "draft",
 };
 
-export default function PromptForm({
-  categories,
-  categoryLoadMessage,
-}: PromptFormProps) {
+export default function PromptForm(_props: PromptFormProps) {
   const [state, formAction] = useActionState(createPromptAction, initialState);
   const [step, setStep] = useState<PromptFormStep>("core");
   const [draft, setDraft] = useState<PromptDraftState>(initialDraft);
@@ -102,8 +99,6 @@ export default function PromptForm({
           <PromptOptionalFields
             draft={draft}
             limits={FIELD_LIMITS}
-            categories={categories}
-            categoryLoadMessage={categoryLoadMessage}
             onChange={updateDraft}
           />
         </div>

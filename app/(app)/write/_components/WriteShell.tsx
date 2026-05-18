@@ -23,9 +23,6 @@ export default function WriteShell({
     <PageShell maxWidth="md">
       <header className="space-y-2">
         <Badge>개인 작성</Badge>
-        <p className="max-w-2xl text-sm leading-6 text-slate-600">
-          제목과 본문을 먼저 작성한 뒤, 필요한 정보만 추가합니다.
-        </p>
       </header>
 
       <Card>
