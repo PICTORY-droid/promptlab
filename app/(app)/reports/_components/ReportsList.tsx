@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import type { SafeCheckReport } from "@/features/safecheck/types/report.types";
 import Button from "@/shared/ui/button";
 import {
@@ -19,11 +22,22 @@ export default function ReportsList({
   reports,
   reportLoadMessage,
 }: ReportsListProps) {
+  const [pageLabel, setPageLabel] = useState<string | null>(
+    reports.length > 0 ? "1 / 1" : null,
+  );
+
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
-          <CardTitle>기록 목록</CardTitle>
+          <div className="flex min-w-0 items-center gap-2">
+            <CardTitle>기록 목록</CardTitle>
+            {pageLabel ? (
+              <span className="shrink-0 text-xs font-semibold text-slate-400">
+                {pageLabel}
+              </span>
+            ) : null}
+          </div>
 
           <Link href="/safecheck">
             <Button className="whitespace-nowrap">새 검사</Button>
@@ -48,7 +62,10 @@ export default function ReportsList({
             }
           />
         ) : (
-          <ReportsPagination reports={reports} />
+          <ReportsPagination
+            reports={reports}
+            onPageLabelChange={setPageLabel}
+          />
         )}
       </CardContent>
     </Card>

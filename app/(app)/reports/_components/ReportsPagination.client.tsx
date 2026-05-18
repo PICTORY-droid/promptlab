@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { SafeCheckReport } from "@/features/safecheck/types/report.types";
 import Button from "@/shared/ui/button";
 import ReportCard from "./ReportCard";
@@ -9,10 +9,12 @@ const PAGE_SIZE = 5;
 
 type ReportsPaginationProps = {
   reports: SafeCheckReport[];
+  onPageLabelChange: (label: string) => void;
 };
 
 export default function ReportsPagination({
   reports,
+  onPageLabelChange,
 }: ReportsPaginationProps) {
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -25,6 +27,10 @@ export default function ReportsPagination({
     return reports.slice(startIndex, startIndex + PAGE_SIZE);
   }, [pageIndex, reports]);
 
+  useEffect(() => {
+    onPageLabelChange(`${pageIndex + 1} / ${totalPages}`);
+  }, [onPageLabelChange, pageIndex, totalPages]);
+
   function goToPreviousPage() {
     setPageIndex((current) => Math.max(0, current - 1));
   }
@@ -35,15 +41,6 @@ export default function ReportsPagination({
 
   return (
     <section className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold text-slate-500">
-          총 {reports.length.toLocaleString("ko-KR")}개
-        </p>
-        <p className="text-xs font-semibold text-slate-400">
-          {pageIndex + 1} / {totalPages}
-        </p>
-      </div>
-
       <div className="grid gap-2">
         {currentReports.map((report) => (
           <ReportCard key={report.id} report={report} />
