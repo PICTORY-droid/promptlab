@@ -33,14 +33,14 @@ export default function HomePage() {
 
           <div className="space-y-3 sm:space-y-4">
             <h1 className="max-w-4xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
-              AI에 넣기 전,
+              생성형 AI 입력 전,
               <br />
-              프롬프트 위험을 먼저 점검합니다.
+              민감정보와 보안 위험을 점검합니다.
             </h1>
 
             <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
-              PromptLab은 프롬프트 작성, SafeCheck 검사, 기록 관리를 연결한
-              AI 입력 전 보안 점검 작업 공간입니다.
+              PromptLab은 프롬프트 작성, SafeCheck 검사, 리포트 관리를 연결한
+              AI 입력 보안 점검 워크스페이스입니다.
             </p>
           </div>
 
