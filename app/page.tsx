@@ -6,14 +6,14 @@ import PageShell from "@/shared/ui/page-shell";
 
 const trustItems = [
   {
-    title: "AI 입력 전 위험 점검",
+    title: "입력 전 점검",
     description:
-      "개인정보, 회사기밀, 계약정보, 저작권 원문, 과장 표현을 입력 전에 확인합니다.",
+      "개인정보, 회사기밀, 계약정보, 저작권 원문, 과장 표현을 AI 입력 전에 확인합니다.",
   },
   {
-    title: "작성과 검사 분리",
+    title: "안전 문장 안내",
     description:
-      "프롬프트 작성과 SafeCheck 검사를 분리해 저장 전 위험을 따로 점검합니다.",
+      "위험한 표현을 바로 넣지 않도록 저장 전 점검과 안전한 문장 안내를 분리합니다.",
   },
   {
     title: "원문 저장 최소화",
@@ -26,11 +26,11 @@ export default function HomePage() {
   return (
     <PageShell maxWidth="lg" contentClassName="gap-6 sm:gap-8 lg:gap-10">
       <section className="space-y-5 sm:space-y-6">
-        <Badge>HOME</Badge>
+        <Badge>PromptLab</Badge>
 
         <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
-          PromptLab은 프롬프트 작성, SafeCheck 검사, 리포트 관리를 연결한
-          AI 입력 보안 점검 워크스페이스입니다.
+          생성형 AI에 입력하기 전, 민감정보와 업무 보안 위험을 먼저
+          점검합니다.
         </p>
       </section>
 
