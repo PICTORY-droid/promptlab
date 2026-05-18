@@ -26,7 +26,7 @@ const operatingStandards = [
 export default function PrivacySummaryCards() {
   return (
     <Card>
-      <CardContent className="p-4 sm:p-5">
+      <CardContent>
         <section aria-label="PromptLab 개인정보 운영 기준" className="space-y-3">
           <p className="text-sm font-semibold text-slate-800">
             PromptLab 개인정보 운영 기준

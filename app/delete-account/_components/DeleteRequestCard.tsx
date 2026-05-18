@@ -10,7 +10,7 @@ const requestSteps = [
 export default function DeleteRequestCard() {
   return (
     <Card>
-      <CardContent className="p-4 sm:p-6">
+      <CardContent>
         <div className="space-y-3">
           <p className="text-sm font-semibold text-slate-800">
             삭제 요청 방법

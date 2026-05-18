@@ -18,7 +18,7 @@ export default function DeleteInfoSection({
 }: DeleteInfoSectionProps) {
   return (
     <Card>
-      <CardContent className="p-4 sm:p-6">
+      <CardContent>
         <details>
           <summary className="cursor-pointer list-none">
             <div className="space-y-1.5">
