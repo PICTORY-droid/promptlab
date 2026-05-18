@@ -65,7 +65,7 @@ export default function ReportsPagination({
           disabled={!hasNextPage}
           onClick={goToNextPage}
         >
-          다음 기록 보기 →
+          다음 기록 →
         </Button>
       </div>
     </section>
