@@ -11,7 +11,6 @@ type DashboardShellProps = {
 };
 
 export default function DashboardShell({
-  email,
   prompts,
   promptLoadMessage,
 }: DashboardShellProps) {
@@ -23,10 +22,7 @@ export default function DashboardShell({
         description="내 프롬프트를 확인합니다."
       />
 
-      <DashboardSummaryCards
-        email={email}
-        promptCount={prompts.length}
-      />
+      <DashboardSummaryCards promptCount={prompts.length} />
 
       <DashboardPromptList
         prompts={prompts}
