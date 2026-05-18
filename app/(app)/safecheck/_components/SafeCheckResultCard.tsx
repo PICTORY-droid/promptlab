@@ -35,10 +35,7 @@ export default function SafeCheckResultCard({
     <Card>
       <CardHeader>
         <CardTitle>검사 결과</CardTitle>
-        <CardDescription>
-        </CardDescription>
       </CardHeader>
-
       <CardContent>
         {!result ? (
           <SafeCheckEmptyResult />

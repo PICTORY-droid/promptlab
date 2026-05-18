@@ -33,10 +33,7 @@ export default function SafeCheckForm() {
       <Card>
         <CardHeader>
           <CardTitle>검사할 내용</CardTitle>
-          <CardDescription>
-          </CardDescription>
         </CardHeader>
-
         <CardContent>
           <form action={formAction} className="space-y-3">
             <label className="block space-y-2">
