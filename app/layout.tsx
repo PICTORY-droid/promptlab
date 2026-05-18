@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
-import AppHeader from "./_components/AppHeader";
-import AppFooter from "./_components/AppFooter";
+import AnalyticsScripts from "./_components/AnalyticsScripts";
+import AppChrome from "./_components/AppChrome";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,25 +68,9 @@ export default function RootLayout({
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-slate-50 text-slate-950">
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-7T02L3YW4T"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-7T02L3YW4T');
-          `}
-        </Script>
-
-        <AppHeader />
-
-        {children}
-
-        <AppFooter />
+      <body className="flex min-h-full flex-col bg-slate-50 pb-20 text-slate-950 md:pb-0">
+        <AnalyticsScripts />
+        <AppChrome>{children}</AppChrome>
       </body>
     </html>
   );
