@@ -24,7 +24,7 @@ export default function DeleteAccountShell() {
       />
 
       <Card className="border-amber-200 bg-amber-50">
-        <CardContent className="p-4 sm:p-6">
+        <CardContent>
           <div className="space-y-1.5">
             <p className="text-sm font-semibold text-amber-950">
               Google, Kakao 계정 삭제가 아닙니다

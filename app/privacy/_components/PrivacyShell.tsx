@@ -20,7 +20,7 @@ export default function PrivacyShell() {
       />
 
       <Card className="border-emerald-100 bg-emerald-50">
-        <CardContent className="p-4 sm:p-6">
+        <CardContent>
           <CardDescription className="text-emerald-900">
             SafeCheck 검사 원문, 고객 개인정보 원문, 회사기밀 원문은 저장하지
             않는 것을 원칙으로 하며, 기록에는 점수, 판정, 위험 카테고리,
