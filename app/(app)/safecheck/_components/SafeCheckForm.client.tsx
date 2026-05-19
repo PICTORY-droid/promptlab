@@ -51,7 +51,7 @@ export default function SafeCheckForm({ isLoggedIn }: SafeCheckFormProps) {
       <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>검사할 내용</CardTitle>
+            <CardTitle>검사할 프롬프트 본문</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="relative">
@@ -70,10 +70,7 @@ export default function SafeCheckForm({ isLoggedIn }: SafeCheckFormProps) {
                 className="space-y-3"
               >
                 <label className="block space-y-2">
-                  <span className="flex items-center justify-between gap-3">
-                    <span className="text-sm font-semibold text-slate-700">
-                      프롬프트 본문
-                    </span>
+                  <span className="flex items-center justify-end gap-3">
                     <span className="shrink-0 text-xs text-slate-400">
                       {textLength.toLocaleString("ko-KR")} /{" "}
                       {MAX_PROMPT_LENGTH.toLocaleString("ko-KR")}자

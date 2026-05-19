@@ -47,10 +47,7 @@ export default function ReportsList({
 
       <CardContent>
         {reportLoadMessage ? (
-          <EmptyState
-            title="검사 기록을 불러오지 못했습니다"
-            description={reportLoadMessage}
-          />
+          <EmptyState title={reportLoadMessage} />
         ) : reports.length === 0 ? (
           <EmptyState
             title="검사 기록 없음"
