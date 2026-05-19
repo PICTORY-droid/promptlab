@@ -1,11 +1,6 @@
 import type { PromptCategory } from "@/features/prompts/types/category.types";
 import Badge from "@/shared/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/shared/ui/card";
+import { Card, CardContent } from "@/shared/ui/card";
 import PageShell from "@/shared/ui/page-shell";
 import PromptForm from "./PromptForm.client";
 
@@ -26,10 +21,6 @@ export default function WriteShell({
       </header>
 
       <Card>
-        <CardHeader>
-          <CardTitle>프롬프트 작성</CardTitle>
-        </CardHeader>
-
         <CardContent>
           <PromptForm
             categories={categories}
