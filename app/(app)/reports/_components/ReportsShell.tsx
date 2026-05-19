@@ -5,7 +5,8 @@ import ReportsList from "./ReportsList";
 import ReportsSummary from "./ReportsSummary";
 
 type ReportsShellProps = {
-  email: string;
+  email: string | null;
+  isLoggedIn: boolean;
   reports: SafeCheckReport[];
   reportLoadMessage: string | null;
 };

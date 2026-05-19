@@ -3,7 +3,8 @@ import PageShell from "@/shared/ui/page-shell";
 import SafeCheckForm from "./SafeCheckForm.client";
 
 type SafeCheckShellProps = {
-  email: string;
+  email: string | null;
+  isLoggedIn: boolean;
 };
 
 export default function SafeCheckShell({}: SafeCheckShellProps) {

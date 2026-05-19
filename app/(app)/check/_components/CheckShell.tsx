@@ -3,7 +3,8 @@ import CheckPageHeader from "./CheckPageHeader";
 import CheckToolGrid from "./CheckToolGrid";
 
 type CheckShellProps = {
-  email: string;
+  email: string | null;
+  isLoggedIn: boolean;
 };
 
 export default function CheckShell({}: CheckShellProps) {

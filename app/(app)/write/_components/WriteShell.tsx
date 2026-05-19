@@ -5,7 +5,8 @@ import PageShell from "@/shared/ui/page-shell";
 import PromptForm from "./PromptForm.client";
 
 type WriteShellProps = {
-  email: string;
+  email: string | null;
+  isLoggedIn: boolean;
   categories: PromptCategory[];
   categoryLoadMessage: string | null;
 };
