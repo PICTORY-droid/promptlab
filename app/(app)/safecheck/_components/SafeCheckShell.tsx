@@ -7,7 +7,9 @@ type SafeCheckShellProps = {
   isLoggedIn: boolean;
 };
 
-export default function SafeCheckShell({}: SafeCheckShellProps) {
+export default function SafeCheckShell({
+  isLoggedIn,
+}: SafeCheckShellProps) {
   return (
     <PageShell>
       <PageHeader
@@ -16,7 +18,7 @@ export default function SafeCheckShell({}: SafeCheckShellProps) {
         description="저장하거나 공개하기 전 개인정보, 회사기밀, 계약정보, 저작권 위험, 허위·과장 표현을 점검합니다."
       />
 
-      <SafeCheckForm />
+      <SafeCheckForm isLoggedIn={isLoggedIn} />
     </PageShell>
   );
 }

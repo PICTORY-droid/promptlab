@@ -12,6 +12,7 @@ type WriteShellProps = {
 };
 
 export default function WriteShell({
+  isLoggedIn,
   categories,
   categoryLoadMessage,
 }: WriteShellProps) {
@@ -24,6 +25,7 @@ export default function WriteShell({
       <Card>
         <CardContent>
           <PromptForm
+            isLoggedIn={isLoggedIn}
             categories={categories}
             categoryLoadMessage={categoryLoadMessage}
           />
