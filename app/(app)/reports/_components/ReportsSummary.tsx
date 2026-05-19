@@ -1,5 +1,4 @@
 import type { SafeCheckReport } from "@/features/safecheck/types/report.types";
-import ReportsSummaryItem from "./ReportsSummaryItem";
 
 type ReportsSummaryProps = {
   reportCount: number;
@@ -26,19 +25,16 @@ export default function ReportsSummary({
   reportCount,
   latestReport,
 }: ReportsSummaryProps) {
-  return (
-    <section className="grid gap-2 rounded-2xl border border-slate-200 bg-white p-3">
-      <ReportsSummaryItem
-        label="전체"
-        title="검사 기록"
-        value={`${reportCount.toLocaleString("ko-KR")}개`}
-      />
+  const reportCountLabel = `검사 기록 ${reportCount.toLocaleString("ko-KR")}개`;
+  const latestReportLabel = latestReport
+    ? `최근 판정 점수 ${latestReport.score}점 ${getLevelLabel(latestReport.level)}`
+    : "최근 판정 기록 없음";
 
-      <ReportsSummaryItem
-        label="최근 판정"
-        title={latestReport ? `점수 ${latestReport.score}` : "점수 없음"}
-        value={getLevelLabel(latestReport?.level)}
-      />
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-3">
+      <p className="text-sm font-semibold leading-6 text-slate-700">
+        {reportCountLabel} / {latestReportLabel}
+      </p>
     </section>
   );
 }
