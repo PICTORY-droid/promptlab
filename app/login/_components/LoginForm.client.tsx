@@ -4,21 +4,21 @@ import SocialLoginButtons from "./SocialLoginButtons";
 
 export default function LoginForm() {
   return (
-    <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-10">
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="space-y-3">
+    <div className="mx-auto max-w-md">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <div className="space-y-2">
           <p className="text-sm font-semibold text-slate-500">
             PromptLab Login
           </p>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950">
+          <h1 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
             로그인
           </h1>
-          <p className="text-sm leading-6 text-slate-600">
-            Google, Kakao 계정으로 바로 로그인하거나, 이메일 매직링크로 로그인할 수 있습니다.
+          <p className="text-sm leading-5 text-slate-600">
+            Google, Kakao 또는 이메일 링크로 로그인합니다.
           </p>
         </div>
 
-        <div className="mt-6 space-y-5">
+        <div className="mt-4 space-y-3">
           <SocialLoginButtons />
           <LoginDivider />
           <MagicLinkLoginForm />
